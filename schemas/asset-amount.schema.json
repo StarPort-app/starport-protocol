@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:starport:schema:asset-amount:v0.3",
+  "title": "Amount",
+  "$comment": "R4 design-only dependency-closed projection of the matching OpenAPI component; not a deployed implementation.",
+  "type": "object",
+  "properties": {
+    "asset": {
+      "$ref": "#/$defs/AssetRef"
+    },
+    "rawAmount": {
+      "$ref": "#/$defs/RawUnits"
+    }
+  },
+  "required": [
+    "asset",
+    "rawAmount"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "AssetRef": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "address": {
+          "type": "string",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Display label, not identity"
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "decimalsVerified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chainId",
+        "address",
+        "symbol",
+        "decimals",
+        "decimalsVerified"
+      ],
+      "additionalProperties": false
+    },
+    "RawUnits": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 78,
+      "description": "Unsigned base-10 raw units; validate uint256 range server-side. Never a floating-point number or reference valuation."
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:starport:schema:service-receipt:v0.3",
+  "title": "Receipt",
+  "$comment": "R4 design-only dependency-closed projection of the matching OpenAPI component; not a deployed implementation.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Receipt ID"
+    },
+    "intentId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Exact financial intent linked by the assigned task; null for a non-financial observation or review task with no intent. The server must match the assignment including null; never fabricate an intent to issue a receipt."
+    },
+    "attemptId": {
+      "type": "string",
+      "description": "Submission attempt identity"
+    },
+    "nodeId": {
+      "type": "string",
+      "description": "Operator node"
+    },
+    "statementVersion": {
+      "type": "string",
+      "description": "Receipt schema version"
+    },
+    "statementDigest": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$"
+    },
+    "nodeClaim": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "evidenceLevel": {
+      "enum": [
+        "self_reported",
+        "independently_observed",
+        "chain_confirmed"
+      ]
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "transactionHashes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^0x[a-fA-F0-9]{64}$"
+      }
+    },
+    "chainResult": {
+      "enum": [
+        "unknown",
+        "not_submitted",
+        "included",
+        "confirmed",
+        "finalized",
+        "reverted",
+        "reorged"
+      ]
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Opaque identifier; authorization is checked independently of identifier knowledge."
+    },
+    "observedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signatureVerification": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "valid",
+        "invalid"
+      ]
+    },
+    "statementScope": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "confirmationPolicyId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Opaque identifier; authorization is checked independently of identifier knowledge."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "intentId",
+    "attemptId",
+    "nodeId",
+    "statementVersion",
+    "statementDigest",
+    "nodeClaim",
+    "evidenceLevel",
+    "evidenceReferences",
+    "transactionHashes",
+    "chainResult",
+    "taskId",
+    "observedAt",
+    "signatureVerification",
+    "statementScope",
+    "confirmationPolicyId"
+  ],
+  "additionalProperties": false,
+  "description": "Owner/operator-scoped receipt. A signed node claim, routing evidence and chain finality are separate assertions. Historical conflicts and failures are retained. intentId must match TaskAssignment.intentId exactly: a relay_intent task requires a real bound intent, while a non-financial task can produce a receipt with intentId=null. Validate this relationship against the assigned task; receipt submission cannot invent an intent."
+}

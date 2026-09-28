@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:starport:schema:reward-epoch:v0.3",
+  "title": "RewardEpoch",
+  "$comment": "R4 design-only dependency-closed projection of the matching OpenAPI component; not a deployed implementation.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Reward epoch"
+    },
+    "asset": {
+      "$ref": "#/$defs/AssetRef"
+    },
+    "fundedRaw": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "description": "Base-10 raw units, never floating point or a reference currency valuation."
+    },
+    "reservedRaw": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "description": "Base-10 raw units, never floating point or a reference currency valuation."
+    },
+    "allocatedRaw": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "description": "Base-10 raw units, never floating point or a reference currency valuation."
+    },
+    "claimedRaw": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "description": "Base-10 raw units, never floating point or a reference currency valuation."
+    },
+    "policyHash": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$"
+    },
+    "eligibilityPolicyId": {
+      "type": "string",
+      "description": "Explicit distribution eligibility"
+    },
+    "state": {
+      "enum": [
+        "draft",
+        "funding_required",
+        "funded",
+        "allocating",
+        "claimable",
+        "closed",
+        "paused"
+      ]
+    },
+    "fundingConfirmationState": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "included",
+        "confirmed",
+        "finalized",
+        "reorged"
+      ]
+    },
+    "claimStartsAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "claimEndsAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "termsUri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "rewardContract": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "earningDurationSeconds": {
+      "type": "integer",
+      "const": 259200
+    },
+    "firstStartTimestamp": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "epochIndex": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "startsAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "endsAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "asset",
+    "fundedRaw",
+    "reservedRaw",
+    "allocatedRaw",
+    "claimedRaw",
+    "policyHash",
+    "eligibilityPolicyId",
+    "state",
+    "fundingConfirmationState",
+    "claimStartsAt",
+    "claimEndsAt",
+    "termsUri",
+    "rewardContract",
+    "earningDurationSeconds",
+    "firstStartTimestamp",
+    "epochIndex",
+    "startsAt",
+    "endsAt"
+  ],
+  "additionalProperties": false,
+  "description": "Claimed <= allocated <= confirmed funded minus separately reserved/unavailable funding. No reward promise arises from an unfunded epoch; direct SPCX distribution still requires eligibility. R4 earning epochs are 259200 seconds, contiguous from explicitly configured firstStartTimestamp, with no weekday alignment. Epoch n starts at anchor+n*259200 and ends exclusively at anchor+(n+1)*259200. Missing anchor/times remain null and unconfigured. Three-day earning duration does not promise three-day funding or payment; 72-hour root review, 7-day principal exit and 90-day claims are separate.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "enum": [
+              "funded",
+              "allocating",
+              "claimable",
+              "closed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "firstStartTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "AssetRef": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "address": {
+          "type": "string",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Display label, not identity"
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "decimalsVerified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chainId",
+        "address",
+        "symbol",
+        "decimals",
+        "decimalsVerified"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
