@@ -1,6 +1,6 @@
 # Starport Contract Integration — R4 Design
 
-**R5 priority update:** [SPCX fee vault first](fee-vault-r5.md) supersedes the plain-wallet creator-recipient target and the requirement to finish the entire custom settlement stack before the initial revenue loop. All controller and payout roles remain unassigned.
+**Implementation status:** this document preserves the historical R4 target interfaces, not the final implementation ABI. See [Earn implementation](earn-implementation.md), [Pay/Trade implementation](execution-implementation.md), and [the implementation map](implementation-status.md) for actual source coverage and differences. [SPCX fee vault first](fee-vault-r5.md) supersedes the plain-wallet fee-recipient target. Fee-vault roles have been selected as preparation inputs; new Earn/Pay/Trade roles and deployment addresses remain unassigned.
 
 ## 1. Status and Confirmed Inputs
 

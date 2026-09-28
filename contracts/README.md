@@ -1,5 +1,9 @@
 # Starport SPCX Fee Vault
 
+This directory also contains the separate undeployed [Earn custody implementations](../docs/earn-implementation.md), `SportDelegationVault` and `FundedMerkleRewards`. The existing fee-vault deployment checklist does not deploy or authorize them. `npm run test:contracts` checks all local contract suites.
+
+[Pay and Trade implementations](../docs/execution-implementation.md) add `StarportPaymentRouter` and `BoundedTradeRouter`. Signature/domain and token-approval helpers use fixed `@openzeppelin/contracts@5.6.1` from the lockfile. The compiler input includes the exact imported dependency sources; library use is not an independent audit of the complete contracts.
+
 Collection-only financial foundation. The deployed vault address is **not assigned**. Use the R5 deployment design as a review checklist, not a deployment script.
 
 R5.1 adds native ETH reception and emergency recovery of same-chain ERC-20/native assets to the immutable payout wallet. Keeper rights do not expand. Read [the revised permission matrix](PERMISSIONS.md); the updated deployment artifact is not approved for signing until these permissions are confirmed. No NFT receiver or arbitrary-call interface is provided.

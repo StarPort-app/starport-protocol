@@ -1,4 +1,5 @@
 export { NODE_AGENT_RUNTIME_ENABLED } from "./runtime.js";
+export { createHttpsProbeTransport } from './https-transport.js';
 export { TargetRegistryError, assertRegisteredTargets, findRegisteredTarget } from "./targets.js";
 export type { RegisteredTarget } from "./targets.js";
 export {

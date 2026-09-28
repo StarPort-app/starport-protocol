@@ -2,6 +2,8 @@
 
 **R5 boundary:** the final fee recipient is a pending contract vault. Hardware reward buckets in this historical R4 policy remain inactive during the software-first rollout; collection does not create a reward entitlement. See [R5](fee-vault-r5.md).
 
+**Implementation update:** principal exits and funded reward custody now have source implementations. See [Earn implementation v1](earn-implementation.md) for the exact subset, constructor gates, review trust assumptions and unimplemented allocator/admission components. This historical policy does not mark those contracts as deployed or every R4 rule as implemented.
+
 ## 1. Decision and status
 
 **Proposed protocol policy; design only; not active.** These defaults complete the participation design without pretending that a token, contract, node fleet, reward budget, or eligibility service exists. The companion `participation-policy.design.json` records the same choices as non-executable design data. No deployment, signature, transfer, launch, or operational test is authorized by these documents.

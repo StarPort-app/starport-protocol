@@ -1,5 +1,7 @@
 # Starport Protocol
 
+**Website:** [starport.nexus](https://starport.nexus) · [Implementation map](docs/implementation-status.md) · [Earn](docs/earn-implementation.md) · [Pay & Trade](docs/execution-implementation.md)
+
 Project token: **SPORT** (contract pending deployment).
 
 ![Starport concept banner](docs/assets/starport-banner.png)
@@ -7,7 +9,7 @@ Project token: **SPORT** (contract pending deployment).
 Starport is a proposed Starlink-connected application network for RWA access, limited transaction tasks, and inspectable service receipts.
 
 ## Current status
-This repository contains protocol specifications, runnable TypeScript packages and the undeployed StarportFeeVault Solidity implementation. Design-only application features are labeled separately. No deployed Starport contracts, verified live node fleet, independent security audit or guaranteed rewards are represented here.
+This repository contains runnable node/SDK packages and five undeployed contract implementations: fee collection, isolated SPORT delegation, funded rewards, invoice/direct payments and bounded exact-input trades. The [implementation map](docs/implementation-status.md) separates these from missing venue, eligibility and hosted-service integrations. This is source-level implementation, not a deployed or independently audited financial service.
 
 ## Product modules
 Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is SPCX, revenue is recorded in raw SPCX units, and the creator-tax target is 50 bps (0.5%); these are design requirements, not claims about a live deployment.
@@ -34,6 +36,9 @@ The image is an application design preview, not a live network screenshot.
 - Public API design and an implemented read-only SDK
 - Treasury and reward accounting invariants
 - Bounded node-agent and opt-in Starlink capture packages
+- Concrete DNS-pinned HTTPS probe transport and task-bound receipt verification
+- Principal-exit and funded-reward contracts, with deterministic allocation manifests
+- EIP-712 / ERC-1271 invoice settlement and a fixed-adapter exact-input trade boundary
 - Fee-vault source, local tests and reproducible compiler inputs
 
 The consumer application, authentication, indexing, operations and deployment orchestration are maintained separately in starport-app. The public repository is not a fabricated substitute for private runtime code.
@@ -69,9 +74,12 @@ Requires Node.js 22.12 or later and the pinned npm toolchain. This repository bu
 npm ci --ignore-scripts
 npm run build
 npm run build:contracts
+npm test
+npm run test:contracts
+npm run example:offline
 ```
 
-The four workspace packages provide canonical operator messages, a bounded probe runner, an opt-in local terminal capture adapter and a read-only public API client. The build does not provision a database, contact terminal hardware, publish packages or deploy contracts. The capture adapter requires a separately installed `grpcurl` and an authorized physical terminal. Financial signing is not provided by these packages.
+The four workspace packages provide canonical operator messages and receipt verification, a bounded probe runner with an opt-in concrete HTTPS transport, an opt-in local terminal capture adapter and a read-only public API client. The build does not provision a database, contact terminal hardware, publish packages or deploy contracts. Contract tests require Anvil; the capture adapter requires a separately installed `grpcurl` and an authorized physical terminal. Financial signing is not provided by these packages.
 
 See `docs/node-runtime.md` for the operator message scheme and runtime boundary. Package build uses the pinned TypeScript workspace; `npm run build` does not publish or deploy.
 ## R5.1 fee-vault implementation
