@@ -19,10 +19,12 @@ Starlink provides a communications path. It does not determine asset prices, sig
 | --- | --- | --- |
 | schemas | Versioned JSON Schema and wire types | Design schemas only |
 | `@starport/read-only-client` | Public catalog, orbital, chain and receipt reads | Implemented; no order execution or signing |
-| `@starport/node-protocol` | Canonical operator messages and receipt projection | Implemented; signatures do not prove hardware or admission |
-| `@starport/node-agent` | Bounded, injected probe runner | Implemented; disabled by default, no production transport |
+| `@starport/node-protocol` | Canonical messages, task-bound verification, receipt projection | Implemented; signatures do not prove hardware or admission |
+| `@starport/node-agent` | Bounded probe runner and DNS-pinned HTTPS transport | Implemented; explicit opt-in, no transaction relay |
 | `@starport/starlink-operator` | Opt-in local terminal sampling | Implemented adapter; physical capture remains unverified |
 | `StarportFeeVault` | Fixed-asset collection and controlled payouts/recovery | Implemented and locally checked; not deployed |
-| Future execution/reward contracts | Intent settlement, delegation and funded rewards | Design only |
+| `SportDelegationVault` / `FundedMerkleRewards` | Principal exits and pre-funded reward claims | Implemented; not deployed, eligibility adapters required |
+| `StarportPaymentRouter` | Direct and issuer-signed invoice settlement | Implemented; not deployed, eligibility integration required |
+| `BoundedTradeRouter` | Fixed-adapter exact-input settlement | Implemented boundary; no production venue adapter configured |
 
 A public release will be consumed by the private app using an immutable version/commit and integrity record. No floating dependency on a moving main branch.

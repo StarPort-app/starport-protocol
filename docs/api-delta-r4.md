@@ -1,5 +1,7 @@
 # R4 API Design Delta
 
+Historical hosted-API design. The issuer-signature and settlement contract source is now implemented separately in [Pay/Trade v1](execution-implementation.md); the hosted mutation routes described below are not thereby activated.
+
 ## Scope
 
 `starport-protocol/specs/openapi.json` extends the previous R3 `0.2.0-design` contract to `0.3.0-design-r4`. It contains **70 operations**, preserving all **69 R3 operation IDs** and adding only the invoice issuer-authorization operation. This is a design artifact, not an implemented service, deployment, or signing action. Production servers remain absent, and financial execution/server signing remain disabled.

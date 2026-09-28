@@ -22,6 +22,8 @@ export { encodeHex, parseOperatorPublicKey, parseOperatorSignature, safeEqualTex
 export { messageDigest, possessionMessage, receiptMessage, taskMessage } from "./messages.js";
 export type { PossessionMessageInput, ReceiptMessageInput, TaskMessageInput } from "./messages.js";
 export { projectPublicReceipt } from "./redact.js";
+export { verifyReceiptSubmission, createReceiptVerifier } from './verify-receipt.js';
+export type { ReceiptVerificationContext, ReceiptVerification } from './verify-receipt.js';
 export type {
   Capability,
   ChainResult,

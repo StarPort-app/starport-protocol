@@ -1,4 +1,6 @@
 import { LIMITS } from "@starport/node-protocol";
+import { isIPv4 } from 'node:net';
+import { isPublicIpv4 } from './public-ip.js';
 
 export class TargetRegistryError extends Error {
   constructor(message: string) {
@@ -67,7 +69,8 @@ export function assertRegisteredTargets(targets: readonly RegisteredTarget[]): r
       || host === "0.0.0.0"
       || host.includes(":")
       || BLOCKED_SUFFIXES.some((suffix) => host.endsWith(suffix))
-      || isBlockedIpv4(host);
+      || isBlockedIpv4(host)
+      || (isIPv4(host) && !isPublicIpv4(host));
     if (parsed.protocol !== "https:" || parsed.username !== "" || parsed.password !== "" || parsed.hash !== "" || blockedHost || urls.has(parsed.href)) {
       throw new TargetRegistryError("Registered probe target must be a distinct public HTTPS GET URL.");
     }
