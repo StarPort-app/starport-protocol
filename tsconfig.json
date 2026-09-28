@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/node-protocol"
+    },
+    {
+      "path": "./packages/node-agent"
+    },
+    {
+      "path": "./packages/starlink-operator"
+    },
+    {
+      "path": "./packages/read-only-client"
+    }
+  ]
+}

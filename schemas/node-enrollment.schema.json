@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:starport:schema:node-enrollment:v0.3",
+  "title": "NodeEnrollment",
+  "$comment": "R4 design-only dependency-closed projection of the matching OpenAPI component; not a deployed implementation.",
+  "type": "object",
+  "properties": {
+    "operatorAddress": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    },
+    "capability": {
+      "enum": [
+        "starlink_gateway",
+        "rf_observer",
+        "evidence_reviewer"
+      ]
+    },
+    "publicKey": {
+      "type": "string",
+      "description": "Operator public key only",
+      "maxLength": 1024
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "maxItems": 20
+    },
+    "policyVersion": {
+      "type": "string",
+      "description": "Enrollment policy version"
+    }
+  },
+  "required": [
+    "operatorAddress",
+    "capability",
+    "publicKey",
+    "evidenceReferences",
+    "policyVersion"
+  ],
+  "additionalProperties": false
+}

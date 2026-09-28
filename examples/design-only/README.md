@@ -1,0 +1,1 @@
+Design-only examples must be explicitly marked environment=preview and source=design_fixture. No fabricated live node, financial transaction, signature or funded reward is included in this design release. Public mainnet metadata in docs/pons-spcx.md is an actual read-only snapshot, not a Starport deployment.

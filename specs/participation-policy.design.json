@@ -1,0 +1,351 @@
+{
+  "schemaVersion": "starport.participation-policy.design.v0.4",
+  "policyId": "sport-node-participation-r4",
+  "status": "proposed_design_only",
+  "activationAllowed": false,
+  "language": "en",
+  "defaultHome": "/network",
+  "modules": [
+    "Trade",
+    "Earn",
+    "Network",
+    "Pass",
+    "Missions",
+    "Pay",
+    "Treasury",
+    "Signals",
+    "Connect"
+  ],
+  "assetConfiguration": {
+    "chainId": 4663,
+    "sport": {
+      "symbol": "SPORT",
+      "address": null,
+      "decimals": null,
+      "supplyRaw": null,
+      "status": "pending_deployment",
+      "extraTransferTaxBps": 0
+    },
+    "launchQuoteAndCreatorRevenue": {
+      "symbol": "SPCX",
+      "recordedAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+      "recordedDecimals": 18,
+      "identityStatus": "recorded_not_freshly_reverified"
+    },
+    "creatorFeeTargetBps": 50,
+    "treasuryRecipient": {
+      "address": null,
+      "source": "fee_vault_pending_deployment",
+      "ownershipVerified": false,
+      "historicalBeneficiaryVerified": false,
+      "multisigAssumed": false,
+      "previousReferenceWallet": "0xAf3eAA38a445392f1E9d1faE463871998745cb75"
+    },
+    "automaticConversionEnabled": false,
+    "rewardAsset": {
+      "candidate": "SPCX",
+      "permissionlessWorldwidePayouts": false,
+      "assetAndParticipantEligibilityRequired": true,
+      "fallbackAsset": null,
+      "automaticRecipientSubstitutionAllowed": false
+    }
+  },
+  "rights": {
+    "holdingAloneCreatesRewardEntitlement": false,
+    "fixedAprOrApy": null,
+    "equityOrPhysicalAssetOwnership": false,
+    "baseChainConsensusRole": false,
+    "automaticGovernanceRights": false,
+    "ordinaryTradePaySportMinimumRaw": null,
+    "principalNonSlashableByPolicy": true,
+    "principalValueOrTechnicalSafetyGuarantee": false,
+    "operatorAffiliatedDelegationRewardEligible": false,
+    "ordinaryTradeEarnRequiresDeveloperIntegration": false
+  },
+  "admission": {
+    "mode": "supervised",
+    "coreCapability": "starlink_gateway",
+    "distinctOtherCapabilities": [
+      "rf_observer",
+      "evidence_reviewer"
+    ],
+    "independentReviewerApprovals": 2,
+    "responseTargetDays": 3,
+    "bondRequiredDuringApplication": false,
+    "probation": {
+      "minimumDays": 7,
+      "maximumDaysPerAttempt": 14,
+      "gatewayProbeMinimum": 100,
+      "gatewayObservedDaysMinimum": 7,
+      "gatewayIndependentVantageMinimum": 2,
+      "gatewayConnectivityPassBps": 9500,
+      "rfObservationSpecimenMinimum": 10,
+      "reviewerBlindSpecimenMinimum": 10,
+      "reviewerAcceptedSpecimenMinimum": 9,
+      "measuredCapacityLimitBps": 1000,
+      "routineAdmissionProbeRewards": false,
+      "customerFinancialTasksEnabled": false
+    },
+    "reassessmentIntervalDays": 30,
+    "materialChangeRequiresReassessment": true,
+    "operatorIdentityUnit": "known_control_group_not_wallet_or_key_count",
+    "assumePerfectSybilDetection": false,
+    "publicExactHouseholdCoordinatesAllowed": false,
+    "credentialCollectionAllowed": false,
+    "arbitraryRpcOrUrlRelayAllowed": false,
+    "assetEligibilityBypassViaEgressCountryAllowed": false,
+    "bondAmountByServiceTierRaw": null,
+    "assignmentCapacityByServiceTier": null
+  },
+  "epoch": {
+    "durationSeconds": 259200,
+    "schedule": "continuous_72_hour_windows_from_firstStartTimestamp_no_weekday_alignment",
+    "windowFormula": "[firstStartTimestamp+n*259200,firstStartTimestamp+(n+1)*259200)",
+    "firstStartTimestamp": null,
+    "earningWindowGuaranteesPaymentWithinWindow": false,
+    "paymentTiming": "after_evidence_review_separate_root_challenge_finalization_eligibility_and_actual_claim_settlement",
+    "overlappingEpochReviewsRequireSeparateFundingAndCommitments": true,
+    "paidWorkRequiresPriorConfirmedFunding": true,
+    "candidatePublicationTargetAfterEndSeconds": 172800,
+    "rootChallengeSeconds": 259200,
+    "materialRootRevisionRestartsChallenge": true,
+    "finalizationHardDeadlineAfterEndSeconds": 1209600,
+    "unresolvedAtHardDeadline": "close_without_claimable_root_and_return_undistributed_funding_to_recorded_source",
+    "unresolvedIndividualAllocation": "exclude_or_reserve_before_finalization_no_automatic_validity",
+    "lateAwards": "separately_funded_future_allocation_only",
+    "finalizedRootMutable": false,
+    "claimWindowAfterFinalizationSeconds": 7776000,
+    "maximumAggregateProtectivePauseSeconds": 604800,
+    "claimExtension": "actual_distributor_pause_duration_capped_at_604800_seconds",
+    "absoluteClaimLifecycleAfterFinalizationSeconds": 8380800,
+    "expiredUnclaimedAndDustRecipient": "recorded_funding_source_under_published_epoch_terms",
+    "claimEligibilityRevalidated": true,
+    "merkleMode": "standard_inclusion_with_declared_total_and_independent_complete_manifest_review",
+    "merkleProofProvesAggregateLeafSum": false,
+    "manifestReview": [
+      "leaf_sum_equals_declared_allocation",
+      "unique_claim_indices_and_entitlements",
+      "control_group_caps",
+      "participant_and_asset_eligibility",
+      "policy_match",
+      "manifest_root_match"
+    ],
+    "contractConservation": "claimedRaw <= declaredAllocatedRaw <= confirmedUnreservedFundingRaw_per_asset",
+    "publisherTrustBoundary": "contract_total_cap_does_not_prevent_oversubscribed_leaf_manifest_from_denying_later_claims",
+    "commitmentDomain": [
+      "chainId",
+      "distributor",
+      "epoch",
+      "policy",
+      "asset",
+      "participant",
+      "index",
+      "amountRaw"
+    ],
+    "durationSource": "explicit_user_choice_3_days"
+  },
+  "funding": {
+    "mode": "explicit_manual_approval_and_transfer",
+    "newRewardBudgetMaximumSurplusBps": 2500,
+    "budgetCapPeriod": "per_funded_epoch",
+    "budgetCapBasis": "actual_same_asset_spendable_surplus_at_funding_decision_after_prior_commitments",
+    "budgetCapIsAprOrApy": false,
+    "rawAssetEpochCap": null,
+    "reserveTargetDays": 30,
+    "observedCostLookbackCompleteWeeks": 4,
+    "startupReserveBasis": "approved_initial_operating_plan",
+    "crossAssetLiabilityNettingAllowed": false,
+    "waterfall": [
+      "reconcile_received_unrestricted_revenue_and_historical_beneficiary",
+      "exclude_known_circular_related_party_receipts_from_organic_subsidy_basis",
+      "reserve_committed_liabilities_in_actual_assets",
+      "restore_30_day_operating_reserve",
+      "deduct_existing_earmarks_and_reward_commitments",
+      "approve_min_raw_epoch_cap_or_25_percent_same_asset_surplus",
+      "transfer_and_confirm_reward_funding_before_paid_epoch"
+    ],
+    "negativeSurplusBudgetRaw": "0",
+    "sourceAssetsExclude": [
+      "delegated_principal",
+      "operator_bonds",
+      "locked_lp",
+      "forecast_volume",
+      "unrealized_token_appreciation"
+    ],
+    "budgetSplitBps": {
+      "gatewayWork": 7000,
+      "rfObservationWork": 1000,
+      "independentReviewWork": 1000,
+      "delegationParticipation": 1000
+    },
+    "externalSponsoredMissions": "separate_prefunded_budget_and_terms",
+    "unusedBuckets": "remain_unallocated_same_asset_no_automatic_reallocation_or_conversion",
+    "futureReuseRequiresSeparateApproval": true,
+    "treasuryRecipientAutoForwardingEnabled": false
+  },
+  "workPoints": {
+    "transferable": false,
+    "rewardGuarantee": false,
+    "defaultPerAcceptedBoundedUnit": {
+      "starlink_gateway": 100,
+      "rf_observer": 100,
+      "evidence_reviewer": 100
+    },
+    "canonicalTaskPayableCapCount": 1,
+    "valueOrTradingVolumeMultiplier": false,
+    "truthfulFailedExecutionMayEstablishDeliveredRelayWork": true,
+    "reviewerPreferredVerdictMultiplier": false,
+    "zeroPointCategories": [
+      "known_self_requested_tasks",
+      "related_party_tasks",
+      "circular_wash_activity",
+      "duplicate_economic_actions",
+      "repeated_broadcasts_of_same_work",
+      "routine_admission_probes"
+    ],
+    "maximumWorkBucketSharePerKnownControlGroupBps": 2000,
+    "workAllocationFormula": "min(floor(bucketRaw*groupAcceptedPoints/totalAcceptedPoints),floor(bucketRaw*2000/10000)); zero when totalAcceptedPoints=0",
+    "excessAllocation": "unallocated_not_automatically_redistributed",
+    "sameCostReimbursementTwiceAllowed": false,
+    "requiredRecordFields": [
+      "epoch",
+      "canonicalTask",
+      "assignedSlot",
+      "operatorControlGroup",
+      "capability",
+      "policyVersion",
+      "templateVersion",
+      "sourceCommitment",
+      "assessment",
+      "observedTimes",
+      "reversalReference"
+    ]
+  },
+  "delegation": {
+    "asset": "configured_SPORT_only",
+    "eligibleNodeCapabilities": [
+      "starlink_gateway"
+    ],
+    "principalCanFundOperations": false,
+    "principalCanCoverOperatorPenalties": false,
+    "principalCanTradeOrConvert": false,
+    "timeWeightUnit": "raw_SPORT_seconds",
+    "closingBalanceOnlySnapshotAllowed": false,
+    "capacityDefinition": "min(independentlyMeasuredServiceCapacity,schedulerAuthorizedCapacityJustifiedByUsefulDemand)",
+    "supportSportRawPerCapacityUnit": null,
+    "capacityUnitDefinition": null,
+    "capacityMeasurementWindowSeconds": null,
+    "weightFormula": "integral(activeEligiblePrincipal_i_n(t)*min(1,supportCap_n(t)/totalEligibleActivePrincipal_n(t)))dt; zero when denominator=0",
+    "nodeDelegationBudgetBasis": "independently_accepted_gateway_work_points",
+    "maximumDelegationBucketSharePerOperatorControlGroupBps": 2000,
+    "maximumNodeDelegationSharePerDelegatorControlGroupBps": 1000,
+    "zeroUsefulWorkMeansZeroDelegationReward": true,
+    "operatorAffiliatedSelfDelegationRewardEligible": false,
+    "overCapUnallocatedSharesRedistributed": false,
+    "rewardWeightStops": "canonical_exit_request_block_timestamp_after_confirmation_and_reconciliation",
+    "browserClickStopsWeight": false,
+    "reorgedExitRequest": "reconcile_principal_status_and_time_weight",
+    "newDepositsMayResetOldUnlock": false,
+    "unconfiguredLimitsAllowDeposits": false
+  },
+  "principalExit": {
+    "requestAuthority": "principal_owner_direct_contract_call",
+    "withdrawalRecipient": "principal_owner",
+    "normalCooldownSeconds": 604800,
+    "deadlineClock": "canonical_request_block_timestamp",
+    "uiCountdown": "display_after_configured_confirmation_policy_recompute_on_reorg",
+    "backendOrOperatorConsentRequired": false,
+    "rewardDisputeCanBlock": false,
+    "adminCanExtendExistingUnlock": false,
+    "pauseCanBlockOwnerWithdrawals": false,
+    "incidentCooldownSeconds": 172800,
+    "incidentConditions": [
+      "onchain_recorded_protocol_safety_pause",
+      "onchain_recorded_assigned_gateway_safety_suspension"
+    ],
+    "incidentUnlockFormula": "min(normalUnlockTimestamp,emergencyRequestTimestamp+172800)",
+    "incidentEligibilitySnapshottedAtRequest": true,
+    "incidentClosureCanRelock": false,
+    "optionalPermissionlessIncident": {
+      "defaultEnabled": false,
+      "requiresReviewedOnchainCheckpointOracle": true,
+      "staleCheckpointSeconds": 259200,
+      "offchainTimestampSufficient": false
+    },
+    "ordinaryExitRequiresHeartbeat": false,
+    "externalLimitations": [
+      "chain_halt",
+      "token_transfer_restrictions",
+      "contract_compromise_not_solved_by_policy"
+    ]
+  },
+  "operatorBond": {
+    "escrow": "separate_from_delegation_principal",
+    "asset": "configured_SPORT_only",
+    "depositTermsMustBindPolicyHash": true,
+    "rawRequiredByServiceTier": null,
+    "moreBondProvesMoreCapacity": false,
+    "stopNewAssignmentsOnUnbondRequest": true,
+    "closeOrMarkExistingTasksUnresolvedSeconds": 86400,
+    "normalUnbondSeconds": 1209600,
+    "incidentUncontestedUnbondSeconds": 604800,
+    "incidentDelegation48HourShortcutAllowed": false,
+    "challengeFileWithinReceiptSeconds": 604800,
+    "challengeFileNotAfterUnbondRequestSeconds": 604800,
+    "initialDecisionWithinFilingSeconds": 604800,
+    "appealWindowAfterNoticeSeconds": 604800,
+    "finalDecisionWithinFilingSeconds": 1814400,
+    "absoluteExitBoundAfterRequestSeconds": 2419200,
+    "adjudication": {
+      "proposedPanelSize": 3,
+      "requiredNonConflictedApprovals": 2,
+      "existingPanelAssumed": false,
+      "operatorOrProposerMayJudgeOwnCase": false
+    },
+    "penaltyBpsOfIncidentBondSnapshot": {
+      "proven_intentional_duplicate_reward_claim": 1000,
+      "proven_fabricated_evidence": 2500,
+      "proven_exact_domain_equivocation": 2500
+    },
+    "correlatedIncidentMaximumPenaltyBps": 2500,
+    "absolutePenaltyLimit": "remaining_unreserved_operator_bond_only",
+    "notSlashableAlone": [
+      "ordinary_downtime",
+      "truthful_corrected_state",
+      "chain_reorganization",
+      "unsuccessful_trade",
+      "review_disagreement"
+    ],
+    "heldAmount": "maximum_provable_contested_slice_only",
+    "correlatedClaimsReserveMultipleTimes": false,
+    "deadlineWithoutResolvedCase": "release_contested_slice_service_suspension_may_remain",
+    "penaltyDestination": "separately_accounted_remediation_reserve",
+    "automaticAccuserBounty": false,
+    "delegationPrincipalAccessible": false,
+    "dependentActivationWhenEscrowUnsupported": false
+  },
+  "changeControl": {
+    "minimumNoticeBeforeAffectedEpochSeconds": 604800,
+    "scope": "future_deposits_assignments_epochs_only",
+    "existingExitCanBeLengthened": false,
+    "pastIncidentPenaltyCanBeRaised": false,
+    "finalizedAllocationCanBeRedirected": false,
+    "runtimeConfigurationRequired": [
+      "sportAddress",
+      "sportDecimals",
+      "supportedSportTokenBehavior",
+      "bondRequirementsByTierRaw",
+      "capacityDefinitionsAndMeasurementWindows",
+      "supportSportRawPerCapacityUnit",
+      "workloadRateConcurrencyCaps",
+      "rawAssetEpochCaps",
+      "approvedCostPlan",
+      "actualRoleAndSignerIdentities",
+      "chainConfirmationAndFinalityPolicy",
+      "assetAndParticipantEligibilityIntegration",
+      "optionalCheckpointOracleIfEnabled"
+    ],
+    "missingConfiguration": "block_dependent_live_capability_not_read_only_design",
+    "implementationOrDeploymentAuthorizedByThisFile": false
+  }
+}

@@ -1,0 +1,17 @@
+.DS_Store
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+.secrets/
+wallets/
+.local-executor/
+logs/
+*.log
+contracts/out/
+contracts/cache/

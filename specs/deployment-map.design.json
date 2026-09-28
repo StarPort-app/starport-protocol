@@ -1,0 +1,602 @@
+{
+  "kind": "starport_deployment_map_design",
+  "revision": "R5-fee-vault-first",
+  "documentStatus": "design_only_not_deployment_configuration",
+  "sourceReviewAtUtc": "2026-09-26T04:42:22Z",
+  "launchAuthorized": false,
+  "deploymentAuthorized": false,
+  "financialExecutionEnabled": false,
+  "serverSigningEnabled": false,
+  "automaticBroadcastEnabled": false,
+  "defaultModule": "Network",
+  "modules": [
+    "Trade",
+    "Earn",
+    "Network",
+    "Pass",
+    "Missions",
+    "Pay",
+    "Treasury",
+    "Signals",
+    "Connect"
+  ],
+  "languagePolicy": "English only until complete core; no i18n runtime in this phase.",
+  "network": {
+    "targetChainId": 4663,
+    "targetName": "Robinhood Chain",
+    "testnetChainId": 46630,
+    "gasAsset": "ETH",
+    "sourceUrl": "https://docs.robinhood.com/chain/connecting/",
+    "selectedRpcUrl": null,
+    "selectedRpcProvider": null,
+    "liveConnectionVerified": false
+  },
+  "assets": {
+    "projectToken": {
+      "ticker": "SPORT",
+      "tickerStatus": "user_selected",
+      "contractAddress": null,
+      "deploymentStatus": "pending_deployment",
+      "decimals": null,
+      "decimalsVerified": false,
+      "additionalTransferTaxBps": 0,
+      "customMintOrTaxContractPlanned": false,
+      "nameAndSupplySource": "Separately approved PONS launch configuration; not fabricated here."
+    },
+    "launchQuote": {
+      "ticker": "SPCX",
+      "chainId": 4663,
+      "contractAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+      "decimals": 18,
+      "evidence": "existing_recorded_official_asset_snapshot",
+      "sourceUrl": "https://api.robinhood.com/rhj/assets",
+      "freshAssetObservationPerformed": false,
+      "referenceValuationIsQuantity": false
+    },
+    "paymentCandidate": {
+      "ticker": "USDG",
+      "chainId": 4663,
+      "contractAddress": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://docs.robinhood.com/chain/contracts/",
+      "decimals": null,
+      "bytecodeVerified": false,
+      "paymentIntegrationApproved": false,
+      "enabled": false
+    },
+    "initialRewardCandidate": {
+      "assetRef": "launchQuote",
+      "eligibilityRequired": true,
+      "enabled": false,
+      "automaticAlternativeAsset": false
+    }
+  },
+  "treasury": {
+    "recipient": null,
+    "selectionEvidence": "user_approved_contract_fee_recipient_pending_deployment",
+    "checksumEvidence": "Root agent reported an offline EIP-55 casing check; not a chain observation.",
+    "ownershipVerified": false,
+    "walletType": "unverified",
+    "signingPolicy": "unverified",
+    "canReceiveAssetVerified": false,
+    "rolesInferredFromRecipient": false,
+    "actualPonsBeneficiaryVerified": false,
+    "automaticFundingEnabled": false,
+    "automaticConversionEnabled": false,
+    "downstreamFunding": "Separate explicitly approved manual wallet action after asset-specific revenue, beneficiary, balance and finality reconciliation.",
+    "claimAccount": null,
+    "epochFunder": null,
+    "previousReferenceWallet": "0xAf3eAA38a445392f1E9d1faE463871998745cb75"
+  },
+  "launchTarget": {
+    "creatorTaxBps": 50,
+    "creatorTaxRuleEvidence": "User-selected target restored to 50 bps; basis-point support was source-reviewed. Recheck mutable fee caps and economics before launch.",
+    "creatorFeeRecipientTarget": null,
+    "baseCurveFeeBps": null,
+    "starportWrapperFeeBps": 0,
+    "additionalTokenTransferTaxBps": 0,
+    "launchConfigId": null,
+    "expectedEconomics": null,
+    "initiatingAccount": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
+    "buybackEnabled": false,
+    "buybackChoiceStatus": "Conservative design default; explicit launch review required.",
+    "beneficiaryBinding": {
+      "status": "pending_vault_deployment_and_PONS_binding",
+      "parameterPath": "TokenParams.creatorFeeRecipient",
+      "zeroAddressBehaviorInReference": "Defaults to originalDeployer; direct launch derives originalDeployer from msg.sender.",
+      "requiredSuppliedValue": null,
+      "selfServiceChangeInReference": "transferCreatorFeeRecipient(address token,address newRecipient); current recipient only",
+      "ownerOverrideInReference": "setCreatorFeeRecipient(address token,address newRecipient); timelocked protocol-owner proposal",
+      "setFeeRecipientSelectorVerified": false,
+      "deployedFactoryBindingVerified": false,
+      "silentLaunchAccountChangeAllowed": false,
+      "referenceCommit": "162310fbd1217717e2f5e4cde794d6a11322b469",
+      "referenceSourceUrl": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2LaunchFactory.sol",
+      "referenceBundleCaveat": "Known mixed-version dependencies; not a proven deployed-source bundle.",
+      "activationRequirement": "Verify deployed ABI and beneficiary logic; explicitly bind nonzero target; read resulting actual launch beneficiary without changing authorized initiating account."
+    }
+  },
+  "externalReferences": {
+    "ponsFactory": {
+      "name": "PONS factory",
+      "chainId": 4663,
+      "address": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://docs.ponsfamily.com/v2",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "ponsMemeHook": {
+      "name": "PONS meme hook",
+      "chainId": 4663,
+      "address": "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://docs.ponsfamily.com/v2",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "ponsFeeEscrow": {
+      "name": "PONS fee escrow",
+      "chainId": 4663,
+      "address": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://docs.ponsfamily.com/v2",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "uniswapPoolManager": {
+      "name": "Uniswap v4 PoolManager",
+      "chainId": 4663,
+      "address": "0x8366a39cc670b4001a1121b8f6a443a643e40951",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "uniswapQuoter": {
+      "name": "Uniswap v4 Quoter",
+      "chainId": 4663,
+      "address": "0x8dc178efb8111bb0973dd9d722ebeff267c98f94",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "uniswapStateView": {
+      "name": "Uniswap v4 StateView",
+      "chainId": 4663,
+      "address": "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "uniswapUniversalRouter": {
+      "name": "Universal Router 2.1.2 candidate",
+      "chainId": 4663,
+      "address": "0x204FAca1764B154221e35c0d20aBb3c525710498",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    },
+    "permit2": {
+      "name": "Permit2 candidate",
+      "chainId": 4663,
+      "address": "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+      "evidence": "official_documentation_listed",
+      "sourceUrl": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "bytecodeVerified": false,
+      "runtimeVerified": false,
+      "enabled": false
+    }
+  },
+  "starportContracts": {
+    "executionRouter": {
+      "name": "StarportExecutionRouter",
+      "purpose": "Bounded wallet-called Trade and Pay; invoice-key settlement and nonce protection.",
+      "chainId": 4663,
+      "address": null,
+      "codeHash": null,
+      "abiRevision": null,
+      "state": "design_only_not_deployed",
+      "enabled": false,
+      "upgradeModel": "non_upgradeable_first_version_proposed",
+      "serverRelayedFinancialSignaturesEnabled": false,
+      "retainsStandingUserDeposits": false,
+      "arbitraryCalldataEnabled": false,
+      "invoiceIssuerSignatureRequired": true
+    },
+    "delegationVault": {
+      "name": "SportDelegationVault",
+      "purpose": "Isolated SPORT principal with owner-only exit and withdrawal.",
+      "chainId": 4663,
+      "address": null,
+      "codeHash": null,
+      "abiRevision": null,
+      "state": "design_only_not_deployed",
+      "enabled": false,
+      "upgradeModel": "non_upgradeable_first_version_proposed",
+      "stakeAssetAddress": null,
+      "adminPrincipalWithdrawal": false,
+      "slashingEnabled": false,
+      "investmentEnabled": false,
+      "withdrawalPauseAllowed": false
+    },
+    "merkleRewards": {
+      "name": "FundedMerkleRewards",
+      "purpose": "Manually funded per-asset epochs, immutable reviewed roots and eligible owner claims.",
+      "chainId": 4663,
+      "address": null,
+      "codeHash": null,
+      "abiRevision": null,
+      "state": "design_only_not_deployed",
+      "enabled": false,
+      "upgradeModel": "non_upgradeable_first_version_proposed",
+      "fundingAssetAddress": null,
+      "rootPublisher": null,
+      "rootReviewer": null,
+      "funder": null,
+      "refundDestinationRule": "recorded_single_epoch_funder",
+      "automaticFundingEnabled": false,
+      "principalAccess": false
+    }
+  },
+  "separateOptionalComponents": {
+    "operatorBondEscrow": {
+      "name": "OperatorBondEscrow",
+      "purpose": "Optional isolated operator collateral; never delegated principal.",
+      "chainId": 4663,
+      "address": null,
+      "codeHash": null,
+      "abiRevision": null,
+      "state": "design_only_not_deployed",
+      "enabled": false,
+      "upgradeModel": "non_upgradeable_first_version_proposed",
+      "coreActivationDependency": false,
+      "normalUnbondSeconds": 1209600,
+      "incidentUncontestedUnbondSeconds": 604800,
+      "absoluteContestedExitBoundSeconds": 2419200,
+      "principalEmergency48hRuleApplies": false
+    },
+    "eligibilityIntegration": {
+      "address": null,
+      "authority": null,
+      "providerEndpoint": null,
+      "status": "unavailable_until_reviewed_policy_and_enforcement_exist",
+      "isRobinhoodPublishedApi": false,
+      "failClosed": true
+    },
+    "incidentCheckpointOracle": {
+      "address": null,
+      "enabled": false,
+      "staleThresholdSeconds": 259200,
+      "offchainHeartbeatCountsAsOnchainProof": false
+    }
+  },
+  "adapters": {
+    "pons_curve_v1": {
+      "status": "unavailable_sport_curve_pending",
+      "enabled": false,
+      "factoryRef": "ponsFactory",
+      "curveAddress": null,
+      "sportAddress": null,
+      "quoteAssetRef": "launchQuote",
+      "phasePolicy": {
+        "0": "Use verified curve only; sells also require readyToGraduate=false.",
+        "1": "Unavailable transition; no auto-graduation action.",
+        "2": "New post-graduation quote and review required.",
+        "3": "Unavailable recovery state."
+      },
+      "partialFillPolicy": "reject_and_atomically_revert_v1",
+      "deadlineEnforcedBy": "StarportExecutionRouter",
+      "minimumOutputPolicy": "absolute_recipient_raw_amount",
+      "publicHttpQuoteApi": null,
+      "quoteSource": "Version-pinned integer adapter over sourced curve state; not implemented.",
+      "enabledOnlyAfter": [
+        "SPORT and curve identity verified",
+        "actual creator recipient and 50 bps target verified",
+        "ABI/code and fee accounting matched",
+        "eligibility integration and deadline wrapper reviewed"
+      ],
+      "accountDependentFeeSemanticsVerified": false,
+      "feeIdentityGate": "Verify deployed direct caller/router, actual recipient, user and hook callback semantics; quote/revalidate exact call identities. Unsupported or changed opening protection/fee semantics block the wrapper, never bypass protections."
+    },
+    "pons_v4_v1": {
+      "status": "unavailable_actual_pool_and_router_compatibility_unverified",
+      "enabled": false,
+      "poolId": null,
+      "poolKey": null,
+      "poolManagerRef": "uniswapPoolManager",
+      "routerRef": "uniswapUniversalRouter",
+      "permit2Ref": "permit2",
+      "allowedCommands": null,
+      "arbitraryRouterCalldataAllowed": false,
+      "autoMigrateCurveIntent": false,
+      "requiresNewQuoteAfterGraduation": true,
+      "accountDependentFeeSemanticsVerified": false,
+      "feeIdentityGate": "Verify deployed direct caller/router, actual recipient, user and hook callback semantics; quote/revalidate exact call identities. Unsupported or changed opening protection/fee semantics block the wrapper, never bypass protections."
+    },
+    "rwa_rfq_v1": {
+      "status": "unavailable_no_verified_provider_route",
+      "enabled": false,
+      "provider": "RFQ provider candidate; not selected or authorized",
+      "quoteEndpoint": null,
+      "settlementAddress": null,
+      "takerCompatibilityVerified": false,
+      "assetPairs": [],
+      "credentialsPresentOrRead": false,
+      "primaryMintBurnEnabled": false,
+      "eligibilityRequired": true
+    },
+    "direct_payment_v1": {
+      "status": "design_only",
+      "enabled": false,
+      "assetAllowlist": [],
+      "exactReceivedAmountRequired": true,
+      "enforcedDeadlineRequired": true
+    },
+    "invoice_payment_v1": {
+      "status": "design_only_issuer_handshake_specified_not_implemented",
+      "enabled": false,
+      "openInvoicesSupported": true,
+      "restrictedInvoicesSupported": true,
+      "payerBoundAt": "authenticated_preparation_and_onchain_msg_sender",
+      "issuerAuthorization": "wallet_EIP712_request_signature_not_server_signature",
+      "invoiceKeyFields": [
+        "chainId",
+        "router",
+        "issuer",
+        "invoiceId"
+      ],
+      "invoiceDigestBindsVersion": true,
+      "singleSettlementAcrossVersions": true,
+      "eventMatchRequired": true,
+      "issuerAuthorizationEndpoint": "POST /v1/invoices/{id}/issuer-authorization",
+      "draftPubliclyPayable": false
+    }
+  },
+  "replayAndSubmission": {
+    "executionCaller": "bound_user_wallet",
+    "actionNonceNamespaces": [
+      "trade",
+      "pay",
+      "delegation",
+      "reward_claim"
+    ],
+    "apiIdempotencyIsTransactionNonce": false,
+    "walletEvmNonceIsActionNonce": false,
+    "deadlineGuard": "block.timestamp <= bound deadline",
+    "nonceOnRevert": "Entire transaction reverts, including consumed action nonce; retry still needs fresh review and user decision.",
+    "onchainInvalidation": "Owner-called bitmap invalidation; races with execution until canonical evidence resolves.",
+    "appApiSubmission": "transaction_hash_only",
+    "signedTransactionAcceptedByAppApi": false,
+    "unknownSubmissionRecovery": "Reconcile existing hash, sender/EVM nonce if available, contract nonce, exact call/events and canonical blocks; no new action or automatic rebroadcast.",
+    "invoiceAttribution": "Match issuer-approved invoice/version, payer, recipient, asset, amount and invoice event; one canonical event cannot satisfy two invoices."
+  },
+  "delegationPolicy": {
+    "assetTicker": "SPORT",
+    "assetAddress": null,
+    "normalExitSeconds": 604800,
+    "incidentExitSeconds": 172800,
+    "normalClock": "canonical_exit_request_block_timestamp",
+    "incidentUnlockFormula": "min(normalUnlockAt, emergencyRequestAt + 172800)",
+    "rewardWeightStopsAt": "canonical confirmed exit-request effective timestamp; recompute on reorg",
+    "independentTranches": true,
+    "oldTrancheRelockAllowed": false,
+    "ownerOnlyWithdrawal": true,
+    "administratorCanExtendDeadline": false,
+    "guardianOrApiRequiredForOrdinaryWithdrawal": false,
+    "staleCheckpointShortcutEnabled": false,
+    "withdrawalRecipient": "recorded_owner_only"
+  },
+  "rewardPolicy": {
+    "epochSeconds": 259200,
+    "epochTimezone": "UTC",
+    "rewardAssetRef": "launchQuote",
+    "grossFeesEqualRewardBudget": false,
+    "netFundedBudgetBps": {
+      "gatewayWork": 7000,
+      "rfObservation": 1000,
+      "independentReview": 1000,
+      "sportDelegationParticipation": 1000
+    },
+    "unusedBucketPolicy": "carry under approved budget policy; no automatic conversion",
+    "proposedRootPublicationAfterEpochEndMaxSeconds": 172800,
+    "rootChallengeSeconds": 259200,
+    "absoluteFinalizationAfterEpochEndMaxSeconds": 1209600,
+    "noFinalRootOutcome": "close_without_claims_and_return_unallocated_to_recorded_funder",
+    "rootImmutableAfterFinalization": true,
+    "claimWindowAfterFinalizationSeconds": 7776000,
+    "maxCumulativePauseSeconds": 604800,
+    "maxClaimLifecycleSeconds": 8380800,
+    "leafFields": [
+      "chainId",
+      "distributorAddress",
+      "epochId",
+      "index",
+      "participant",
+      "asset",
+      "amountRaw",
+      "policyHash"
+    ],
+    "leafEncoding": "typed ABI encoding, domain-separated and double hashed; sorted-pair single-leaf proof",
+    "merkleProofProvesAggregateLeafSum": false,
+    "independentManifestSumEligibilityReviewRequired": true,
+    "onchainInvariant": "claimed <= declared allocated <= available actual escrow funding",
+    "fundingFinalityBeforePublication": "independent publishing policy; no claim that a contract observes its own L1 finality",
+    "claimRecipient": "leaf participant must equal msg.sender",
+    "automaticAlternateRewardAsset": false,
+    "fixedApyPromised": false,
+    "firstStartTimestamp": null,
+    "epochAlignment": "contiguous_from_explicit_firstStartTimestamp_no_weekday_alignment",
+    "proposedBudgetCapBpsOfActualSurplus": 2500,
+    "rawBudgetCap": null,
+    "budgetCapFormula": "min(explicit asset raw cap, actual reconciled spendable surplus * 2500 / 10000)",
+    "threeDayEarningEpochGuaranteesThreeDayPayment": false
+  },
+  "starlinkTransport": {
+    "status": "design_only_no_live_gateway_verified",
+    "gatewayUrl": null,
+    "walletSupportVerified": false,
+    "route": "wallet -> authenticated enrolled gateway -> Starlink WAN -> fixed approved RPC upstream",
+    "walletSignsLocally": true,
+    "gatewaySignsFinancialActions": false,
+    "financialPayloadStoredInReceipts": false,
+    "broadcastMethod": "eth_sendRawTransaction on the explicitly chosen wallet RPC transport; not the Starport application API",
+    "remoteSigningMethodsAllowed": false,
+    "arbitraryUpstreamAllowed": false,
+    "openUnauthenticatedRpcProxyAllowed": false,
+    "methodAllowlist": null,
+    "credentialsOrSessionValuesIncluded": false,
+    "receiptFields": [
+      "requestId",
+      "nodeId",
+      "methodClass",
+      "transactionHash",
+      "ingressAt",
+      "egressAt",
+      "upstreamIdentity",
+      "resultDigest"
+    ],
+    "satellitePathCryptographicallyProven": false,
+    "consensusSecurityClaim": false,
+    "guaranteedFasterOrSuccessfulTransaction": false,
+    "unsupportedWalletBehavior": "Mark broadcast route unverified; do not claim gateway routing from a dapp read-provider setting."
+  },
+  "finalityPolicy": {
+    "included": "matched sequencer/L2 observation",
+    "confirmed": "verified L1 batch posting",
+    "finalized": "containing L1 block finalized",
+    "l2BlockCountSubstitutionAllowed": false,
+    "mappingReaderImplemented": false,
+    "missingEvidenceBehavior": "Remain included or unknown; never fabricate finality.",
+    "sourceUrl": "https://docs.robinhood.com/chain/transaction-finality/"
+  },
+  "sources": [
+    {
+      "id": "pons_docs",
+      "url": "https://docs.ponsfamily.com/v2",
+      "conclusion": "Documents curve/v4 lifecycle and asset-specific fee handling; live SPORT route remains unknown."
+    },
+    {
+      "id": "pons_factory_reference",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2LaunchFactory.sol",
+      "conclusion": "Explicit launch recipient with zero fallback; current-recipient transfer method. Known mixed-version bundle is not deployed equivalence."
+    },
+    {
+      "id": "robinhood_network",
+      "url": "https://docs.robinhood.com/chain/connecting/",
+      "conclusion": "Chain 4663, separate testnet 46630, ETH gas; no connection performed."
+    },
+    {
+      "id": "robinhood_stock_tokens",
+      "url": "https://docs.robinhood.com/chain/stock-tokens/",
+      "conclusion": "Stock Token structure and jurisdictional restrictions require a real eligibility policy."
+    },
+    {
+      "id": "robinhood_venues",
+      "url": "https://docs.robinhood.com/chain/building-with-stock-tokens/",
+      "conclusion": "Secondary venues described; no specific Starport quote/route/permission verified."
+    },
+    {
+      "id": "robinhood_data_api",
+      "url": "https://docs.robinhood.com/chain/stock-token-apis/",
+      "conclusion": "Read-only data is not execution or authorization."
+    },
+    {
+      "id": "robinhood_oracles",
+      "url": "https://docs.robinhood.com/chain/oracles-and-price-feeds/",
+      "conclusion": "Check freshness, sequencer, pause and multiplier consistently; actual asset feed bindings pending."
+    },
+    {
+      "id": "uniswap_deployments",
+      "url": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+      "conclusion": "Published chain-specific candidate addresses, not code or route verification."
+    },
+    {
+      "id": "openzeppelin_crypto",
+      "url": "https://docs.openzeppelin.com/contracts/5.x/api/utils/cryptography",
+      "conclusion": "Typed domains/signature and Merkle primitives inform the proposed design; no implementation audit implied."
+    },
+    {
+      "id": "openzeppelin_erc20",
+      "url": "https://docs.openzeppelin.com/contracts/5.x/api/token/erc20",
+      "conclusion": "Use reviewed transfer helpers; exact token behavior still needs verification."
+    },
+    {
+      "id": "eip712",
+      "url": "https://eips.ethereum.org/EIPS/eip-712",
+      "conclusion": "Typed signing does not supply application replay protection."
+    },
+    {
+      "id": "json_rpc",
+      "url": "https://ethereum.org/developers/docs/apis/json-rpc/",
+      "conclusion": "Wallet RPC can transmit signed bytes; app API remains hash-only."
+    }
+  ],
+  "unavailableActivationInputs": [
+    "SPORT/curve addresses",
+    "Starport contract deployments and code hashes",
+    "Deployed PONS beneficiary binding verification",
+    "Authorized launch account and contract-role ownership",
+    "Actual eligible RFQ provider and route",
+    "Verified SPORT v4 pool and router command path",
+    "Per-asset oracle/heartbeat and policy enforcement integration",
+    "Implemented and reviewed invoice issuer-signature verification",
+    "Supported wallet gateway transport",
+    "Finality mapping reader",
+    "Optional operator bond escrow and onchain checkpoint oracle",
+    "Deployed PONS curve/hook account-dependent fee semantics with wrapper caller"
+  ],
+  "performedActions": {
+    "readOnlyPrimaryDocumentation": true,
+    "readOnlyExistingDesignFiles": true,
+    "runtimeTests": false,
+    "chainRpcCalls": false,
+    "simulations": false,
+    "walletAccess": false,
+    "approvals": false,
+    "signatures": false,
+    "broadcasts": false,
+    "deployments": false,
+    "installs": false,
+    "liveRepositoryWrites": false
+  },
+  "schemaVersion": "0.1.0-design-r4",
+  "apiDesign": {
+    "artifact": "openapi-r4.json",
+    "version": "0.3.0-design-r4",
+    "operationCount": 70,
+    "originalOperationIdsPreserved": 69,
+    "newOperation": "POST /v1/invoices/{id}/issuer-authorization",
+    "tradeExecutionMode": "wallet_direct",
+    "financialRelayAuthorizationEnabled": false,
+    "runtimeImplemented": false
+  },
+  "feeCollection": {
+    "vaultAddress": null,
+    "asset": "SPCX",
+    "assetAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+    "escrowReference": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+    "escrowBindingVerified": false,
+    "controller": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
+    "payoutRecipient": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
+    "keeperAddress": "0x2cC7450618B183346e2A47682a6a09ed255580fA",
+    "keeperGasAsset": "ETH",
+    "automaticCollectionDesigned": true,
+    "automaticCollectionEnabled": false,
+    "automaticConversionEnabled": false,
+    "minimumRevenueToRunApplication": null,
+    "sweepAndClaimAreSeparate": true,
+    "deploymentPaused": true,
+    "roleAddressesConfirmedAt": "2026-09-28"
+  }
+}

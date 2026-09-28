@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:starport:schema-delta:node-enrollment-possession:v1",
+  "title": "NodeEnrollmentPossessionDelta",
+  "$comment": "PROPOSAL ONLY. Not merged into OpenAPI or node-enrollment.schema.json. NodeEnrollment is closed and has no proof-of-possession or key-scheme field. Do not activate POST /v1/nodes/enrollments until this delta is reviewed and the route is explicitly registered.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["publicKeyScheme", "possession"],
+  "properties": {
+    "publicKeyScheme": {
+      "const": "ed25519-raw-v1",
+      "description": "Node crypto Ed25519 raw 32-byte public key. Not an Ethereum address or wallet signature."
+    },
+    "possession": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "scheme", "challengeId", "signedAt", "signature"],
+      "properties": {
+        "domain": { "const": "starport-operator/v1" },
+        "scheme": { "const": "starport-operator-message/v1" },
+        "challengeId": { "type": "string", "minLength": 16, "maxLength": 128 },
+        "signedAt": { "type": "string", "format": "date-time" },
+        "signature": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{128}$",
+          "description": "Ed25519 signature over the canonical possession message. 64 raw bytes, lowercase hex."
+        }
+      }
+    }
+  }
+}
