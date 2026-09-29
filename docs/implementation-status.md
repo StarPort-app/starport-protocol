@@ -6,7 +6,7 @@ This map describes the public source tree, not a guarantee of deployed product a
 
 | Module | Inspectable implementation | Remaining integration |
 | --- | --- | --- |
-| Network | Canonical messages; bounded HTTPS transport with DNS pinning; task-bound receipt verifier and local replay guard; opt-in terminal capture | Durable atomic receipt store, operator enrollment/reviews, real hardware observations, production scheduling |
+| Network | Canonical messages; bounded HTTPS transport with DNS pinning; task-bound receipt verifier; finite reviewer qualification policy; local reference replay guard; opt-in terminal capture | Host-provided durable atomic storage/registry, actual reviewer decisions, real hardware observations and production scheduling |
 | Earn | `SportDelegationVault`, `FundedMerkleRewards`, deterministic allocation manifest and proofs | SPORT address; approved asset/eligibility adapter; raw caps and roles; independent review; deployment and funded epochs |
 | Treasury | `StarportFeeVault`; observe-only collection planner and binding reader | Live deployment/code hashes, PONS beneficiary binding, separately authorized Keeper signer |
 | Connect | Read-only SDK; public schemas; runnable node roundtrip | Developer credentials, webhooks and hosted mutation endpoints |
