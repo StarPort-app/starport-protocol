@@ -84,7 +84,7 @@ The four workspace packages provide canonical operator messages and receipt veri
 See `docs/node-runtime.md` for the operator message scheme and runtime boundary. Package build uses the pinned TypeScript workspace; `npm run build` does not publish or deploy.
 ## R5.1 fee-vault implementation
 
-The planned revenue route is SPORT/SPCX → PONS Fee Escrow → StarportFeeVault. See [R5 design](docs/fee-vault-r5.md), [contract build](contracts/README.md), [permissions](contracts/PERMISSIONS.md) and [PONS source review](contracts/PONS-SOURCE-REVIEW.md). Controller, payout and Keeper addresses are preparation inputs, not deployed authority. The vault is not deployed; live binding and deployment checks remain outstanding. Native ETH reception and emergency ERC-20/native recovery are implemented, with recovery limited to the immutable payout address. The unsigned collection planner cannot sign or broadcast. R4 Trade/Pay/reward designs remain separate, inactive scopes.
+The planned revenue route is SPORT/SPCX → PONS Fee Escrow → StarportFeeVault. See [R5 design](docs/fee-vault-r5.md), [contract build](contracts/README.md), [permissions](contracts/PERMISSIONS.md) and [PONS source review](contracts/PONS-SOURCE-REVIEW.md). Controller, payout and Keeper addresses are preparation inputs, not deployed authority. The vault is not deployed; live binding and deployment checks remain outstanding. Native ETH reception and emergency ERC-20/native recovery are implemented, with recovery limited to the immutable payout address. The unsigned collection planner cannot sign or broadcast. Trade, Pay and reward custody now have separate source implementations; their production integrations and activation remain pending.
 
 ## License
 

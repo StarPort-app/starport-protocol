@@ -2,6 +2,8 @@
 
 Source exists; activation is disabled. These contracts are separate from the fee vault and do not inherit its controller or funding automatically. No deployment script, address assignment or frontend activation is included.
 
+Both Earn contracts pin the directly bound eligibility code hash. A change stops new delegation deposits or reward claims; it does not block principal exits or the normal epoch-refund path. This detects direct bytecode changes, not every proxy implementation upgrade or mutation of eligibility rules/data. Those dependencies remain part of the activation review.
+
 ## SPORT principal
 
 `SportDelegationVault` accepts a configured exact-transfer token through explicit user allowance. An immutable admission adapter must approve the participant/node pair; the tranche and total-principal caps must be nonzero at construction. Each deposit creates an independent owner-bound tranche.

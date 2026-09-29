@@ -100,3 +100,16 @@ test('a three-leaf odd-width tree produces independently checkable proofs and st
   for(const p of t.proofs)assert.equal(verifyRewardProof(p.leaf,p.proof,t.root),true);
   assert.equal(t.manifest.allocatedRaw,'90');assert.equal(verifyRewardProof(POLICY,t.proofs[0].proof,t.root),false);
 });
+test('changed eligibility bytecode stops new deposits and claims without blocking an existing principal exit',async()=>{
+  const {asset,gate}=await base(),vault=await deploy('SportDelegationVault',[asset,accounts[0],gate,100n,200n]);
+  await write('FixtureAsset',asset,'mint',[accounts[2],100n]);await write('FixtureAsset',asset,'approve',[vault,100n],accounts[2]);await write('SportDelegationVault',vault,'deposit',[NODE,50n],accounts[2]);await write('SportDelegationVault',vault,'requestExit',[1n],accounts[2]);
+  // Synthetic local bytecode change returning true: without pinning, this replacement would permit entry.
+  await client.request({method:'anvil_setCode',params:[gate,'0x600160005260206000f3']});
+  await exactRevert('SportDelegationVault',vault,'deposit',[NODE,1n],accounts[2],'Unavailable');
+  const tranche=await read('SportDelegationVault',vault,'tranches',[1n]);await at(tranche[5]);await write('SportDelegationVault',vault,'withdraw',[1n],accounts[2]);
+  assert.equal(await read('SportDelegationVault',vault,'totalPrincipal'),0n);
+  const s=await rewards(),t=tree(s);await write('FundedMerkleRewards',s.vault,'fundEpoch',[0n,100n,POLICY]);await finalize(s,t);
+  await client.request({method:'anvil_setCode',params:[s.gate,'0x600160005260206000f3']});
+  await exactRevert('FundedMerkleRewards',s.vault,'claim',[0n,0n,40n,t.proofs[0].proof],accounts[2],'Ineligible');
+  assert.equal(await read('FundedMerkleRewards',s.vault,'isClaimed',[0n,0n]),false);
+});

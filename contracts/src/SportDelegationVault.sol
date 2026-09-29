@@ -19,6 +19,7 @@ contract SportDelegationVault is GuardedEntry {
     address public immutable sport;
     address public immutable controller;
     IDelegationEligibility public immutable eligibility;
+    bytes32 public immutable eligibilityCodeHash;
     uint256 public immutable maxTrancheAmount;
     uint256 public immutable maxTotalPrincipal;
     bool public depositsPaused;
@@ -45,12 +46,13 @@ contract SportDelegationVault is GuardedEntry {
         if (sport_.code.length == 0 || eligibility_.code.length == 0 || controller_ == address(0)
             || maxTranche_ == 0 || maxTotal_ < maxTranche_) revert InvalidConfiguration();
         sport = sport_; controller = controller_; eligibility = IDelegationEligibility(eligibility_);
+        eligibilityCodeHash = eligibility_.codehash;
         maxTrancheAmount = maxTranche_; maxTotalPrincipal = maxTotal_;
     }
     modifier onlyController() { if (msg.sender != controller) revert Unauthorized(); _; }
 
     function deposit(bytes32 nodeId, uint256 amount) external nonReentrant returns (uint256 id) {
-        if (depositsPaused || incidentActive || nodeId == bytes32(0) || amount == 0 || amount > maxTrancheAmount
+        if (depositsPaused || incidentActive || address(eligibility).codehash != eligibilityCodeHash || nodeId == bytes32(0) || amount == 0 || amount > maxTrancheAmount
             || amount > maxTotalPrincipal - totalPrincipal || !eligibility.canDelegate(msg.sender, nodeId)) revert Unavailable();
         ExactAsset.move(sport, msg.sender, address(this), amount, true);
         id = ++nextTrancheId;

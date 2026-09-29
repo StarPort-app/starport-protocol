@@ -22,6 +22,8 @@ export { encodeHex, parseOperatorPublicKey, parseOperatorSignature, safeEqualTex
 export { messageDigest, possessionMessage, receiptMessage, taskMessage } from "./messages.js";
 export type { PossessionMessageInput, ReceiptMessageInput, TaskMessageInput } from "./messages.js";
 export { projectPublicReceipt } from "./redact.js";
+export { evaluateNodeQualification, NODE_REVIEW_VALIDITY_MS } from './qualification.js';
+export type { NodeQualification, NodeQualificationGrant } from './qualification.js';
 export { verifyReceiptSubmission, createReceiptVerifier } from './verify-receipt.js';
 export type { ReceiptVerificationContext, ReceiptVerification } from './verify-receipt.js';
 export type {

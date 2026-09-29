@@ -28,6 +28,7 @@ contract FundedMerkleRewards is GuardedEntry {
     address public immutable fundingAuthority;
     uint256 public immutable maxEpochBudget;
     IRewardEligibility public immutable eligibility;
+    bytes32 public immutable eligibilityCodeHash;
     uint256 public immutable firstEpochStart;
     uint256 public totalReserved;
     struct Epoch {
@@ -62,6 +63,7 @@ contract FundedMerkleRewards is GuardedEntry {
             || funder_ == address(0) || funder_ == address(this) || budgetCap_ == 0) revert InvalidConfiguration();
         rewardAsset = asset_; publisher = publisher_; reviewer = reviewer_;
         eligibility = IRewardEligibility(eligibility_); firstEpochStart = start_;
+        eligibilityCodeHash = eligibility_.codehash;
         fundingAuthority = funder_; maxEpochBudget = budgetCap_;
     }
     function epochStart(uint256 id) public view returns (uint256) { return firstEpochStart + id * EPOCH_SECONDS; }
@@ -124,7 +126,7 @@ contract FundedMerkleRewards is GuardedEntry {
         for (uint256 i; i < proof.length; ++i) hash = hash < proof[i]
             ? keccak256(abi.encodePacked(hash, proof[i])) : keccak256(abi.encodePacked(proof[i], hash));
         if (hash != e.root) revert InvalidProof();
-        if (!eligibility.canClaim(msg.sender, id, e.policyHash)) revert Ineligible();
+        if (address(eligibility).codehash != eligibilityCodeHash || !eligibility.canClaim(msg.sender, id, e.policyHash)) revert Ineligible();
         claimedBits[id][index >> 8] |= uint256(1) << (index & 255);
         e.claimed += amount; totalReserved -= amount;
         ExactAsset.move(rewardAsset, address(this), msg.sender, amount, false);
