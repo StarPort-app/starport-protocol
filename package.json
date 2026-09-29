@@ -1,0 +1,37 @@
+{
+  "name": "starport-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "npm@11.19.0",
+  "workspaces": [
+    "packages/node-protocol",
+    "packages/node-agent",
+    "packages/starlink-operator",
+    "packages/read-only-client"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --noEmit",
+    "test": "npm run build && node --test packages/*/test/*.test.mjs",
+    "example:offline": "npm run build && node examples/node-roundtrip.mjs --offline-check",
+    "build:contracts": "node contracts/build.mjs",
+    "test:contracts": "npm run build:contracts && node --test contracts/test/*.test.mjs",
+    "prepare:fee-vault": "npm run build:contracts && node contracts/prepare-deployment.mjs"
+  },
+  "overrides": {
+    "solc": {
+      "tmp": "0.2.7"
+    }
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "5.6.1",
+    "@types/node": "26.6.3",
+    "solc": "0.8.37",
+    "typescript": "7.0.2",
+    "viem": "2.56.9"
+  }
+}

@@ -1,0 +1,31 @@
+Field aliases and numeric projection adapted from SkyRelay/protocol:
+packages/core/src/telemetry/parse.ts
+Reviewed checkout HEAD: c7ddf05adf50b15b009df8202541e4a79de49c79
+Reviewed source SHA-256: 50bb2a0d796b38ca70042c995b4e505c2e4bcfabf1c87c71b1759a3afb499d3c
+Review date: 2026-09-26
+
+The related privacy.ts was reviewed but not copied. This package instead projects
+an explicit allowlist, retaining neither raw device identifiers nor their hashes.
+privacy.ts reviewed SHA-256: b48526a97330f13e1905517637c4ee22ca82da144777236116e7f2df6aa9450c
+
+MIT License
+
+Copyright (c) 2026 SkyRelay contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

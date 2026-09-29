@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-09-26T03:20:03.396235+00:00",
+  "githubCommit": "162310fbd1217717e2f5e4cde794d6a11322b469",
+  "explorerVerification": "exact match (as reported in explorer UI)",
+  "compiler": "v0.8.35+commit.47b9dedd",
+  "scope": "Read-only source review. No launch, simulation, wallet or broadcast. GitHub full-file hashes do not assert equality to deployed source. Explorer excerpts are a separate evidence artifact.",
+  "files": [
+    {
+      "file": "PonsV2BondingCurve.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2BondingCurve.sol",
+      "sha256": "f3449b3432aec9c85c4fc282ea467dd37506c1466318a1bc83235b4048e016cf"
+    },
+    {
+      "file": "PonsV2LaunchDeployer.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2LaunchDeployer.sol",
+      "sha256": "5ae89838d008eb1a234cca800d50b349f957b0183e89fe5e3a7edf755f22ed64"
+    },
+    {
+      "file": "PonsV2LaunchFactory.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2LaunchFactory.sol",
+      "sha256": "561475202f7635d9c2caa1c4eed196642bedc2c32ed77afc6297175ef86ea2c7"
+    },
+    {
+      "file": "PonsV2LauncherToken.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/PonsV2LauncherToken.sol",
+      "sha256": "f3642bd24ecbcd902d7a09e9fa91100b0ac93723f0bfa41b66241c091b094c3e"
+    },
+    {
+      "file": "hooks/PonsV2MemeHook.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/hooks/PonsV2MemeHook.sol",
+      "sha256": "07c4a6adcf20272729a32802c7b856fda994b0b791b1593220e4ba7a5d3f2cc5"
+    },
+    {
+      "file": "interfaces/ILaunchpadV2.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/interfaces/ILaunchpadV2.sol",
+      "sha256": "8de57ac4c63e8ec291274c03400da9ed9010371a8c0c957690f0005e4f5f17ef"
+    },
+    {
+      "file": "libraries/PonsV2BondingCurveMath.sol",
+      "sourceKind": "official GitHub reference, not explorer extracted source",
+      "url": "https://raw.githubusercontent.com/ponsdotdev/pons-labs/162310fbd1217717e2f5e4cde794d6a11322b469/contractsV2/src/v2/libraries/PonsV2BondingCurveMath.sol",
+      "sha256": "e4486d95391daf7b3925219766307d3c7c78db80304bd824241f379146e59e58"
+    },
+    {
+      "file": "verified-source-snippets.md",
+      "sourceKind": "Selected exact excerpts transcribed from explorer read-only source editor; line numbers retained",
+      "url": "https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e?tab=contract",
+      "sha256": "ba43d05909c8c4614b0590c6251052ad4d192a20763dbe3f77a12e0db949f12f"
+    }
+  ]
+}
