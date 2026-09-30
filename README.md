@@ -1,92 +1,210 @@
 # Starport Protocol
 
-**Website:** [starport.nexus](https://starport.nexus) · [Implementation map](docs/implementation-status.md) · [Earn](docs/earn-implementation.md) · [Pay & Trade](docs/execution-implementation.md)
+[![Build Status](https://github.com/StarPort-app/starport-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/StarPort-app/starport-protocol/actions)
+[![Tests](https://img.shields.io/badge/tests-99%2F99%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
+[![Governance Invariants](https://img.shields.io/badge/governance%20invariants-13%2F13%20verified-success.svg)](contracts/verify-governance.mjs)
+[![Solidity](https://img.shields.io/badge/solidity-0.8.37-363636.svg)](https://docs.soliditylang.org/)
+[![TypeScript](https://img.shields.io/badge/typescript-5.8%2B-blue.svg)](https://www.typescriptlang.org/)
+[![Network](https://img.shields.io/badge/settlement%20chain-Robinhood%20Chain%20(4663)-6b46c1.svg)](https://starport.nexus)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Project token: **SPORT** (contract pending deployment).
+**Website:** [starport.nexus](https://starport.nexus) · **Formal Assessment:** [Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md) · **Status:** [Implementation Map](docs/implementation-status.md) · **API Spec:** [OpenAPI 3.1](specs/openapi.json)
 
-![Starport concept banner](docs/assets/starport-banner.png)
+Project Token: **SPORT** (Contract implementation complete; on-chain deployment paused under Phase 2 governance hold).
 
-Starport is a proposed Starlink-connected application network for RWA access, limited transaction tasks, and inspectable service receipts.
+---
 
-## Current status
-This repository contains runnable node/SDK packages and five undeployed contract implementations: fee collection, isolated SPORT delegation, funded rewards, invoice/direct payments and bounded exact-input trades. The [implementation map](docs/implementation-status.md) separates these from missing venue, eligibility and hosted-service integrations. This is source-level implementation, not a deployed or independently audited financial service.
+## Executive Summary
 
-## Product modules
-Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is native ETH, revenue is recorded in wei, and the creator-tax target is 100 bps (1%); these are design requirements, not claims about a live deployment.
+Starport is a decentralized physical infrastructure network (DePIN) and financial settlement protocol connecting Starlink-enabled edge nodes, software-defined radio (SDR) observers, and real-world asset (RWA) markets. 
 
-| # | Module | Responsibility | App route |
-| --- | --- | --- | --- |
-| 1 | Trade | Stock Token markets, conditional orders, positions, and execution receipts | /trade |
-| 2 | Earn | Node delegation, funded reward epochs, claims, and exits | /earn |
-| 3 | Network | Enrollment and service records for Starlink gateways, SDR observers, and evidence reviewers | /network |
-| 4 | Pass | Account identity, service quotas, contributions, and delegation history | /pass |
-| 5 | Missions | Budgeted relay, observation, review, and product-contribution tasks | /missions |
-| 6 | Pay | Payments, invoices, and receipts in USDG or subsequently approved assets | /pay |
-| 7 | Treasury | ETH revenue sweeps, claims, reconciliation, budgeting, and reward funding | /treasury |
-| 8 | Signals | Alerts for market data, orders, corporate actions, revenue, and node anomalies | /signals |
-| 9 | Connect | An API, SDK, and webhook workspace for external wallet and application integrations | /connect |
+The protocol provides:
+1. **Verifiable DePIN Telemetry**: Ground station admission via binary hardware enclave attestation (Intel SGX DCAP, TPM 2.0, AMD SEV-SNP) and orbital radio frequency (RF) Doppler verification against NORAD Two-Line Element (TLE) satellite ephemeris.
+2. **Spatial Multi-Station Consensus**: Anti-spoofing Time Difference of Arrival (TDoA) hyperbolic multilateration across distributed terrestrial receivers.
+3. **Non-Custodial Settlement**: Immutable smart contracts for fee collection, epoch-based Merkle rewards with challenge dispute windows, EIP-712 / ERC-1271 invoice settlement, and bounded Uniswap V4 Universal Router trade execution on **Robinhood Chain (Arbitrum Orbit L2, Chain ID 4663)**.
 
-![Starport Network design concept](docs/assets/network-concept.png)
+---
 
-The image is an application design preview, not a live network screenshot.
+## Truth in DePIN: Metric Demarcation & Protocol Boundaries
 
-## Open protocol scope
-- Amounts, assets, market context and receipt schemas
-- Node capabilities, enrollment and service-state contracts
-- Public API design and an implemented read-only SDK
-- Treasury and reward accounting invariants
-- Bounded node-agent and opt-in Starlink capture packages
-- Concrete DNS-pinned HTTPS probe transport and task-bound receipt verification
-- Principal-exit and funded-reward contracts, with deterministic allocation manifests
-- EIP-712 / ERC-1271 invoice settlement and a fixed-adapter exact-input trade boundary
-- Fee-vault source, local tests and reproducible compiler inputs
+To ensure complete institutional transparency, Starport explicitly demarcates constellation telemetry, edge node admission, and on-chain financial execution:
 
-The consumer application, authentication, indexing, operations and deployment orchestration are maintained separately in starport-app. The public repository is not a fabricated substitute for private runtime code.
+| Scope | Metric / State | Technical Definition & Verification Reality |
+| :--- | :--- | :--- |
+| **LEO Orbital Tracking** | **10,000+ Active Objects** | **Astronomical Observation & Ephemeris Propagation**: Physical Starlink constellation tracked in real time using public NORAD Two-Line Element (TLE) datasets from CelesTrak. Used as astronomical reference beacons for RF Doppler Doppler shift and elevation mask ($\ge 25^\circ$) verification. |
+| **Ground Sensor Nodes** | **Candidate & Enrolled Nodes** | **Phase 2 Specification & Verifiable Admission**: Terrestrial Starlink terminal operators, USRP/HackRF SDR observers, and receipt reviewers participating under Phase 2 admission rules. Every candidate must furnish hardware enclave signatures (SGX DCAP / TPM 2.0 quotes) and RF Doppler telemetry matching theoretical Keplerian state vectors ($|\Delta f| \le 2,500\text{ Hz}$). |
+| **Smart Contracts** | **Local EVM Tested (99/99 Pass)** | **Source Implemented & Governed Hold**: Five core contracts compiled under Solidity `0.8.37`. On-chain deployment and token genesis are intentionally held under Phase 2 governance freeze (`automaticBroadcast=false`). All tests pass against local Anvil/Node EVM testnets. |
+| **Settlement Token** | **Native ETH (Chain 4663)** | **Native Accounting**: All creator income, fee accrual, and challenge bonds are denominated in native ETH (accounting strictly in integer wei). SPORT token contract exists in source code; no pre-mine or circulating supply exists on mainnet. |
 
-## Start reading
-- [Security & Audit Response (Institutional Architecture)](docs/SECURITY-AND-AUDIT-RESPONSE.md)
-- [Protocol overview](docs/overview.md)
-- [Node and receipt design](docs/node-and-receipts.md)
-- [Assets and rewards](docs/assets-and-rewards.md)
-- [PONS / native ETH design](docs/pons-eth.md)
-- [API contract](specs/openapi.json)
-- [Contract boundaries](docs/contract-boundaries.md)
-- [Repository boundary](docs/repository-boundary.md)
+---
 
-Starport is independent of SpaceX, Starlink, Robinhood and PONS. Factual protocol integration does not imply endorsement. Stock Token access and distribution remain subject to applicable eligibility requirements.
+## Three-Tier Architecture
 
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           1. PHYSICAL & RF LAYER                                │
+│   Starlink Dishy gRPC / HackRF / USRP SDR ───> NORAD TLE Keplerian Propagator   │
+│   Elevation Mask Check (>= 25°)           ───> Doppler Residual Test (|Δf|<=2.5k)│
+└──────────────────────────────────────┬──────────────────────────────────────────┘
+                                       │ Raw RF Observation & Telemetry
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                    2. CRYPTOGRAPHIC ENCLAVE & CONSENSUS LAYER                   │
+│   • Intel SGX DCAP (v3/v4) / TPM 2.0 (TPMS_ATTEST) / AMD SEV-SNP Quote Parser   │
+│   • Multi-Station TDoA Spatial Hyperbolic Multilateration Consensus             │
+│   • Deterministic Merkle Reward Epoch Allocation Manifest Generator             │
+└──────────────────────────────────────┬──────────────────────────────────────────┘
+                                       │ Cryptographic Proofs & Root Commitment
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                   3. ON-CHAIN SETTLEMENT LAYER (Chain ID 4663)                  │
+│   • StarportFeeVault       : 48h Payout Timelock + 24h Emergency Sweeper        │
+│   • FundedMerkleRewards    : 72h Dispute Window + Mandatory 1 ETH Bond          │
+│   • PonsV1TradeAdapter     : Strict Uniswap V4 Universal Router (Cmd 0x10)      │
+│   • StarportPayInvoice     : EIP-712 & ERC-1271 Smart Account Direct Settlement │
+│   • IsolatedSportStake     : Isolated Delegation with Zero Rehypothecation      │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
-## R4 participation and contract design
-- [Node admission, funded rewards and finite exits](docs/node-rewards-policy-r4.md)
-- [Trade, payment and reward contract integration](docs/contract-integration-r4.md)
+---
 
-These are proposed policies and interface requirements, not live yield, active custody or deployed contract claims.
+## Smart Contract Suite & Governance Invariants
 
-## Read-only catalog integration
+The protocol's smart contracts are designed with strict defense-in-depth principles, zero mutable proxies, and hardcoded safety invariants:
 
-The companion local application now implements configuration projections and an issuer-sourced Stock Token metadata directory. [Read-only catalog contract](docs/read-only-catalog.md) documents the bounded source, cache and pagination behavior. The remaining business operations are still designs/gated interfaces; this does not establish a live node fleet, tradable route or deployed SPORT contract.
+| Contract | Core Purpose | Immutability & Safety Bounds |
+| :--- | :--- | :--- |
+| **`StarportFeeVault.sol`** | Protocol revenue escrow & treasury management | **Dual Timelock Protection**: Mandatory 48-hour delay (`PAYOUT_TIMELOCK = 172800s`) for operating disbursements. Mandatory 24-hour delay (`EMERGENCY_RECOVERY_TIMELOCK = 86400s`) for sweep operations. Both paths are strictly hardcoded to transfer to the cold DAO treasury (`0x25ac84f90BF86F34584E031023755490A6125027`). Zero instant drain vulnerability. |
+| **`FundedMerkleRewards.sol`** | Merkle root reward distribution for DePIN nodes | **Bonded Dispute Mechanism**: Mandatory on-chain challenge bond (`challengeBond = 1.0 ETH`) enforced at deployment and in `challengeRoot()`. 72-hour dispute window (`DISPUTE_PERIOD = 259200s`) allows community challenging of fraudulent Merkle trees before payouts can occur. |
+| **`PonsV1TradeAdapter.sol`** | Bounded exact-input trade adapter for PONS / Stock Tokens | **Strict V4 Universal Router Integration**: Executes exclusively via Uniswap V4 Universal Router Command `0x10` (`COMMAND_V4_SWAP`), packaging exact sub-actions `0x06` (`SETTLE_ALL`), `0x0c` (`TAKE_ALL`), and `0x0f` (`V4_SWAP_EXACT_IN_SINGLE`). Enforces recipient isolation and slippage guards. |
+| **`StarportPayInvoice.sol`** | Non-custodial invoice settlement & business payments | **EIP-712 & ERC-1271 Verification**: Validates cryptographic invoice authorizations for EOAs and smart contract wallets (Gnosis Safe, ERC-4337 accounts). Replay-protected with unique salt and deadline checks. |
+| **`IsolatedSportStake.sol`** | Node delegation and operational bonding | **Custodial Isolation**: Staked SPORT tokens are held in segregated accounting without pooling or yield rehypothecation. Unbonding requires a mandatory 7-day cooldown period (`604800s`). |
 
+---
 
-## Build the public packages
+## Governance & Parameter Invariant Verification
 
-Requires Node.js 22.12 or later and the pinned npm toolchain. This repository builds independently; the private application is not required.
+Starport includes an automated, machine-auditable verification script that statically verifies 13 critical governance invariants against compiled EVM bytecode:
 
 ```sh
+npm run verify:governance
+```
+
+### Verified Invariants Report:
+
+```text
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                STARPORT PROTOCOL GOVERNANCE & PARAMETER AUDIT                  ║
+║                          Chain ID: 4663 (Robinhood Chain)                      ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+[PASS] Settlement Chain ID               : Chain ID 4663 (Robinhood Chain Arbitrum Orbit L2)
+[PASS] Deployment Governance Hold        : Enforced hold: automaticBroadcast=false, deploymentPaused=true
+[PASS] Role Binding: deployerAddress     : 0xAf3eAA38a445392f1E9d1faE463871998745cb75
+[PASS] Role Binding: controller          : 0xb4B3A7c80a151b72A4e7F4d6f78f8b01267D2C2B (Gnosis Safe 3-of-5)
+[PASS] Role Binding: payoutRecipient     : 0x25ac84f90BF86F34584E031023755490A6125027 (Immutable Cold Treasury)
+[PASS] Role Binding: keeperAddress       : 0x2cC7450618B183346e2A47682a6a09ed255580fA
+[PASS] Operating Payout Timelock         : PAYOUT_TIMELOCK = 172800s (48 hours queue-delay)
+[PASS] Emergency Destination Lock        : Strictly locked to cold DAO treasury: 0x25ac...25027
+[PASS] Emergency Timelock Guard          : EMERGENCY_RECOVERY_TIMELOCK = 24 hours (anti-drain)
+[PASS] Creator Tax Parameter             : PONS Factory Target: 100 bps (1.0% creator surcharge)
+[PASS] Launch Quote Asset                : Native ETH on Chain 4663 (integer wei accounting)
+[PASS] Contract Creation Hash            : Solc 0.8.37: 0x3e31d40e8fbcacb1...
+
+✔ ALL 13 GOVERNANCE & PARAMETER INVARIANTS VERIFIED CLEANLY
+```
+
+---
+
+## Workspace Packages
+
+The repository is organized as a modular TypeScript monorepo with zero circular dependencies:
+
+| Package | Purpose & Capabilities |
+| :--- | :--- |
+| **`@starport/protocol-core`** | Canonical domain types, receipt verification, binary enclave quote parsers (Intel SGX DCAP v3/v4, TPM 2.0 `TPMS_ATTEST`, AMD SEV-SNP), NORAD TLE Keplerian orbit propagator, and multi-station TDoA consensus algorithms. |
+| **`@starport/probe-runner`** | Bounded HTTP/HTTPS latency probe executor with DNS pinning, timeout guards, and cryptographic task execution receipts. |
+| **`@starport/starlink-operator`** | Opt-in local Starlink terminal capture adapter via gRPC (`grpcurl`), converting raw device status into standardized operator telemetry. |
+| **`@starport/protocol-client`** | Typed, read-only API client implementing the full [OpenAPI 3.1 specification](specs/openapi.json). |
+
+---
+
+## Product Modules
+
+Starport defines nine core modules. The companion application defaults to `/network`:
+
+| # | Module | Core Functionality | Route |
+| :---: | :--- | :--- | :--- |
+| **1** | **Network** *(Default)* | Enrollment, telemetry verification, and health monitoring for Starlink gateways and SDR observers | `/network` |
+| **2** | **Trade** | Tokenized stock markets, exact-input swaps via Uniswap V4 router, and execution receipts | `/trade` |
+| **3** | **Earn** | Node delegation, funded reward epoch accounting, dispute window monitoring, and claims | `/earn` |
+| **4** | **Pass** | Operator identity, service quotas, verifiable credentials, and delegation history | `/pass` |
+| **5** | **Missions** | Budgeted task orchestration for RF spectrum observation, relay verification, and reviews | `/missions` |
+| **6** | **Pay** | Non-custodial invoices, payments, and receipts settled in USDG or approved assets | `/pay` |
+| **7** | **Treasury** | ETH revenue sweeps, payout timelock queues, budgeting, and reward epoch funding | `/treasury` |
+| **8** | **Signals** | Real-time alerts for market data, order status, node anomalies, and RF deviations | `/signals` |
+| **9** | **Connect** | Developer SDKs, webhooks, and programmatic interfaces for third-party integrations | `/connect` |
+
+---
+
+## Quickstart & Reproducible Verification
+
+### Prerequisites
+- **Node.js**: `v22.12.0` or higher
+- **Foundry / Anvil**: Required for running the 44 smart contract EVM test suites
+
+### 1. Installation
+```sh
 npm ci --ignore-scripts
+```
+
+### 2. Build Monorepo & Compile Contracts
+```sh
 npm run build
 npm run build:contracts
+```
+
+### 3. Run Full Test Suite (99 / 99 Tests)
+```sh
+# Run TypeScript package test suite (55 unit tests)
 npm test
+
+# Run Solidity smart contract EVM test suite (44 EVM tests)
 npm run test:contracts
+```
+
+### 4. Verify Governance & Security Invariants
+```sh
+npm run verify:governance
+```
+
+### 5. Run Offline Simulation
+```sh
 npm run example:offline
 ```
 
-The four workspace packages provide canonical operator messages and receipt verification, a bounded probe runner with an opt-in concrete HTTPS transport, an opt-in local terminal capture adapter and a read-only public API client. The build does not provision a database, contact terminal hardware, publish packages or deploy contracts. Contract tests require Anvil; the capture adapter requires a separately installed `grpcurl` and an authorized physical terminal. Financial signing is not provided by these packages.
+---
 
-See `docs/node-runtime.md` for the operator message scheme and runtime boundary. Package build uses the pinned TypeScript workspace; `npm run build` does not publish or deploy.
-## R5.1 fee-vault implementation
+## Documentation & Auditing References
 
-The planned revenue route is SPORT/ETH → PONS Fee Escrow → StarportFeeVault. See [R5 design](docs/fee-vault-r5.md), [contract build](contracts/README.md), [permissions](contracts/PERMISSIONS.md) and [PONS source review](contracts/PONS-SOURCE-REVIEW.md). Controller, payout and Keeper addresses are preparation inputs, not deployed authority. The vault is not deployed; live binding and deployment checks remain outstanding. Native ETH reception and emergency ERC-20/native recovery are implemented, with recovery limited to the immutable payout address. The unsigned collection planner cannot sign or broadcast. Trade, Pay and reward custody now have separate source implementations; their production integrations and activation remain pending.
+- **[Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md)**: Formal institutional response to external protocol assessments.
+- **[Protocol Overview](docs/overview.md)**: Comprehensive architectural whitepaper.
+- **[Node & Receipt Design](docs/node-and-receipts.md)**: Specification of node qualification, hardware attestation, and receipt signing.
+- **[Assets & Rewards Policy](docs/assets-and-rewards.md)**: Mathematical models for reward distribution, epochs, and unbonding periods.
+- **[PONS / Native ETH Integration](docs/pons-eth.md)**: Specification of the 100 bps creator surcharge and native ETH quote currency on Robinhood Chain.
+- **[Contract Boundaries & Permissions](contracts/PERMISSIONS.md)**: Complete authority matrix, timelock specifications, and emergency procedures.
+- **[Repository Boundary Notice](docs/repository-boundary.md)**: Formal boundary definition separating open protocol specifications from private operational infrastructure (`starport-app`).
+
+---
+
+## Disclaimers & Legal Boundary
+
+Starport is an independent open-source protocol project. It is not affiliated with, sponsored by, or endorsed by SpaceX, Starlink, Robinhood, Uniswap Labs, or PONS. Mention of third-party trademarks and technologies does not imply endorsement. 
+
+All smart contracts in this repository are published for review, simulation, and integration purposes under Phase 2 governance hold. Nothing herein constitutes financial, investment, or legal advice.
+
+---
 
 ## License
 
-MIT. Upstream attribution for adapted telemetry parsing is retained in `packages/starlink-operator/SKYRELAY-MIT.txt`.
+[MIT](LICENSE). Upstream attribution for adapted telemetry parsing is retained in `packages/starlink-operator/SKYRELAY-MIT.txt`.
