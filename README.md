@@ -12,7 +12,7 @@ Starport is a proposed Starlink-connected application network for RWA access, li
 This repository contains runnable node/SDK packages and five undeployed contract implementations: fee collection, isolated SPORT delegation, funded rewards, invoice/direct payments and bounded exact-input trades. The [implementation map](docs/implementation-status.md) separates these from missing venue, eligibility and hosted-service integrations. This is source-level implementation, not a deployed or independently audited financial service.
 
 ## Product modules
-Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is native ETH, revenue is recorded in wei, and the creator-tax target is 50 bps (0.5%); these are design requirements, not claims about a live deployment.
+Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is native ETH, revenue is recorded in wei, and the creator-tax target is 100 bps (1%); these are design requirements, not claims about a live deployment.
 
 | # | Module | Responsibility | App route |
 | --- | --- | --- | --- |

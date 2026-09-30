@@ -27,7 +27,7 @@
   "ponsFactoryCodeHash": null,
   "keeperServiceId": null,
   "keeperMode": "observe-only",
-  "creatorTaxBps": 50,
+  "creatorTaxBps": 100,
   "emergencyPermissionsReviewed": false,
   "permissionsReviewRequired": true,
   "acceptedAssetTypes": [

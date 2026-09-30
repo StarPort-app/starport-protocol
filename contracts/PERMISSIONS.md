@@ -29,7 +29,7 @@ Exiting emergency mode leaves collection paused. The controller must explicitly 
 - PONS future fee-recipient migration keeps its two-day delay and controller-only execution. It does not move old escrow credits or already received assets.
 - Changing the controller requires acceptance by the proposed controller. The payout address, fee asset, escrow and factory remain immutable.
 - Emergency control uses the same controller; it is not a recovery mechanism for a lost or compromised controller key. A payout wallet that cannot receive an asset can still block that asset's recovery.
-- PONS compatibility/source binding remains a separate deployment gate. These local permission changes neither sweep restricted PONS fees nor change the 0.5% launch-tax target.
+- PONS compatibility/source binding remains a separate deployment gate. These local permission changes neither sweep restricted PONS fees nor change the 1% launch-tax target.
 
 ## Upstream PONS authority
 

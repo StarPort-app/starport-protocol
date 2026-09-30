@@ -8,11 +8,15 @@ const HASH=`0x${'ab'.repeat(32)}`;
 function meta(source='design_fixture',extra={}){return {environment:'preview',schemaVersion:READ_API_VERSION,source,observedAt:source==='design_fixture'?null:AT,observedBlock:null,confirmationState:'not_applicable',freshness:source==='design_fixture'?'unknown':'fresh',checkpoint:null,requestId:'public-read-test',...extra};}
 function capabilities(){return {data:{environment:'preview',chainId:4663,schemaVersion:READ_API_VERSION,financialExecutionEnabled:false,
   capabilities:['trade','delegation','exit_request','withdrawal','reward_claim','payment','node_enrollment','mission_participation','developer_access'].map(name=>({name,state:'disabled',reasonCode:'CAPABILITY_DISABLED'}))},meta:meta()};}
-function target(){return {data:{chainId:4663,quoteAsset:{chainId:4663,address:null,kind:'native',symbol:'ETH',decimals:18,decimalsVerified:true},creatorTaxBps:50,creatorTaxRule:'source_confirmed',projectTokenAddress:null,projectTokenTicker:'SPORT',evidenceDocument:'docs/pons-eth.md',launchEnabled:false,treasuryRecipientTarget:null,actualCreatorFeeRecipient:null,creatorRecipientBindingStatus:'pending_vault_deployment_and_PONS_binding'},meta:meta()};}
+function target(){return {data:{chainId:4663,quoteAsset:{chainId:4663,address:null,kind:'native',symbol:'ETH',decimals:18,decimalsVerified:true},creatorTaxBps:100,creatorTaxRule:'source_confirmed',projectTokenAddress:null,projectTokenTicker:'SPORT',evidenceDocument:'docs/pons-eth.md',launchEnabled:false,treasuryRecipientTarget:null,actualCreatorFeeRecipient:null,creatorRecipientBindingStatus:'pending_vault_deployment_and_PONS_binding'},meta:meta()};}
 test('native launch quote rejects stale SPCX and zero-address ERC20 lookalikes',async()=>{
   for(const quoteAsset of [{chainId:4663,address:SPCX_ADDRESS,symbol:'SPCX',decimals:18,decimalsVerified:true},{chainId:4663,address:'0x'+'0'.repeat(40),kind:'native',symbol:'ETH',decimals:18,decimalsVerified:true}]){
     await assert.rejects(createStarportReadClient({now:()=>NOW,fetcher:async()=>json({...target(),data:{...target().data,quoteAsset}})}).getLaunchTarget(),ReadOnlyClientError);
   }
+});
+test('launch target refuses the superseded 50-bps choice',()=>{
+  const value=target();value.data.creatorTaxBps=50;
+  assert.throws(()=>validateReadEnvelope('launchTarget',value),ReadOnlyClientError);
 });
 function asset(id=1){return {asset:{chainId:4663,address:`0x${id.toString(16).padStart(40,'0')}`,symbol:'TEST',decimals:18,decimalsVerified:false},kind:'stock_token',issuerMetadataUri:'https://api.robinhood.com/rhj/assets',multiplierRaw:'1000000000000000000',multiplierDecimals:18,marketStatus:'unknown',marketContext:null,issuer:{id:`0x${id.toString(16).padStart(64,'0')}`,name:'Synthetic test metadata',status:'active',isin:null,pendingMultiplierRaw:null,pendingMultiplierEffectiveAt:null}};}
 function assets(){return {data:[asset()],meta:meta('issuer_api',{checkpoint:`issuer-assets:${'ab'.repeat(32)}`}),nextCursor:null,total:1};}

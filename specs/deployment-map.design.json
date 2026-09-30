@@ -101,8 +101,8 @@
     "previousReferenceWallet": "0xAf3eAA38a445392f1E9d1faE463871998745cb75"
   },
   "launchTarget": {
-    "creatorTaxBps": 50,
-    "creatorTaxRuleEvidence": "User-selected target restored to 50 bps; basis-point support was source-reviewed. Recheck mutable fee caps and economics before launch.",
+    "creatorTaxBps": 100,
+    "creatorTaxRuleEvidence": "User-selected target changed to 100 bps on 2026-09-30; basis-point support was source-reviewed. Recheck mutable fee caps and economics before launch.",
     "creatorFeeRecipientTarget": null,
     "baseCurveFeeBps": null,
     "starportWrapperFeeBps": 0,
@@ -314,7 +314,7 @@
       "quoteSource": "Version-pinned integer adapter over sourced curve state; not implemented.",
       "enabledOnlyAfter": [
         "SPORT and curve identity verified",
-        "actual creator recipient and 50 bps target verified",
+        "actual creator recipient and 100 bps target verified",
         "ABI/code and fee accounting matched",
         "eligibility integration and deadline wrapper reviewed"
       ],

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Starport API design",
-    "version": "0.6.0-native-eth",
+    "version": "0.6.1-creator-tax-100",
     "description": "Starport shared API contract. The local read-only application implements configuration projections and issuer-sourced asset metadata; other business operations remain design-only or disabled. Catalog metadata is not a price, executable quote, eligibility decision, chain verification, or Starlink routing evidence. Financial execution remains off."
   },
   "servers": [],
@@ -543,7 +543,7 @@
                               "const": "preview"
                             },
                             "schemaVersion": {
-                              "const": "0.6.0-native-eth"
+                              "const": "0.6.1-creator-tax-100"
                             },
                             "source": {
                               "const": "issuer_api"
@@ -4752,8 +4752,8 @@
         "tags": [
           "Treasury"
         ],
-        "summary": "Read the native ETH and 50 bps design target; no launch capability",
-        "description": "Read the native ETH and 50 bps design target; no launch capability. Design only; no service implementation is represented.",
+        "summary": "Read the native ETH and 100 bps design target; no launch capability",
+        "description": "Read the native ETH and 100 bps design target; no launch capability. Design only; no service implementation is represented.",
         "security": [],
         "x-design-only": false,
         "responses": {
@@ -11722,7 +11722,7 @@
           },
           "creatorTaxBps": {
             "type": "integer",
-            "const": 50
+            "const": 100
           },
           "creatorTaxRule": {
             "type": "string",

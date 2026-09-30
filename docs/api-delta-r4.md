@@ -1,3 +1,5 @@
+> **Current target (September 30, 2026):** SPORT / native ETH, with a **1% (100 bps) additional creator tax**. Earlier 0.5% targets below are historical. Base-fee shares and optional buybacks are separate; no on-chain launch or tax change has occurred. See [current ETH scope](pons-eth.md).
+
 # R4 API Design Delta
 
 Historical hosted-API design. The issuer-signature and settlement contract source is now implemented separately in [Pay/Trade v1](execution-implementation.md); the hosted mutation routes described below are not thereby activated.

@@ -164,7 +164,7 @@ export function validateReadEnvelope<R extends ReadResource>(resource: R, value:
     const d=object(e.data,["chainId","quoteAsset","creatorTaxBps","creatorTaxRule","projectTokenAddress","projectTokenTicker","evidenceDocument","launchEnabled","treasuryRecipientTarget","actualCreatorFeeRecipient","creatorRecipientBindingStatus"]);
     const a=object(d.quoteAsset,["chainId","address","kind","symbol","decimals","decimalsVerified"]);
     if (meta.source !== "design_fixture" || meta.observedAt !== null || meta.freshness !== "unknown" || meta.checkpoint !== null
-      || d.chainId !== 4663 || d.creatorTaxBps !== 50 || d.creatorTaxRule !== "source_confirmed" || d.projectTokenAddress !== null || d.projectTokenTicker !== "SPORT"
+      || d.chainId !== 4663 || d.creatorTaxBps !== 100 || d.creatorTaxRule !== "source_confirmed" || d.projectTokenAddress !== null || d.projectTokenTicker !== "SPORT"
       || d.evidenceDocument !== "docs/pons-eth.md" || d.launchEnabled !== false || d.treasuryRecipientTarget !== null || d.actualCreatorFeeRecipient !== null
       || d.creatorRecipientBindingStatus !== "pending_vault_deployment_and_PONS_binding" || a.chainId !== 4663 || a.address !== null || a.kind !== "native" || a.symbol !== "ETH" || a.decimals !== 18 || a.decimalsVerified !== true) fail();
   } else if (resource === "referencePrice") {

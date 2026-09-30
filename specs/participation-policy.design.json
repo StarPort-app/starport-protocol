@@ -34,7 +34,7 @@
       "recordedDecimals": 18,
       "identityStatus": "native_chain_currency"
     },
-    "creatorFeeTargetBps": 50,
+    "creatorFeeTargetBps": 100,
     "treasuryRecipient": {
       "address": null,
       "source": "fee_vault_pending_deployment",

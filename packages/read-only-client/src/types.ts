@@ -1,5 +1,5 @@
 /** Version pin for the implemented public reads; not the full mutation design. */
-export const READ_API_VERSION = "0.6.0-native-eth" as const;
+export const READ_API_VERSION = "0.6.1-creator-tax-100" as const;
 export const APPROVED_STARPORT_ORIGIN = "https://starport.nexus" as const;
 /** Compatibility export; both names resolve to the public production origin. */
 export const STARPORT_CUSTOM_ORIGIN = APPROVED_STARPORT_ORIGIN;
@@ -30,7 +30,7 @@ export interface Capabilities {
 }
 export interface AssetIdentity { chainId: 4663; address: string; symbol: string; decimals: number; decimalsVerified: boolean }
 export interface LaunchTarget {
-  chainId: 4663; quoteAsset: {chainId:4663;address:null;kind:"native";symbol:"ETH";decimals:18;decimalsVerified:true}; creatorTaxBps: 50; creatorTaxRule: "source_confirmed";
+  chainId: 4663; quoteAsset: {chainId:4663;address:null;kind:"native";symbol:"ETH";decimals:18;decimalsVerified:true}; creatorTaxBps: 100; creatorTaxRule: "source_confirmed";
   projectTokenAddress: null; projectTokenTicker: "SPORT"; evidenceDocument: "docs/pons-eth.md"; launchEnabled: false;
   treasuryRecipientTarget: null; actualCreatorFeeRecipient: null; creatorRecipientBindingStatus: "pending_vault_deployment_and_PONS_binding";
 }

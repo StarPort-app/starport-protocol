@@ -17,7 +17,7 @@ export function preparationBlocker(config){
   if(!config.vaultAddress)return 'vault_not_deployed';
   if(!config.projectTokenAddress)return 'SPORT_not_launched';
   if(![config.vaultAddress,config.projectTokenAddress,config.feeAsset,config.feeEscrowReference,config.ponsFactoryReference,config.controller,config.payoutRecipient,config.keeperAddress].every(a=>typeof a==='string'&&isAddress(a)))return 'invalid_address';
-  if(!same(config.feeAsset,NATIVE_ETH)||same(config.keeperAddress,config.controller)||same(config.keeperAddress,config.payoutRecipient)||config.creatorTaxBps!==50)return 'role_or_asset_mismatch';
+  if(!same(config.feeAsset,NATIVE_ETH)||same(config.keeperAddress,config.controller)||same(config.keeperAddress,config.payoutRecipient)||config.creatorTaxBps!==100)return 'role_or_asset_mismatch';
   if(![config.vaultCodeHash,config.feeEscrowCodeHash,config.ponsFactoryCodeHash].every(v=>typeof v==='string'&&HASH.test(v))||config.deployedStackCompatibilityVerified!==true)return 'stack_review_required';
   return null;
 }
@@ -49,7 +49,7 @@ export async function observeCollection(config,client,{pendingSubmission=false,n
     client.readContract({address:escrow,abi:escrowAbi,functionName:'balanceOf',args:[config.vaultAddress],blockNumber}),
     client.getBalance({address:config.keeperAddress,blockNumber}),
   ]);
-  if(!launch.exists||!same(launch.token,config.projectTokenAddress)||!same(launch.creatorFeeRecipient,config.vaultAddress)||!same(launch.pairToken,asset)||Number(launch.creatorTaxBps)!==50||escrowOwed!==claimable)throw new Error('PONS beneficiary binding changed');
+  if(!launch.exists||!same(launch.token,config.projectTokenAddress)||!same(launch.creatorFeeRecipient,config.vaultAddress)||!same(launch.pairToken,asset)||Number(launch.creatorTaxBps)!==100||escrowOwed!==claimable)throw new Error('PONS beneficiary binding changed');
   let estimatedGasWei=0n;
   if(!paused&&!emergency&&claimable>0n){const [gas,price]=await Promise.all([client.estimateContractGas({account:config.keeperAddress,address:config.vaultAddress,abi:vaultAbi,functionName:'collectFees'}),client.getGasPrice()]);estimatedGasWei=gas*price;}
   const recheck=await client.getBlock({blockNumber});if(recheck.hash!==block.hash)throw new Error('Observation reorganized');
