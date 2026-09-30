@@ -12,7 +12,7 @@ Starport is a proposed Starlink-connected application network for RWA access, li
 This repository contains runnable node/SDK packages and five undeployed contract implementations: fee collection, isolated SPORT delegation, funded rewards, invoice/direct payments and bounded exact-input trades. The [implementation map](docs/implementation-status.md) separates these from missing venue, eligibility and hosted-service integrations. This is source-level implementation, not a deployed or independently audited financial service.
 
 ## Product modules
-Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is SPCX, revenue is recorded in raw SPCX units, and the creator-tax target is 50 bps (0.5%); these are design requirements, not claims about a live deployment.
+Network is the default home (`/` leads to `/network`). All nine modules remain available. The proposed launch quote asset is native ETH, revenue is recorded in wei, and the creator-tax target is 50 bps (0.5%); these are design requirements, not claims about a live deployment.
 
 | # | Module | Responsibility | App route |
 | --- | --- | --- | --- |
@@ -22,7 +22,7 @@ Network is the default home (`/` leads to `/network`). All nine modules remain a
 | 4 | Pass | Account identity, service quotas, contributions, and delegation history | /pass |
 | 5 | Missions | Budgeted relay, observation, review, and product-contribution tasks | /missions |
 | 6 | Pay | Payments, invoices, and receipts in USDG or subsequently approved assets | /pay |
-| 7 | Treasury | SPCX revenue sweeps, claims, reconciliation, budgeting, and reward funding | /treasury |
+| 7 | Treasury | ETH revenue sweeps, claims, reconciliation, budgeting, and reward funding | /treasury |
 | 8 | Signals | Alerts for market data, orders, corporate actions, revenue, and node anomalies | /signals |
 | 9 | Connect | An API, SDK, and webhook workspace for external wallet and application integrations | /connect |
 
@@ -47,7 +47,7 @@ The consumer application, authentication, indexing, operations and deployment or
 - [Protocol overview](docs/overview.md)
 - [Node and receipt design](docs/node-and-receipts.md)
 - [Assets and rewards](docs/assets-and-rewards.md)
-- [PONS / SPCX design evidence](docs/pons-spcx.md)
+- [PONS / native ETH design](docs/pons-eth.md)
 - [API contract](specs/openapi.json)
 - [Contract boundaries](docs/contract-boundaries.md)
 - [Repository boundary](docs/repository-boundary.md)
@@ -84,7 +84,7 @@ The four workspace packages provide canonical operator messages and receipt veri
 See `docs/node-runtime.md` for the operator message scheme and runtime boundary. Package build uses the pinned TypeScript workspace; `npm run build` does not publish or deploy.
 ## R5.1 fee-vault implementation
 
-The planned revenue route is SPORT/SPCX → PONS Fee Escrow → StarportFeeVault. See [R5 design](docs/fee-vault-r5.md), [contract build](contracts/README.md), [permissions](contracts/PERMISSIONS.md) and [PONS source review](contracts/PONS-SOURCE-REVIEW.md). Controller, payout and Keeper addresses are preparation inputs, not deployed authority. The vault is not deployed; live binding and deployment checks remain outstanding. Native ETH reception and emergency ERC-20/native recovery are implemented, with recovery limited to the immutable payout address. The unsigned collection planner cannot sign or broadcast. Trade, Pay and reward custody now have separate source implementations; their production integrations and activation remain pending.
+The planned revenue route is SPORT/ETH → PONS Fee Escrow → StarportFeeVault. See [R5 design](docs/fee-vault-r5.md), [contract build](contracts/README.md), [permissions](contracts/PERMISSIONS.md) and [PONS source review](contracts/PONS-SOURCE-REVIEW.md). Controller, payout and Keeper addresses are preparation inputs, not deployed authority. The vault is not deployed; live binding and deployment checks remain outstanding. Native ETH reception and emergency ERC-20/native recovery are implemented, with recovery limited to the immutable payout address. The unsigned collection planner cannot sign or broadcast. Trade, Pay and reward custody now have separate source implementations; their production integrations and activation remain pending.
 
 ## License
 

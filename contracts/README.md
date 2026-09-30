@@ -1,8 +1,10 @@
-# Starport SPCX Fee Vault
+# Starport Native ETH Fee Vault
 
 This directory also contains the separate undeployed [Earn custody implementations](../docs/earn-implementation.md), `SportDelegationVault` and `FundedMerkleRewards`. The existing fee-vault deployment checklist does not deploy or authorize them. `npm run test:contracts` checks all local contract suites.
 
 [Pay and Trade implementations](../docs/execution-implementation.md) add `StarportPaymentRouter` and `BoundedTradeRouter`. Signature/domain and token-approval helpers use fixed `@openzeppelin/contracts@5.6.1` from the lockfile. The compiler input includes the exact imported dependency sources; library use is not an independent audit of the complete contracts.
+
+R6 collects native ETH through PONS `balanceOf(vault)` / `claim()`. The immutable `feeAsset` is the zero-address native sentinel, not an ERC-20 address. ERC-20 deposits are recoverable only through the existing emergency path.
 
 Collection-only financial foundation. The deployed vault address is **not assigned**. Use the R5 deployment design as a review checklist, not a deployment script.
 
@@ -22,7 +24,7 @@ Compiler: pinned `solc@0.8.37`, EVM Cancun, optimizer 200. Its `tmp` dependency 
 
 The build also exports `contracts/out/standard-input.json`, containing the exact compiler input for subsequent explorer source verification. Use Solidity standard JSON with contract `src/StarportFeeVault.sol:StarportFeeVault`, the pinned compiler above, and the actual deployment constructor arguments. No explorer submission happens during build. Public GitHub publication is not required to verify a deployed contract in the explorer; either publication still needs authorization. See [the scoped PONS source review](PONS-SOURCE-REVIEW.md) for verified call semantics and remaining live checks.
 
-The vault can claim a single asset from its immutable escrow, account for actual receipts and pay operating funds only to an immutable payout address under controller authorization. Permissionless collection grants no withdrawal right. Two-step control transfer and a delayed, controller-only PONS future-beneficiary change provide explicit management paths. There is no user staking, swap, asset conversion or automatic reward distribution.
+The vault claims native ETH from its immutable escrow, account for actual receipts and pay operating funds only to an immutable payout address under controller authorization. Permissionless collection grants no withdrawal right. Two-step control transfer and a delayed, controller-only PONS future-beneficiary change provide explicit management paths. There is no user staking, swap, asset conversion or automatic reward distribution.
 
 `keeper/collection-plan.mjs` is an inert unsigned-call planner, not a daemon or broadcaster. Live activation requires a verified SPORT stack, deployed vault, authorized controller/payout roles and a separately funded ETH keeper. Do not substitute the previously supplied wallet address for the vault address or infer a management role from it.
 

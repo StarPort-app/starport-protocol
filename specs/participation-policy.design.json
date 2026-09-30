@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "starport.participation-policy.design.v0.4",
+  "schemaVersion": "starport.participation-policy.design.v0.5",
   "policyId": "sport-node-participation-r4",
   "status": "proposed_design_only",
   "activationAllowed": false,
@@ -27,10 +27,12 @@
       "extraTransferTaxBps": 0
     },
     "launchQuoteAndCreatorRevenue": {
-      "symbol": "SPCX",
-      "recordedAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+      "symbol": "ETH",
+      "kind": "native",
+      "recordedAddress": null,
+      "ponsPairToken": "0x0000000000000000000000000000000000000000",
       "recordedDecimals": 18,
-      "identityStatus": "recorded_not_freshly_reverified"
+      "identityStatus": "native_chain_currency"
     },
     "creatorFeeTargetBps": 50,
     "treasuryRecipient": {
@@ -47,7 +49,8 @@
       "permissionlessWorldwidePayouts": false,
       "assetAndParticipantEligibilityRequired": true,
       "fallbackAsset": null,
-      "automaticRecipientSubstitutionAllowed": false
+      "automaticRecipientSubstitutionAllowed": false,
+      "fundingRelationship": "Separate explicitly funded ERC20 candidate; ETH fee income is not automatically converted or allocated."
     }
   },
   "rights": {

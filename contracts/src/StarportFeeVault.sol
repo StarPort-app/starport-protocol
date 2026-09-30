@@ -6,14 +6,14 @@ interface IFeeAsset {
     function transfer(address to, uint256 amount) external returns (bool);
 }
 interface IPonsFeeEscrow {
-    function balanceOfToken(address recipient, address token) external view returns (uint256);
-    function claimToken(address token) external;
+    function balanceOf(address recipient) external view returns (uint256);
+    function claim() external returns (uint256);
 }
 interface IPonsFeeRecipient {
     function transferCreatorFeeRecipient(address token, address newRecipient) external;
 }
 
-/// @notice Pulls a single configured fee asset from a single PONS escrow.
+/// @notice Pulls native ETH creator fees from the fixed PONS escrow.
 /// @dev Not a user deposit vault, trading router, reward distributor or autonomous clock.
 contract StarportFeeVault {
     error Unauthorized();
@@ -57,7 +57,8 @@ contract StarportFeeVault {
     event EmergencyNativeRecovered(address indexed recipient, uint256 amount);
 
     constructor(address asset_, address escrow_, address factory_, address controller_, address payout_) {
-        if (asset_.code.length == 0 || escrow_.code.length == 0 || factory_.code.length == 0
+        // PONS uses address(0) for native ETH. ERC-20 and WETH are not substitutes.
+        if (asset_ != address(0) || escrow_.code.length == 0 || factory_.code.length == 0
             || controller_ == address(0) || controller_ == address(this) || payout_ == address(0) || payout_ == address(this)) revert InvalidConfiguration();
         feeAsset = asset_;
         feeEscrow = escrow_;
@@ -72,7 +73,7 @@ contract StarportFeeVault {
     receive() external payable { emit NativeReceived(msg.sender, msg.value); }
 
     function claimable() public view returns (uint256) {
-        return IPonsFeeEscrow(feeEscrow).balanceOfToken(address(this), feeAsset);
+        return IPonsFeeEscrow(feeEscrow).balanceOf(address(this));
     }
 
     /// @notice Anyone may trigger collection; only this vault receives the fees.
@@ -80,10 +81,10 @@ contract StarportFeeVault {
         if (collectionPaused || emergencyMode) revert CollectionPaused();
         uint256 owed = claimable();
         if (owed == 0) return 0;
-        uint256 beforeBalance = IFeeAsset(feeAsset).balanceOf(address(this));
-        IPonsFeeEscrow(feeEscrow).claimToken(feeAsset);
-        uint256 afterBalance = IFeeAsset(feeAsset).balanceOf(address(this));
-        if (afterBalance < beforeBalance || afterBalance - beforeBalance != owed) revert UnexpectedReceipt();
+        uint256 beforeBalance = address(this).balance;
+        uint256 reported = IPonsFeeEscrow(feeEscrow).claim();
+        uint256 afterBalance = address(this).balance;
+        if (reported != owed || afterBalance < beforeBalance || afterBalance - beforeBalance != owed) revert UnexpectedReceipt();
         received = afterBalance - beforeBalance;
         totalCollected += received;
         emit FeesCollected(msg.sender, feeAsset, received);
@@ -92,13 +93,11 @@ contract StarportFeeVault {
     /// @notice Manual spending to the immutable payout address, never to a keeper-selected target.
     function payOperatingFunds(uint256 amount) external onlyController nonReentrant {
         if (emergencyMode) revert EmergencyActive();
-        uint256 beforeVault = IFeeAsset(feeAsset).balanceOf(address(this));
+        uint256 beforeVault = address(this).balance;
         if (amount == 0 || amount > beforeVault) revert InvalidAmount();
-        uint256 beforeRecipient = IFeeAsset(feeAsset).balanceOf(payoutRecipient);
-        (bool ok, bytes memory data) = feeAsset.call(abi.encodeCall(IFeeAsset.transfer, (payoutRecipient, amount)));
-        if (!ok || (data.length != 0 && (data.length != 32 || !abi.decode(data, (bool))))) revert TransferFailed();
-        if (IFeeAsset(feeAsset).balanceOf(address(this)) != beforeVault - amount
-            || IFeeAsset(feeAsset).balanceOf(payoutRecipient) != beforeRecipient + amount) revert UnexpectedReceipt();
+        (bool ok,) = payoutRecipient.call{value: amount}("");
+        if (!ok) revert TransferFailed();
+        if (address(this).balance != beforeVault - amount) revert UnexpectedReceipt();
         emit FundsPaid(payoutRecipient, amount);
     }
 

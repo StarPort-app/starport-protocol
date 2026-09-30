@@ -1,12 +1,12 @@
 import { createPublicClient,http,parseAbi,keccak256,isAddress } from 'viem';
 import { planCollection } from './collection-plan.mjs';
-const SPCX='0x4a0e65a3eccec6dbe60ae065f2e7bb85fae35eea';
+const NATIVE_ETH='0x0000000000000000000000000000000000000000';
 const HASH=/^0x[0-9a-f]{64}$/;
 const same=(a,b)=>typeof a==='string'&&typeof b==='string'&&a.toLowerCase()===b.toLowerCase();
 const vaultAbi=parseAbi(['function feeAsset() view returns (address)','function feeEscrow() view returns (address)','function ponsFactory() view returns (address)',
   'function controller() view returns (address)','function payoutRecipient() view returns (address)','function collectionPaused() view returns (bool)','function emergencyMode() view returns (bool)','function claimable() view returns (uint256)',
   'function collectFees() returns (uint256)']);
-const escrowAbi=parseAbi(['function balanceOfToken(address recipient,address token) view returns (uint256)']);
+const escrowAbi=parseAbi(['function balanceOf(address recipient) view returns (uint256)']);
 const factoryAbi=parseAbi(['struct LaunchedToken { address token; address curve; address deployer; address creatorFeeRecipient; address pairToken; uint256 graduationThreshold; uint24 poolFee; int24 tickSpacing; uint16 creatorTaxBps; bool buybackEnabled; uint8 phase; uint256 sweptQuote; uint256 sweptTokens; uint256 sweptAt; bool exists; }',
   'function getLaunchedToken(address token) view returns (LaunchedToken)']);
 
@@ -17,7 +17,7 @@ export function preparationBlocker(config){
   if(!config.vaultAddress)return 'vault_not_deployed';
   if(!config.projectTokenAddress)return 'SPORT_not_launched';
   if(![config.vaultAddress,config.projectTokenAddress,config.feeAsset,config.feeEscrowReference,config.ponsFactoryReference,config.controller,config.payoutRecipient,config.keeperAddress].every(a=>typeof a==='string'&&isAddress(a)))return 'invalid_address';
-  if(!same(config.feeAsset,SPCX)||same(config.keeperAddress,config.controller)||same(config.keeperAddress,config.payoutRecipient)||config.creatorTaxBps!==50)return 'role_or_asset_mismatch';
+  if(!same(config.feeAsset,NATIVE_ETH)||same(config.keeperAddress,config.controller)||same(config.keeperAddress,config.payoutRecipient)||config.creatorTaxBps!==50)return 'role_or_asset_mismatch';
   if(![config.vaultCodeHash,config.feeEscrowCodeHash,config.ponsFactoryCodeHash].every(v=>typeof v==='string'&&HASH.test(v))||config.deployedStackCompatibilityVerified!==true)return 'stack_review_required';
   return null;
 }
@@ -46,7 +46,7 @@ export async function observeCollection(config,client,{pendingSubmission=false,n
   if(!same(asset,config.feeAsset)||!same(escrow,config.feeEscrowReference)||!same(factory,config.ponsFactoryReference)||!same(controller,config.controller)||!same(payout,config.payoutRecipient)||typeof paused!=='boolean'||typeof emergency!=='boolean'||typeof claimable!=='bigint')throw new Error('Vault binding changed');
   const [launch,escrowOwed,keeperEth]=await Promise.all([
     client.readContract({address:factory,abi:factoryAbi,functionName:'getLaunchedToken',args:[config.projectTokenAddress],blockNumber}),
-    client.readContract({address:escrow,abi:escrowAbi,functionName:'balanceOfToken',args:[config.vaultAddress,asset],blockNumber}),
+    client.readContract({address:escrow,abi:escrowAbi,functionName:'balanceOf',args:[config.vaultAddress],blockNumber}),
     client.getBalance({address:config.keeperAddress,blockNumber}),
   ]);
   if(!launch.exists||!same(launch.token,config.projectTokenAddress)||!same(launch.creatorFeeRecipient,config.vaultAddress)||!same(launch.pairToken,asset)||Number(launch.creatorTaxBps)!==50||escrowOwed!==claimable)throw new Error('PONS beneficiary binding changed');

@@ -1,4 +1,4 @@
-import { PUBLIC_PATHS, READ_API_VERSION, ReadOnlyClientError, SPCX_ADDRESS,
+import { PUBLIC_PATHS, READ_API_VERSION, ReadOnlyClientError,
   type AnyReadResult, type PublicReadError, type ReadResource, type ReadResults, type SourceMeta } from "./types.js";
 
 const SOURCES = ["onchain","issuer_api","orbital_catalog","node_statement","design_fixture","application_db","indexer","mixed"];
@@ -162,12 +162,11 @@ export function validateReadEnvelope<R extends ReadResource>(resource: R, value:
     if (meta.source === "design_fixture" ? meta.observedAt !== null || meta.freshness !== "unknown" : !meta.observedAt || meta.freshness !== "fresh") fail();
   } else if (resource === "launchTarget") {
     const d=object(e.data,["chainId","quoteAsset","creatorTaxBps","creatorTaxRule","projectTokenAddress","projectTokenTicker","evidenceDocument","launchEnabled","treasuryRecipientTarget","actualCreatorFeeRecipient","creatorRecipientBindingStatus"]);
-    const a=object(d.quoteAsset,["chainId","address","symbol","decimals","decimalsVerified"]);
+    const a=object(d.quoteAsset,["chainId","address","kind","symbol","decimals","decimalsVerified"]);
     if (meta.source !== "design_fixture" || meta.observedAt !== null || meta.freshness !== "unknown" || meta.checkpoint !== null
       || d.chainId !== 4663 || d.creatorTaxBps !== 50 || d.creatorTaxRule !== "source_confirmed" || d.projectTokenAddress !== null || d.projectTokenTicker !== "SPORT"
-      || d.evidenceDocument !== "docs/pons-spcx.md" || d.launchEnabled !== false || d.treasuryRecipientTarget !== null || d.actualCreatorFeeRecipient !== null
-      || d.creatorRecipientBindingStatus !== "pending_vault_deployment_and_PONS_binding" || a.chainId !== 4663 || !address(a.address)
-      || a.address.toLowerCase() !== SPCX_ADDRESS.toLowerCase() || a.symbol !== "SPCX" || a.decimals !== 18 || a.decimalsVerified !== true) fail();
+      || d.evidenceDocument !== "docs/pons-eth.md" || d.launchEnabled !== false || d.treasuryRecipientTarget !== null || d.actualCreatorFeeRecipient !== null
+      || d.creatorRecipientBindingStatus !== "pending_vault_deployment_and_PONS_binding" || a.chainId !== 4663 || a.address !== null || a.kind !== "native" || a.symbol !== "ETH" || a.decimals !== 18 || a.decimalsVerified !== true) fail();
   } else if (resource === "referencePrice") {
     const d=object(e.data,["chainId","assetAddress","symbol","bid","ask","currency","isTradingHalt","generatedAt","fetchedAt","expiresAt","sourceUrl","priceBasis","multiplierAdjusted","executable"]);
     if (d.chainId !== 4663 || !address(d.assetAddress) || !text(d.symbol,32) || !/^[A-Z][A-Z0-9]{0,22}(?:[.-][A-Z0-9]{1,8})?$/.test(d.symbol)

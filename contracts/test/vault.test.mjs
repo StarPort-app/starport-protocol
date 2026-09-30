@@ -3,12 +3,12 @@ import { before,after,test } from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
-import { createPublicClient,createWalletClient,defineChain,http } from 'viem';
+import { createPublicClient,createWalletClient,defineChain,http,zeroAddress,toFunctionSelector } from 'viem';
 import { planCollection } from '../keeper/collection-plan.mjs';
 let child,client,wallet,accounts;
 const artifacts={};
 before(async()=>{
-  for(const name of ['StarportFeeVault','FixtureAsset','FixtureEscrow','FixtureFactory','FixtureTransferTaxAsset'])artifacts[name]=JSON.parse(await readFile(new URL(`../out/${name}.json`,import.meta.url),'utf8'));
+  for(const name of ['StarportFeeVault','FixtureAsset','FixtureNativeEscrow','FixtureFactory','FixtureTransferTaxAsset'])artifacts[name]=JSON.parse(await readFile(new URL(`../out/${name}.json`,import.meta.url),'utf8'));
   const server=createServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const port=server.address().port;await new Promise(resolve=>server.close(resolve));
   child=spawn('anvil',['--host','127.0.0.1','--port',String(port),'--chain-id','4663','--accounts','4','--silent'],{stdio:'ignore'});
   const url=`http://127.0.0.1:${port}`,chain=defineChain({id:4663,name:'Starport isolated local EVM',nativeCurrency:{name:'Local ETH',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[url]}}});
@@ -20,41 +20,54 @@ after(()=>{child?.kill('SIGTERM');});
 async function deploy(name,args=[]){const a=artifacts[name],tx=await wallet.deployContract({account:accounts[0],abi:a.abi,bytecode:a.bytecode,args});return (await client.waitForTransactionReceipt({hash:tx})).contractAddress;}
 async function write(name,address,functionName,args=[],account=accounts[0],gas){const tx=await wallet.writeContract({address,abi:artifacts[name].abi,functionName,args,account,...(gas?{gas}:{})});return client.waitForTransactionReceipt({hash:tx});}
 const read=(name,address,functionName,args=[])=>client.readContract({address,abi:artifacts[name].abi,functionName,args});
-async function setup(){const asset=await deploy('FixtureAsset'),escrow=await deploy('FixtureEscrow'),factory=await deploy('FixtureFactory');
-  const vault=await deploy('StarportFeeVault',[asset,escrow,factory,accounts[0],accounts[1]]);return {asset,escrow,factory,vault};}
+async function credit(escrow,vault,amount){const hash=await wallet.writeContract({account:accounts[0],address:escrow,abi:artifacts.FixtureNativeEscrow.abi,functionName:'credit',args:[vault],value:amount});return client.waitForTransactionReceipt({hash});}
+async function setup(){const asset=await deploy('FixtureAsset'),escrow=await deploy('FixtureNativeEscrow'),factory=await deploy('FixtureFactory');
+  const vault=await deploy('StarportFeeVault',[zeroAddress,escrow,factory,accounts[0],accounts[1]]);return {asset,escrow,factory,vault};}
 
 test('keeper can collect only to vault; repeat collection does not duplicate receipts; spending stays controller-only',async()=>{
-  const {asset,escrow,vault}=await setup();await write('FixtureEscrow',escrow,'credit',[vault,asset,100n]);
+  const {asset,escrow,vault}=await setup();await credit(escrow,vault,100n);
   assert.equal((await write('StarportFeeVault',vault,'collectFees',[],accounts[2])).status,'success');
-  assert.equal(await read('FixtureAsset',asset,'balanceOf',[vault]),100n);assert.equal(await read('FixtureAsset',asset,'balanceOf',[accounts[2]]),0n);
+  assert.equal(await client.getBalance({address:vault}),100n);assert.equal(await read('StarportFeeVault',vault,'feeAsset'),zeroAddress);
   await write('StarportFeeVault',vault,'collectFees',[],accounts[2]);assert.equal(await read('StarportFeeVault',vault,'totalCollected'),100n);
   assert.equal((await write('StarportFeeVault',vault,'payOperatingFunds',[10n],accounts[2],500000n)).status,'reverted');
-  await write('StarportFeeVault',vault,'payOperatingFunds',[25n]);assert.equal(await read('FixtureAsset',asset,'balanceOf',[accounts[1]]),25n);
+  const payoutBefore=await client.getBalance({address:accounts[1]});await write('StarportFeeVault',vault,'payOperatingFunds',[25n]);assert.equal(await client.getBalance({address:accounts[1]}),payoutBefore+25n);
 });
-test('failed token delivery reverts the local claim transaction and leaves fee credit available',async()=>{
-  const {asset,escrow,vault}=await setup();await write('FixtureEscrow',escrow,'credit',[vault,asset,100n]);await write('FixtureAsset',asset,'setFailure',[true]);
+test('short native ETH delivery reverts the local claim transaction and leaves fee credit available',async()=>{
+  const {asset,escrow,vault}=await setup();await credit(escrow,vault,100n);await write('FixtureNativeEscrow',escrow,'setShortPayment',[true]);
   assert.equal((await write('StarportFeeVault',vault,'collectFees',[],accounts[2],500000n)).status,'reverted');
-  assert.equal(await read('FixtureEscrow',escrow,'balanceOfToken',[vault,asset]),100n);assert.equal(await read('StarportFeeVault',vault,'totalCollected'),0n);
+  assert.equal(await read('FixtureNativeEscrow',escrow,'balanceOf',[vault]),100n);assert.equal(await read('StarportFeeVault',vault,'totalCollected'),0n);
 });
 test('controller handover requires acceptance; a future beneficiary change is delayed and does not move old funds',async()=>{
   const {asset,escrow,factory,vault}=await setup();await write('FixtureFactory',factory,'set',[asset,vault]);
-  await write('FixtureEscrow',escrow,'credit',[vault,asset,100n]);await write('StarportFeeVault',vault,'collectFees');
-  await write('FixtureEscrow',escrow,'credit',[vault,asset,25n]);
+  await credit(escrow,vault,100n);await write('StarportFeeVault',vault,'collectFees');
+  await credit(escrow,vault,25n);
   await write('StarportFeeVault',vault,'proposeController',[accounts[3]]);assert.equal((await read('StarportFeeVault',vault,'controller')).toLowerCase(),accounts[0].toLowerCase());
   await write('StarportFeeVault',vault,'acceptController',[],accounts[3]);
   await write('StarportFeeVault',vault,'proposeFutureRecipient',[asset,accounts[1]],accounts[3]);
   assert.equal((await write('StarportFeeVault',vault,'executeFutureRecipient',[],accounts[3],500000n)).status,'reverted');
   await client.request({method:'evm_increaseTime',params:[172801]});await client.request({method:'evm_mine',params:[]});
   await write('StarportFeeVault',vault,'executeFutureRecipient',[],accounts[3]);assert.equal((await read('FixtureFactory',factory,'recipients',[asset])).toLowerCase(),accounts[1].toLowerCase());
-  assert.equal(await read('FixtureEscrow',escrow,'balanceOfToken',[vault,asset]),25n);
-  assert.equal(await read('FixtureAsset',asset,'balanceOf',[vault]),100n);
+  assert.equal(await read('FixtureNativeEscrow',escrow,'balanceOf',[vault]),25n);
+  assert.equal(await client.getBalance({address:vault}),100n);
 });
 test('keeper planner needs binding, ETH and no pending submission; it never broadcasts or changes recipient',()=>{
   const config={vaultAddress:accounts[0],escrowAddress:accounts[1],vaultCodeHash:`0x${'ab'.repeat(32)}`,minimumClaimRaw:'0'};
-  const snapshot={chainId:4663,vaultAddress:accounts[0],feeEscrow:accounts[1],feeAsset:'0x4a0e65a3eccec6dbe60ae065f2e7bb85fae35eea',creatorFeeRecipient:accounts[0],vaultCodeHash:config.vaultCodeHash,blockHash:`0x${'cd'.repeat(32)}`,observedAt:new Date().toISOString(),claimableRaw:'1',keeperEthWei:'100',estimatedGasWei:'50',collectionPaused:false,emergencyMode:false,pendingSubmission:false};
+  const snapshot={chainId:4663,vaultAddress:accounts[0],feeEscrow:accounts[1],feeAsset:zeroAddress,creatorFeeRecipient:accounts[0],vaultCodeHash:config.vaultCodeHash,blockHash:`0x${'cd'.repeat(32)}`,observedAt:new Date().toISOString(),claimableRaw:'1',keeperEthWei:'100',estimatedGasWei:'50',collectionPaused:false,emergencyMode:false,pendingSubmission:false};
   assert.equal(planCollection(config,snapshot).action,'prepare');assert.equal(planCollection(config,{...snapshot,keeperEthWei:'0'}).action,'wait');
   assert.equal(planCollection(config,{...snapshot,pendingSubmission:true}).action,'reconcile');assert.equal(planCollection(config,{...snapshot,feeAsset:accounts[2]}).action,'disabled');
   assert.equal(planCollection(config,{...snapshot,emergencyMode:true}).reason,'emergency_mode');
+});
+test('native fee asset is explicit; ERC-20 fee configuration is refused and direct donations are not escrow collections',async()=>{
+  const {asset,escrow,factory,vault}=await setup();
+  const artifact=artifacts.StarportFeeVault;
+  const bad=await wallet.deployContract({account:accounts[0],abi:artifact.abi,bytecode:artifact.bytecode,args:[asset,escrow,factory,accounts[0],accounts[1]],gas:2000000n});
+  assert.equal((await client.waitForTransactionReceipt({hash:bad})).status,'reverted');
+  const trace=await client.request({method:'debug_traceTransaction',params:[bad,{}]});
+  assert.equal(trace.returnValue.replace(/^0x/,''),toFunctionSelector('InvalidConfiguration()').slice(2));
+  await client.waitForTransactionReceipt({hash:await wallet.sendTransaction({account:accounts[2],to:vault,value:37n})});
+  await credit(escrow,vault,100n);await write('StarportFeeVault',vault,'collectFees',[],accounts[2]);
+  assert.equal(await client.getBalance({address:vault}),137n);assert.equal(await read('StarportFeeVault',vault,'totalCollected'),100n);
+  assert.equal(await read('StarportFeeVault',vault,'claimable'),0n);
 });
 
 test('ETH and another ERC-20 are accepted without creating fee income; only controller may recover to fixed payout',async()=>{

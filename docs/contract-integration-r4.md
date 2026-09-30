@@ -1,3 +1,5 @@
+> **R6 update:** Launch quote and creator revenue are now native ETH. Earlier SPCX launch references below are historical, not the current configuration. SPCX remains a separately funded ERC-20 reward candidate; automatic conversion and rewards stay off. See [native ETH scope](pons-eth.md).
+
 # Starport Contract Integration — R4 Design
 
 **Implementation status:** this document preserves the historical R4 target interfaces, not the final implementation ABI. See [Earn implementation](earn-implementation.md), [Pay/Trade implementation](execution-implementation.md), and [the implementation map](implementation-status.md) for actual source coverage and differences. [SPCX fee vault first](fee-vault-r5.md) supersedes the plain-wallet fee-recipient target. Fee-vault roles have been selected as preparation inputs; new Earn/Pay/Trade roles and deployment addresses remain unassigned.

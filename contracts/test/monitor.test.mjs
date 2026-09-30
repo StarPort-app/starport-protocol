@@ -9,7 +9,7 @@ const config={...design,deploymentPaused:false,emergencyPermissionsReviewed:true
 function fixture(){let calls=0,changed=false;return {count:()=>calls,reorg:()=>{changed=true;},client:{
   async getChainId(){calls++;return 4663;},async getBlock(q){calls++;return {number:10n,timestamp:BigInt(now/1000-1),hash:q.blockNumber&&changed?`0x${'cd'.repeat(32)}`:blockHash};},
   async getBytecode(){calls++;return code;},async getBalance(){calls++;return 1000n;},async estimateContractGas(){calls++;return 100n;},async getGasPrice(){calls++;return 2n;},
-  async readContract(q){calls++;const values={feeAsset:config.feeAsset,feeEscrow:config.feeEscrowReference,ponsFactory:config.ponsFactoryReference,controller:config.controller,payoutRecipient:config.payoutRecipient,collectionPaused:false,emergencyMode:false,claimable:5n,balanceOfToken:5n,
+  async readContract(q){calls++;const values={feeAsset:config.feeAsset,feeEscrow:config.feeEscrowReference,ponsFactory:config.ponsFactoryReference,controller:config.controller,payoutRecipient:config.payoutRecipient,collectionPaused:false,emergencyMode:false,claimable:5n,balanceOf:5n,
     getLaunchedToken:{exists:true,token:config.projectTokenAddress,creatorFeeRecipient:config.vaultAddress,pairToken:config.feeAsset,creatorTaxBps:50}};if(!(q.functionName in values))throw Error('Unexpected method');return values[q.functionName];},
 }};}
 test('deployment pause and unresolved submissions make no network request',async()=>{
@@ -22,6 +22,7 @@ test('observer binds reviewed code, roles, token, quote and a coherent block wit
   const g=fixture();g.reorg();await assert.rejects(observeCollection(config,g.client,{now:()=>now}));
 });
 test('invalid asset/role configuration and foreign RPC hosts are refused',()=>{
+  assert.equal(preparationBlocker({...config,feeAsset:'0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa'}),'role_or_asset_mismatch');
   assert.equal(preparationBlocker({...config,keeperAddress:config.controller}),'role_or_asset_mismatch');
   for(const url of ['http://robinhood-mainnet.g.alchemy.com/v2/x','https://evil.invalid/v2/x','https://robinhood-mainnet.g.alchemy.com/v2/x?token=y'])assert.throws(()=>createObserverClient(url));
 });
