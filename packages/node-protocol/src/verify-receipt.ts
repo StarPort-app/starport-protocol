@@ -65,10 +65,21 @@ export function verifyReceiptSubmission(submission: unknown, context: ReceiptVer
   } catch { return reject('INVALID_STATEMENT'); }
 }
 
-/** Bounded single-process reference replay guard. Production consumers need an atomic durable unique key. */
-export function createReceiptVerifier(maxEntries = 1000) {
+import { type ReceiptReplayStore, MemoryReceiptReplayStore } from './durable-store.js';
+
+export interface ReceiptVerifierOptions {
+  readonly maxEntries?: number;
+  readonly store?: ReceiptReplayStore;
+}
+
+/**
+ * Receipt verifier with bounded replay protection.
+ * Supports in-memory replay guard (default) or pluggable durable stores (e.g. DurableFileReceiptReplayStore).
+ */
+export function createReceiptVerifier(options: number | ReceiptVerifierOptions = 1000) {
+  const maxEntries = typeof options === 'number' ? options : (options?.maxEntries ?? 1000);
   if (!Number.isSafeInteger(maxEntries) || maxEntries < 1 || maxEntries > 100_000) throw new Error('Invalid replay capacity');
-  const used = new Map<string, number>();
+  const store: ReceiptReplayStore = typeof options === 'object' && options?.store ? options.store : new MemoryReceiptReplayStore();
   let lastReceivedAt = -1;
   return {
     accept(submission: unknown, context: ReceiptVerificationContext): ReceiptVerification {
@@ -78,12 +89,16 @@ export function createReceiptVerifier(maxEntries = 1000) {
       lastReceivedAt = context.receivedAtMs;
       const a = context.assignment;
       // Expired attempts cannot pass verification again at this receiver time.
-      for (const [key, expires] of used) if (expires < context.receivedAtMs) used.delete(key);
+      store.prune(context.receivedAtMs);
       const key = JSON.stringify([a.nodeId, a.taskId, a.attemptId]);
-      if (used.has(key)) return reject('ATTEMPT_ALREADY_USED');
-      if (used.size >= maxEntries) return reject('CAPACITY_REACHED');
-      used.set(key, time(a.expiresAt));
+      if (store.has(key)) return reject('ATTEMPT_ALREADY_USED');
+      if (store.size() >= maxEntries) return reject('CAPACITY_REACHED');
+      store.set(key, time(a.expiresAt));
       return result;
     },
+    get store() {
+      return store;
+    }
   };
 }
+

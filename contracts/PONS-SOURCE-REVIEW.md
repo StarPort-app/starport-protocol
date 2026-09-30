@@ -24,7 +24,7 @@ Explorer reports the same compiler/EVM/optimizer settings, source path `contract
 
 - `transferCreatorFeeRecipient(token, newRecipient)` requires an existing launch and `msg.sender == launch.creatorFeeRecipient`. Starport must be registered as the recipient before its migration path works.
 - The factory propagates recipient changes to the active curve or pool hook and the buyback vault. This is not a transfer of assets already held by Starport or old escrow credits.
-- Source checks creator tax against `maxCreatorTaxBps` and combined fee ceilings; no 1% minimum appears in the reviewed launch validation. The 0.5% target remains conditional on current mutable limits, approved pairing, launch configuration and helper validation at launch time.
+- Source checks creator tax against `maxCreatorTaxBps` and combined fee ceilings; no 1% minimum is forced by the contract math. The active target is **100 bps (1%)** in native ETH, selected on September 30, 2026. The 1% target remains conditional on current mutable limits, approved pairing, launch configuration and helper validation at launch time.
 - The PONS owner can propose a creator-recipient override with a three-day delay and a three-day execution window. Self-service recipient migration does not cancel it. Starport's local emergency mode cannot stop an upstream override.
 
 ## Remaining deployment checks

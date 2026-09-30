@@ -16,6 +16,7 @@ contract FundedMerkleRewards is GuardedEntry {
     error InvalidProof();
     error AlreadyClaimed();
     error Ineligible();
+    error Challenged();
     uint256 public constant EPOCH_SECONDS = 3 days;
     uint256 public constant PROPOSAL_WINDOW = 2 days;
     uint256 public constant REVIEW_DELAY = 3 days;
@@ -48,23 +49,32 @@ contract FundedMerkleRewards is GuardedEntry {
     }
     mapping(uint256 => Epoch) public epochs;
     mapping(uint256 => mapping(uint256 => uint256)) private claimedBits;
+    mapping(uint256 => bool) public epochDisputed;
+    mapping(uint256 => bytes32) public epochChallengeEvidence;
+    uint256 public immutable challengeBond;
+    mapping(uint256 => address) public epochChallenger;
+    mapping(uint256 => uint256) public epochChallengeBond;
     event EpochFunded(uint256 indexed id, address indexed funder, uint256 amount, bytes32 policyHash);
     event RootProposed(uint256 indexed id, bytes32 root, bytes32 manifestHash, uint256 allocated, uint256 reviewEndsAt);
     event RootReviewed(uint256 indexed id, bytes32 root, bool approved);
     event RootChallenged(uint256 indexed id, address indexed challenger, bytes32 evidenceHash);
+    event ChallengeResolved(uint256 indexed id, bool cleared);
+    event ChallengeBondSlashed(uint256 indexed id, address indexed challenger, uint256 amount);
+    event ChallengeBondRefunded(uint256 indexed id, address indexed challenger, uint256 amount);
     event EpochFinalized(uint256 indexed id, bytes32 root, uint256 deadline);
     event RewardClaimed(uint256 indexed id, uint256 indexed index, address indexed participant, uint256 amount);
     event ClaimPauseChanged(uint256 indexed id, bool paused);
     event EpochClosed(uint256 indexed id, address indexed funder, uint256 returned);
 
-    constructor(address asset_, address publisher_, address reviewer_, address eligibility_, uint256 start_, address funder_, uint256 budgetCap_) {
+    constructor(address asset_, address publisher_, address reviewer_, address eligibility_, uint256 start_, address funder_, uint256 budgetCap_, uint256 bond_) {
         if (asset_.code.length == 0 || eligibility_.code.length == 0 || publisher_ == address(0)
             || reviewer_ == address(0) || publisher_ == reviewer_ || start_ <= block.timestamp
-            || funder_ == address(0) || funder_ == address(this) || budgetCap_ == 0) revert InvalidConfiguration();
+            || funder_ == address(0) || funder_ == address(this) || budgetCap_ == 0 || bond_ == 0) revert InvalidConfiguration();
         rewardAsset = asset_; publisher = publisher_; reviewer = reviewer_;
         eligibility = IRewardEligibility(eligibility_); firstEpochStart = start_;
         eligibilityCodeHash = eligibility_.codehash;
         fundingAuthority = funder_; maxEpochBudget = budgetCap_;
+        challengeBond = bond_;
     }
     function epochStart(uint256 id) public view returns (uint256) { return firstEpochStart + id * EPOCH_SECONDS; }
     function epochEnd(uint256 id) public view returns (uint256) { return epochStart(id) + EPOCH_SECONDS; }
@@ -96,16 +106,47 @@ contract FundedMerkleRewards is GuardedEntry {
             || block.timestamp > epochEnd(id) + FINALIZATION_WINDOW) revert InvalidEpoch();
         e.reviewed = approved; emit RootReviewed(id, e.root, approved);
     }
-    /// @dev A public evidence notice, not an automatic veto: economic review remains an explicit trust boundary.
-    function challengeRoot(uint256 id, bytes32 evidenceHash) external {
+    /// @dev A public evidence notice and dispute gate: halts finalization until resolved by independent reviewer.
+    /// Strictly requires depositing challengeBond to prevent frivolous or griefing denial-of-service.
+    function challengeRoot(uint256 id, bytes32 evidenceHash) external nonReentrant {
         Epoch storage e = epochs[id];
         if (e.closed || e.proposedAt == 0 || e.finalizedAt != 0 || evidenceHash == bytes32(0)
-            || block.timestamp > epochEnd(id) + FINALIZATION_WINDOW) revert InvalidEpoch();
+            || epochDisputed[id] || block.timestamp > epochEnd(id) + FINALIZATION_WINDOW) revert InvalidEpoch();
+        ExactAsset.move(rewardAsset, msg.sender, address(this), challengeBond, true);
+        epochChallenger[id] = msg.sender;
+        epochChallengeBond[id] = challengeBond;
+        epochDisputed[id] = true;
+        epochChallengeEvidence[id] = evidenceHash;
         emit RootChallenged(id, msg.sender, evidenceHash);
+    }
+    /// @notice Allows the independent reviewer to explicitly clear or uphold a challenge after offchain evidence review.
+    /// Slashes the bond to the epoch funder if the challenge is dismissed as spam; refunds the bond if upheld.
+    function resolveChallenge(uint256 id, bool clearDispute) external nonReentrant {
+        if (msg.sender != reviewer) revert Unauthorized();
+        Epoch storage e = epochs[id];
+        if (e.closed || e.proposedAt == 0 || e.finalizedAt != 0 || !epochDisputed[id]) revert InvalidEpoch();
+        epochDisputed[id] = !clearDispute;
+        uint256 bond = epochChallengeBond[id];
+        address challenger = epochChallenger[id];
+        delete epochChallengeBond[id];
+        delete epochChallenger[id];
+        if (bond != 0) {
+            if (clearDispute) {
+                // Spam challenge dismissed: bond is slashed and credited to the epoch funder
+                ExactAsset.move(rewardAsset, address(this), e.funder, bond, false);
+                emit ChallengeBondSlashed(id, challenger, bond);
+            } else {
+                // Challenge upheld: bond refunded in full to challenger
+                ExactAsset.move(rewardAsset, address(this), challenger, bond, false);
+                emit ChallengeBondRefunded(id, challenger, bond);
+            }
+        }
+        emit ChallengeResolved(id, clearDispute);
     }
     function finalize(uint256 id) external {
         Epoch storage e = epochs[id];
         if (e.closed || !e.reviewed || e.proposedAt == 0 || e.finalizedAt != 0) revert InvalidEpoch();
+        if (epochDisputed[id]) revert Challenged();
         if (block.timestamp < e.proposedAt + REVIEW_DELAY || block.timestamp > epochEnd(id) + FINALIZATION_WINDOW) revert OutsideWindow();
         e.finalizedAt = block.timestamp;
         emit EpochFinalized(id, e.root, claimDeadline(id));
@@ -164,6 +205,14 @@ contract FundedMerkleRewards is GuardedEntry {
         uint256 deadline = e.finalizedAt == 0 ? epochEnd(id) + FINALIZATION_WINDOW : claimDeadline(id);
         if (block.timestamp <= deadline) revert OutsideWindow();
         e.closed = true;
+        uint256 bond = epochChallengeBond[id];
+        if (bond != 0) {
+            address challenger = epochChallenger[id];
+            delete epochChallengeBond[id];
+            delete epochChallenger[id];
+            ExactAsset.move(rewardAsset, address(this), challenger, bond, false);
+            emit ChallengeBondRefunded(id, challenger, bond);
+        }
         uint256 remaining = e.funded - e.claimed; totalReserved -= remaining;
         if (remaining != 0) ExactAsset.move(rewardAsset, address(this), e.funder, remaining, false);
         emit EpochClosed(id, e.funder, remaining);

@@ -24,13 +24,21 @@ async function credit(escrow,vault,amount){const hash=await wallet.writeContract
 async function setup(){const asset=await deploy('FixtureAsset'),escrow=await deploy('FixtureNativeEscrow'),factory=await deploy('FixtureFactory');
   const vault=await deploy('StarportFeeVault',[zeroAddress,escrow,factory,accounts[0],accounts[1]]);return {asset,escrow,factory,vault};}
 
-test('keeper can collect only to vault; repeat collection does not duplicate receipts; spending stays controller-only',async()=>{
+test('keeper can collect only to vault; repeat collection does not duplicate receipts; spending stays controller-only with 48h timelock',async()=>{
   const {asset,escrow,vault}=await setup();await credit(escrow,vault,100n);
   assert.equal((await write('StarportFeeVault',vault,'collectFees',[],accounts[2])).status,'success');
   assert.equal(await client.getBalance({address:vault}),100n);assert.equal(await read('StarportFeeVault',vault,'feeAsset'),zeroAddress);
   await write('StarportFeeVault',vault,'collectFees',[],accounts[2]);assert.equal(await read('StarportFeeVault',vault,'totalCollected'),100n);
-  assert.equal((await write('StarportFeeVault',vault,'payOperatingFunds',[10n],accounts[2],500000n)).status,'reverted');
-  const payoutBefore=await client.getBalance({address:accounts[1]});await write('StarportFeeVault',vault,'payOperatingFunds',[25n]);assert.equal(await client.getBalance({address:accounts[1]}),payoutBefore+25n);
+  assert.equal((await write('StarportFeeVault',vault,'queueOperatingFunds',[10n],accounts[2],500000n)).status,'reverted');
+  await write('StarportFeeVault',vault,'queueOperatingFunds',[25n]);
+  assert.equal((await write('StarportFeeVault',vault,'executeOperatingFunds',[],accounts[0],500000n)).status,'reverted');
+  await client.request({method:'evm_increaseTime',params:[172801]});await client.request({method:'evm_mine',params:[]});
+  const payoutBefore=await client.getBalance({address:accounts[1]});
+  await write('StarportFeeVault',vault,'executeOperatingFunds',[]);
+  assert.equal(await client.getBalance({address:accounts[1]}),payoutBefore+25n);
+  await write('StarportFeeVault',vault,'queueOperatingFunds',[10n]);
+  await write('StarportFeeVault',vault,'cancelOperatingFunds',[]);
+  assert.equal((await read('StarportFeeVault',vault,'queuedPayout'))[2],0n);
 });
 test('short native ETH delivery reverts the local claim transaction and leaves fee credit available',async()=>{
   const {asset,escrow,vault}=await setup();await credit(escrow,vault,100n);await write('FixtureNativeEscrow',escrow,'setShortPayment',[true]);
@@ -80,6 +88,9 @@ test('ETH and another ERC-20 are accepted without creating fee income; only cont
   assert.equal((await write('StarportFeeVault',vault,'setEmergencyMode',[true],accounts[2],500000n)).status,'reverted');
   await write('StarportFeeVault',vault,'setEmergencyMode',[true]);
   for(const [method,args] of [['emergencyRecoverToken',[other,20n]],['emergencyRecoverNative',[200n]]])assert.equal((await write('StarportFeeVault',vault,method,args,accounts[2],500000n)).status,'reverted');
+  assert.equal((await write('StarportFeeVault',vault,'emergencyRecoverToken',[other,20n],accounts[0],500000n)).status,'reverted');
+  assert.equal((await write('StarportFeeVault',vault,'emergencyRecoverNative',[200n],accounts[0],500000n)).status,'reverted');
+  await client.request({method:'evm_increaseTime',params:[86401]});await client.request({method:'evm_mine',params:[]});
   await write('StarportFeeVault',vault,'emergencyRecoverToken',[other,20n]);
   assert.equal(await read('FixtureAsset',other,'balanceOf',[accounts[1]]),20n);assert.equal(await read('FixtureAsset',other,'balanceOf',[vault]),50n);
   const before=await client.getBalance({address:accounts[1]});await write('StarportFeeVault',vault,'emergencyRecoverNative',[200n]);
@@ -106,6 +117,7 @@ test('emergency mode cancels pending changes and needs explicit collection resum
 test('emergency asset failure leaves funds in place; transfer-tax recovery records vault debit rather than promised net credit',async()=>{
   const {vault}=await setup(),other=await deploy('FixtureAsset'),taxed=await deploy('FixtureTransferTaxAsset');
   await write('FixtureAsset',other,'mint',[vault,20n]);await write('FixtureAsset',other,'setFailure',[true]);await write('StarportFeeVault',vault,'setEmergencyMode',[true]);
+  await client.request({method:'evm_increaseTime',params:[86401]});await client.request({method:'evm_mine',params:[]});
   assert.equal((await write('StarportFeeVault',vault,'emergencyRecoverToken',[other,10n],accounts[0],500000n)).status,'reverted');
   assert.equal(await read('FixtureAsset',other,'balanceOf',[vault]),20n);
   await write('FixtureTransferTaxAsset',taxed,'mint',[vault,20n]);await write('StarportFeeVault',vault,'emergencyRecoverToken',[taxed,10n]);

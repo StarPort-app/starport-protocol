@@ -24,3 +24,28 @@ test('renewal is explicit and effective expiry tracks the approvals necessary to
   assert.equal(q.expiresAt,new Date(NOW+NODE_REVIEW_VALIDITY_MS).toISOString());
   assert.equal(evaluateNodeQualification({...policy,enrollmentStatus:'suspended'}).taskEligible,false);
 });
+
+test('qualification reflects verified silicon hardware attestation and RF Doppler pass proofs', () => {
+  const hwValid = { valid: true, hardwareAttested: true, enclaveType: 'tee_sgx' };
+  const rfValid = { valid: true, verifiedRfPass: true, noradId: 58001 };
+
+  const qWithProofs = evaluateNodeQualification({
+    ...policy,
+    hardwareAttestation: hwValid,
+    rfDopplerProof: rfValid,
+  });
+  assert.equal(qWithProofs.state, 'active');
+  assert.equal(qWithProofs.taskEligible, true);
+  assert.equal(qWithProofs.financialEligible, false);
+  assert.equal(qWithProofs.hardwareAttested, true);
+  assert.equal(qWithProofs.rfVerified, true);
+
+  // Invalid proofs fail to set flags
+  const qInvalidProofs = evaluateNodeQualification({
+    ...policy,
+    hardwareAttestation: { valid: false, hardwareAttested: false },
+    rfDopplerProof: { valid: false, verifiedRfPass: false },
+  });
+  assert.equal(qInvalidProofs.hardwareAttested, false);
+  assert.equal(qInvalidProofs.rfVerified, false);
+});

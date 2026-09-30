@@ -44,6 +44,7 @@ The image is an application design preview, not a live network screenshot.
 The consumer application, authentication, indexing, operations and deployment orchestration are maintained separately in starport-app. The public repository is not a fabricated substitute for private runtime code.
 
 ## Start reading
+- [Security & Audit Response (Institutional Architecture)](docs/SECURITY-AND-AUDIT-RESPONSE.md)
 - [Protocol overview](docs/overview.md)
 - [Node and receipt design](docs/node-and-receipts.md)
 - [Assets and rewards](docs/assets-and-rewards.md)

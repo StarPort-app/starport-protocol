@@ -9,11 +9,11 @@ All nine product modules remain available in the design, with Network as the def
 ## Fixed Product Requirements and Recorded Evidence
 
 - Chain target: Robinhood Chain, 4663.
-- Launch quote and creator-fee asset: SPCX at `0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa`, 18 decimals. A matching ticker is not an acceptable substitute.
-- Creator-tax target: 100 bps (1%), selected on September 30, 2026. The recorded source review confirms basis-point precision; the earlier 50-bps investigation is historical evidence, not the active target. The separately recorded 100 bps base curve fee is not a creator-tax minimum.
-- The project name is Starport and ticker is SPORT. The user-selected treasury recipient is `0xAf3eAA38a445392f1E9d1faE463871998745cb75`; address checksum was checked offline, not control or account type. The token contract remains pending deployment; no token has been launched here.
-- Raw SPCX income remains SPCX. Gas is ETH; payment assets, delegation principal, and reward assets are separately configured identities.
-- Automatic conversion is disabled. An SPCX reference valuation cannot fund a nonexistent USDG balance.
+- Launch quote and creator-fee asset: **Native ETH** (PONS `address(0)` sentinel on chain 4663). SPCX remains an indexed RWA stock token in the catalog.
+- Creator-tax target: **100 bps (1%)**, selected on September 30, 2026. The recorded source review confirms basis-point precision; the earlier 50-bps investigation is historical evidence, not the active target.
+- The project name is Starport and ticker is SPORT. The token contract remains pending deployment; no token has been launched here.
+- Fee income is native ETH in wei. Payment assets, delegation principal, and reward assets are separately configured identities.
+- Automatic conversion is disabled. Native ETH fee revenue is not automatically converted into USDG or SPCX.
 
 The evidence and its limits are recorded in [PONS / SPCX evidence](pons-spcx.md). This document does not make a new chain observation. Mutable launch configuration, beneficiary, asset eligibility, and deployed bytecode must be reverified immediately before a separately authorized launch.
 
@@ -125,7 +125,7 @@ Observation targets are registered IDs with request-size, duration, cost, destin
 - The submission endpoint records a hash of a transaction already sent by the user's wallet. It does not receive a signed transaction or broadcast instruction.
 - Session logout, API-key revocation, receipt deletion, and offchain task cancellation do not revoke onchain allowances or financial signatures.
 - A server-side eligibility result must be mapped to a concrete enforceable boundary; it cannot be cited as an onchain restriction unless the actual contract/asset integration enforces it.
-- Fixed source evidence for the 50 bps rule does not authorize a launch or remove the need for fresh mutable-economics and beneficiary checks.
+- Verified source evidence confirms that PONS supports custom basis-point creator tax. The active authorized parameter is **100 bps (1%)** in native ETH. Launch requires verifying mutable factory limits and beneficiary checks.
 
 ## Required Review Evidence Before Activation
 

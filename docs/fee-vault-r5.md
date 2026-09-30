@@ -18,12 +18,12 @@ The user confirmed `0xAf3eAA38a445392f1E9d1faE463871998745cb75` for deployment s
 
 The constructor checklist, read-only binding observer and unsigned job-store foundation can be prepared during this hold. No private key is required now. The keeper schema is not applied by web startup and no keeper service or scheduler has been provisioned.
 
-## Confirmed core
+## Confirmed core (R6 Standard)
 
-- Starport token: SPORT. PONS launch quote: SPCX on Robinhood Chain 4663.
-- Creator tax target: 0.5%; not the all-in trading fee or an additional SPORT transfer tax.
-- Creator proceeds stay in SPCX. USDG belongs to the separate Pay application; it is not substituted for launch proceeds or rewards.
-- ETH pays keeper gas. Automatic SPCX conversion remains off.
+- Starport token: SPORT. PONS launch quote: **Native ETH** on Robinhood Chain 4663 (PONS zero-address sentinel, superseding earlier SPCX quote exploration).
+- Creator tax target: **100 bps (1%)**; explicitly selected on September 30, 2026 (superseding earlier 50 bps / 0.5% research targets). Not an additional SPORT transfer tax.
+- Creator proceeds stay in **native ETH (wei)**. USDG belongs to the separate Pay application; it is not substituted for launch proceeds or rewards.
+- ETH pays keeper gas. Automatic conversion remains off.
 - Application availability does not depend on accumulated token-fee volume. Paid rewards require actual available funding; no projected or unswept fee becomes spendable cash.
 - Three-day reward epochs remain a future funded feature. The hardware work buckets in R4 are inactive during the software-first phase and are not silently reassigned to passive holders.
 

@@ -1,6 +1,11 @@
 # PONS creator-tax source verification
 
-## Answer
+> [!IMPORTANT]
+> **Active Protocol Standard (September 30, 2026):**
+> By explicit user directive, Starport's active launch target is **SPORT / Native ETH with 100 bps (1%) creator tax** (see [pons-eth.md](../pons-eth.md)).
+> The analysis below is preserved as historical architectural research proving that PONS factory math operates with a 10,000 denominator and supports arbitrary basis points (including 50 bps) without a hardcoded 1% minimum. The active operational choice for the protocol is 100 bps (1%) in native ETH.
+
+## Research summary
 
 **Yes. The verified PONS factory source supports `creatorTaxBps = 50`, which is exactly 0.5%. There is no 100 bps / 1% creator-tax minimum in the reviewed launch path. No actual token launch is needed to establish this source-level rule.**
 

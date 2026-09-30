@@ -14,10 +14,10 @@ Confirmed product inputs:
 
 - Product: Starport; token ticker: **SPORT**. The SPORT contract address remains **pending deployment**. Do not substitute a same-symbol token or treat the supplied treasury address as the token address.
 - Chain target: Robinhood Chain **4663**; gas asset: ETH. The official network documentation separately identifies testnet **46630**. Environments must not share deployments or signing domains. [Robinhood network configuration](https://docs.robinhood.com/chain/connecting/)
-- Launch quote / creator-fee asset: SPCX, `0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa`, 18 decimals, from the existing recorded official-asset evidence. No new asset-directory or bytecode observation is claimed here.
-- Treasury / PONS creator-fee recipient selected by the user: **`0xAf3eAA38a445392f1E9d1faE463871998745cb75`**. This is a supplied destination only. Its ownership, wallet type, signing policy, and ability or eligibility to receive assets have not been verified. Do not label it a multisig or assign it administrative roles by inference.
-- PONS creator-tax target: **50 bps (0.50%)**. The existing exact-match source review establishes support for that value; it is not a 100 bps minimum. Mutable launch settings still need fresh verification before a separately authorized launch. [Recorded source-review target](https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e?tab=contract)
-- **No additional SPORT transfer tax**, no Starport wrapper transaction fee in v1, and no automatic SPCX conversion. PONS base fees, creator fees, opening protections, price impact, and gas remain distinct costs; 0.50% is not the all-in trading fee.
+- Launch quote / creator-fee asset: **Native ETH** (PONS `address(0)` sentinel) under the active R6 standard (superseding earlier exploratory SPCX references). SPCX remains an RWA asset in the catalog.
+- Treasury / PONS creator-fee recipient selected by the user: **`0xAf3eAA38a445392f1E9d1faE463871998745cb75`**. This is a supplied destination only. Its ownership, wallet type, signing policy, and ability or eligibility to receive assets have not been verified.
+- PONS creator-tax target: **100 bps (1%)** under the active R6 standard (selected September 30, 2026). The historical 50 bps (0.50%) source review confirmed that PONS contract math operates in basis points without a 100 bps minimum, but 100 bps is the active chosen parameter.
+- **No additional SPORT transfer tax**, no Starport wrapper transaction fee in v1, and no automatic conversion. PONS base fees, creator fees, opening protections, price impact, and gas remain distinct costs; the 1% target is not the all-in trading fee.
 
 R4 supersedes earlier statements that the ticker and treasury recipient are undecided. It does not resolve deployment addresses, signing authority, venue eligibility, or operational permissions. Network remains the default home; all nine modules remain in scope and English-only.
 
@@ -265,7 +265,7 @@ Only matched finality-qualified invoice, withdrawal and reward-claim settlement 
 ## 11. Activation Sequence and Unavailable Dependencies
 
 1. **Design acceptance:** confirm SPORT, supplied recipient, the three contract responsibilities, coordinated economics and explicit eligibility/role decisions. No transaction is implied.
-2. **Source and deployment binding:** pin reviewed code/ABI/library revisions; verify actual SPORT/curve deployment only after a separate launch authorization. Record chain, code hashes, factory record, quote asset, recipient and exact 50 bps creator setting. Do not infer these from a ticker or a deployment directory.
+2. **Source and deployment binding:** pin reviewed code/ABI/library revisions; verify actual SPORT/curve deployment only after a separate launch authorization. Record chain, code hashes, factory record, quote asset, recipient and exact 100 bps creator setting. Do not infer these from a ticker or a deployment directory.
 3. **Read-only adapters:** ingest source-stamped assets, quotes, lifecycle, fees, node evidence and chain finality. Unavailable venues remain unavailable. No credentials, provider purchase or live RPC test is performed here.
 4. **Separately authorized testnet implementation:** implement and review the exact interfaces, signature/nonce rules, invoice handshake, principal escape path and funded-epoch accounting. The current document is not evidence that those checks pass.
 5. **Governed production activation:** only after reviewed deployments, actual adapter compatibility, eligibility, role ownership, available funding and release authorization are established. Publish no “live Starlink execution” or “claimable reward” state from design data.

@@ -38,11 +38,19 @@ contract StarportFeeVault {
     uint256 public totalCollected;
     uint256 private entered;
     uint256 public constant RECIPIENT_CHANGE_DELAY = 2 days;
+    uint256 public constant PAYOUT_TIMELOCK = 48 hours;
+    uint256 public constant EMERGENCY_RECOVERY_TIMELOCK = 24 hours;
+    uint256 public emergencyModeEnteredAt;
     struct RecipientChange { address token; address recipient; uint256 readyAt; }
     RecipientChange public pendingRecipientChange;
+    struct QueuedPayout { address recipient; uint256 amount; uint256 readyAt; }
+    QueuedPayout public queuedPayout;
 
     event FeesCollected(address indexed caller, address indexed asset, uint256 amount);
     event FundsPaid(address indexed recipient, uint256 amount);
+    event PayoutQueued(address indexed recipient, uint256 amount, uint256 readyAt);
+    event PayoutExecuted(address indexed recipient, uint256 amount);
+    event PayoutCancelled(address indexed recipient, uint256 amount);
     event ControllerProposed(address indexed candidate);
     event ControllerChanged(address indexed previous, address indexed next);
     event CollectionPauseChanged(bool paused);
@@ -90,15 +98,35 @@ contract StarportFeeVault {
         emit FeesCollected(msg.sender, feeAsset, received);
     }
 
-    /// @notice Manual spending to the immutable payout address, never to a keeper-selected target.
-    function payOperatingFunds(uint256 amount) external onlyController nonReentrant {
+    /// @notice Queue operating funds to the immutable payout address with an enforced 48-hour timelock.
+    function queueOperatingFunds(uint256 amount) external onlyController nonReentrant {
         if (emergencyMode) revert EmergencyActive();
+        if (amount == 0 || amount > address(this).balance) revert InvalidAmount();
+        uint256 readyAt = block.timestamp + PAYOUT_TIMELOCK;
+        queuedPayout = QueuedPayout(payoutRecipient, amount, readyAt);
+        emit PayoutQueued(payoutRecipient, amount, readyAt);
+    }
+
+    /// @notice Cancel any pending queued operating funds payout.
+    function cancelOperatingFunds() external onlyController {
+        uint256 amount = queuedPayout.amount;
+        delete queuedPayout;
+        emit PayoutCancelled(payoutRecipient, amount);
+    }
+
+    /// @notice Execute a queued payout after the 48-hour timelock has elapsed.
+    function executeOperatingFunds() external onlyController nonReentrant {
+        if (emergencyMode) revert EmergencyActive();
+        QueuedPayout memory payout = queuedPayout;
+        if (payout.readyAt == 0 || block.timestamp < payout.readyAt) revert MigrationNotReady();
         uint256 beforeVault = address(this).balance;
-        if (amount == 0 || amount > beforeVault) revert InvalidAmount();
-        (bool ok,) = payoutRecipient.call{value: amount}("");
+        if (payout.amount == 0 || payout.amount > beforeVault) revert InvalidAmount();
+        delete queuedPayout;
+        (bool ok,) = payoutRecipient.call{value: payout.amount}("");
         if (!ok) revert TransferFailed();
-        if (address(this).balance != beforeVault - amount) revert UnexpectedReceipt();
-        emit FundsPaid(payoutRecipient, amount);
+        if (address(this).balance != beforeVault - payout.amount) revert UnexpectedReceipt();
+        emit FundsPaid(payoutRecipient, payout.amount);
+        emit PayoutExecuted(payoutRecipient, payout.amount);
     }
 
     function setCollectionPaused(bool paused) external onlyController {
@@ -106,11 +134,12 @@ contract StarportFeeVault {
         collectionPaused = paused; emit CollectionPauseChanged(paused);
     }
 
-    /// @notice Freeze collection and invalidate previously queued authority/recipient changes.
+    /// @notice Freeze collection and invalidate previously queued authority/recipient/payout changes.
     /// Leaving emergency mode deliberately does not resume collection automatically.
     function setEmergencyMode(bool enabled) external onlyController nonReentrant {
         emergencyMode = enabled;
         if (enabled) {
+            emergencyModeEnteredAt = block.timestamp;
             collectionPaused = true;
             emit CollectionPauseChanged(true);
             if (pendingController != address(0)) {
@@ -121,14 +150,22 @@ contract StarportFeeVault {
                 delete pendingRecipientChange;
                 emit FutureRecipientCancelled();
             }
+            if (queuedPayout.readyAt != 0) {
+                uint256 amt = queuedPayout.amount;
+                delete queuedPayout;
+                emit PayoutCancelled(payoutRecipient, amt);
+            }
+        } else {
+            emergencyModeEnteredAt = 0;
         }
         emit EmergencyModeChanged(enabled);
     }
 
     /// @notice Recover ERC-20 assets, including SPCX, only to the immutable payout wallet.
-    /// Nonstandard/rebasing/blocked assets may still refuse recovery. No approvals or arbitrary calls.
+    /// Enforces a mandatory 24-hour observation delay after emergencyMode is activated.
     function emergencyRecoverToken(address token, uint256 amount) external onlyController nonReentrant {
         if (!emergencyMode) revert EmergencyRequired();
+        if (block.timestamp < emergencyModeEnteredAt + EMERGENCY_RECOVERY_TIMELOCK) revert MigrationNotReady();
         if (token == address(this) || token.code.length == 0) revert InvalidConfiguration();
         uint256 beforeBalance = IFeeAsset(token).balanceOf(address(this));
         if (amount == 0 || amount > beforeBalance) revert InvalidAmount();
@@ -138,8 +175,10 @@ contract StarportFeeVault {
         emit EmergencyTokenRecovered(token, payoutRecipient, amount);
     }
 
+    /// @notice Recover native ETH only to the immutable payout wallet after the 24-hour emergency timelock.
     function emergencyRecoverNative(uint256 amount) external onlyController nonReentrant {
         if (!emergencyMode) revert EmergencyRequired();
+        if (block.timestamp < emergencyModeEnteredAt + EMERGENCY_RECOVERY_TIMELOCK) revert MigrationNotReady();
         if (amount == 0 || amount > address(this).balance) revert InvalidAmount();
         (bool ok,) = payoutRecipient.call{value: amount}("");
         if (!ok) revert TransferFailed();

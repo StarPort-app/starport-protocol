@@ -22,7 +22,7 @@ async function exactRevert(name,address,functionName,args,account,errorName){awa
 async function at(timestamp){await client.request({method:'evm_setNextBlockTimestamp',params:[Number(timestamp)]});await client.request({method:'evm_mine',params:[]});}
 const now=async()=>(await client.getBlock()).timestamp;
 async function base(){const asset=await deploy('FixtureAsset'),gate=await deploy('FixtureEligibility');return {asset,gate};}
-async function rewards(){const b=await base(),start=await now()+1000n;const vault=await deploy('FundedMerkleRewards',[b.asset,accounts[0],accounts[1],b.gate,start,accounts[0],1000n]);await write('FixtureAsset',b.asset,'mint',[accounts[0],1000n]);await write('FixtureAsset',b.asset,'approve',[vault,1000n]);return {...b,start,vault};}
+async function rewards(bond=25n){const b=await base(),start=await now()+1000n;const vault=await deploy('FundedMerkleRewards',[b.asset,accounts[0],accounts[1],b.gate,start,accounts[0],1000n,bond]);await write('FixtureAsset',b.asset,'mint',[accounts[0],1000n]);await write('FixtureAsset',b.asset,'approve',[vault,1000n]);return {...b,start,vault};}
 function tree(s,entries=[{index:'0',participant:accounts[2],amountRaw:'40'},{index:'1',participant:accounts[3],amountRaw:'30'}],id='0'){return buildRewardManifest({chainId:4663,distributor:s.vault,epochId:id,asset:s.asset,policyHash:POLICY,fundedRaw:'100',entries});}
 async function finalize(s,t){await at(s.start+3n*DAY);await write('FundedMerkleRewards',s.vault,'proposeRoot',[0n,t.root,t.manifestHash,BigInt(t.manifest.allocatedRaw)]);await write('FundedMerkleRewards',s.vault,'reviewRoot',[0n,t.root,t.manifestHash,BigInt(t.manifest.allocatedRaw),true],accounts[1]);const e=await read('FundedMerkleRewards',s.vault,'epochs',[0n]);await at(e[7]+3n*DAY);await write('FundedMerkleRewards',s.vault,'finalize',[0n],accounts[4]);}
 
@@ -113,3 +113,53 @@ test('changed eligibility bytecode stops new deposits and claims without blockin
   await exactRevert('FundedMerkleRewards',s.vault,'claim',[0n,0n,40n,t.proofs[0].proof],accounts[2],'Ineligible');
   assert.equal(await read('FundedMerkleRewards',s.vault,'isClaimed',[0n,0n]),false);
 });
+test('challengeRoot freezes finalization with bond; slashes bond on dismissal and refunds on upheld dispute',async()=>{
+  const bond=25n;
+  const s=await rewards(bond),t=tree(s);
+  await write('FundedMerkleRewards',s.vault,'fundEpoch',[0n,100n,POLICY]);
+  await write('FundedMerkleRewards',s.vault,'fundEpoch',[1n,100n,POLICY]);
+  await at(s.start+3n*DAY);
+  await write('FundedMerkleRewards',s.vault,'proposeRoot',[0n,t.root,t.manifestHash,70n]);
+  await write('FundedMerkleRewards',s.vault,'reviewRoot',[0n,t.root,t.manifestHash,70n,true],accounts[1]);
+  const evidence='0x'+'ee'.repeat(32);
+
+  // Challenger (accounts[3]) needs bond tokens
+  await write('FixtureAsset',s.asset,'mint',[accounts[3],bond*2n]);
+  await write('FixtureAsset',s.asset,'approve',[s.vault,bond*2n],accounts[3]);
+
+  // Challenge root posts the bond
+  await write('FundedMerkleRewards',s.vault,'challengeRoot',[0n,evidence],accounts[3]);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochDisputed',[0n]),true);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochChallengeEvidence',[0n]),evidence);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochChallengeBond',[0n]),bond);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochChallenger',[0n]),accounts[3]);
+
+  // Finalize is blocked while disputed
+  const e=await read('FundedMerkleRewards',s.vault,'epochs',[0n]);
+  await at(e[7]+3n*DAY);
+  await exactRevert('FundedMerkleRewards',s.vault,'finalize',[0n],accounts[4],'Challenged');
+
+  // Reviewer clears frivolous dispute: bond is slashed and given to epoch funder (accounts[0])
+  const funderBefore=await read('FixtureAsset',s.asset,'balanceOf',[accounts[0]]);
+  await write('FundedMerkleRewards',s.vault,'resolveChallenge',[0n,true],accounts[1]);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochDisputed',[0n]),false);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochChallengeBond',[0n]),0n);
+  assert.equal(await read('FixtureAsset',s.asset,'balanceOf',[accounts[0]]),funderBefore+bond);
+
+  // Now finalization proceeds
+  await write('FundedMerkleRewards',s.vault,'finalize',[0n],accounts[4]);
+  assert.notEqual((await read('FundedMerkleRewards',s.vault,'epochs',[0n]))[8],0n);
+
+  // Test upheld challenge on epoch 1: bond refunded to challenger
+  await at(s.start+6n*DAY);
+  await write('FundedMerkleRewards',s.vault,'proposeRoot',[1n,t.root,t.manifestHash,70n]);
+  await write('FundedMerkleRewards',s.vault,'reviewRoot',[1n,t.root,t.manifestHash,70n,true],accounts[1]);
+  await write('FundedMerkleRewards',s.vault,'challengeRoot',[1n,evidence],accounts[3]);
+
+  const challengerBefore=await read('FixtureAsset',s.asset,'balanceOf',[accounts[3]]);
+  // Reviewer upholds challenge (clearDispute = false): bond refunded in full to challenger
+  await write('FundedMerkleRewards',s.vault,'resolveChallenge',[1n,false],accounts[1]);
+  assert.equal(await read('FundedMerkleRewards',s.vault,'epochDisputed',[1n]),true);
+  assert.equal(await read('FixtureAsset',s.asset,'balanceOf',[accounts[3]]),challengerBefore+bond);
+});
+

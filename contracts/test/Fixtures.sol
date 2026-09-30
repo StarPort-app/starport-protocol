@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.37;
 import {TradeExecution, BoundedTradeRouter} from "../src/BoundedTradeRouter.sol";
+import {ExactInputSingleParams} from "../src/adapters/PonsV1TradeAdapter.sol";
 contract FixtureAsset {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
@@ -35,9 +36,27 @@ contract FixtureEscrow {
 }
 contract FixtureFactory {
     mapping(address => address) public recipients;
+    uint256 public creatorTaxBps = 100;
     function set(address token, address recipient) external { recipients[token] = recipient; }
+    function setCreatorTaxBps(uint256 bps) external { creatorTaxBps = bps; }
     function transferCreatorFeeRecipient(address token, address recipient) external {
         require(recipients[token] == msg.sender, "not recipient"); recipients[token] = recipient;
+    }
+}
+contract FixtureGnosisSafe {
+    address[] internal _owners;
+    uint256 internal _threshold;
+    constructor(address[] memory owners_, uint256 threshold_) {
+        _owners = owners_;
+        _threshold = threshold_;
+    }
+    function getOwners() external view returns (address[] memory) { return _owners; }
+    function getThreshold() external view returns (uint256) { return _threshold; }
+    function isOwner(address owner) external view returns (bool) {
+        for (uint256 i = 0; i < _owners.length; i++) {
+            if (_owners[i] == owner) return true;
+        }
+        return false;
     }
 }
 contract FixtureNativeEscrow {
@@ -103,3 +122,81 @@ contract FixtureContractIssuer {
         return enabled && digest == approvedDigest && keccak256(signature) == keccak256(hex"aa") ? bytes4(0x1626ba7e) : bytes4(0xffffffff);
     }
 }
+contract FixturePonsRouter {
+    uint256 public rateMultiplier = 2;
+    bool public failSwap;
+    function setFailSwap(bool fail) external { failSwap = fail; }
+    function setRateMultiplier(uint256 mult) external { rateMultiplier = mult; }
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts) {
+        require(!failSwap, "fixture swap failure");
+        require(block.timestamp <= deadline, "expired");
+        FixtureAsset(path[0]).transferFrom(msg.sender, address(this), amountIn);
+        uint256 out = amountIn * rateMultiplier;
+        require(out >= amountOutMin, "slippage");
+        FixtureAsset(path[1]).mint(to, out);
+        amounts = new uint256[](2);
+        amounts[0] = amountIn;
+        amounts[1] = out;
+    }
+}
+
+contract FixturePonsBondingCurve {
+    uint256 public rateMultiplier = 2;
+    address public quoteAsset;
+    address public baseToken;
+    constructor(address quote_, address base_) {
+        quoteAsset = quote_;
+        baseToken = base_;
+    }
+    function setRateMultiplier(uint256 mult) external { rateMultiplier = mult; }
+    function buy(uint256 amountIn, uint256 minAmountOut, address to) external returns (uint256 amountOut) {
+        FixtureAsset(quoteAsset).transferFrom(msg.sender, address(this), amountIn);
+        amountOut = amountIn * rateMultiplier;
+        require(amountOut >= minAmountOut, "slippage");
+        FixtureAsset(baseToken).mint(to, amountOut);
+    }
+    function sell(uint256 amountIn, uint256 minAmountOut, address to) external returns (uint256 amountOut) {
+        FixtureAsset(baseToken).transferFrom(msg.sender, address(this), amountIn);
+        amountOut = amountIn / rateMultiplier;
+        require(amountOut >= minAmountOut, "slippage");
+        FixtureAsset(quoteAsset).mint(to, amountOut);
+    }
+}
+
+contract FixtureUniversalRouter {
+    uint256 public rateMultiplier = 2;
+    bool public failExecution;
+    function setFailExecution(bool fail) external { failExecution = fail; }
+    function setRateMultiplier(uint256 mult) external { rateMultiplier = mult; }
+    function execute(bytes calldata commands, bytes[] calldata inputs, uint256 deadline) external payable {
+        require(!failExecution, "universal router execution failed");
+        require(block.timestamp <= deadline, "expired");
+        require(commands.length == 1 && commands[0] == 0x10, "invalid command");
+        (bytes memory actions, bytes[] memory params) = abi.decode(inputs[0], (bytes, bytes[]));
+        require(actions.length == 3, "invalid actions");
+        require(uint8(actions[0]) == 0x06, "expected swap single");
+        require(uint8(actions[1]) == 0x0c, "expected settle all");
+        require(uint8(actions[2]) == 0x0f, "expected take all");
+
+        ExactInputSingleParams memory swapParams = abi.decode(params[0], (ExactInputSingleParams));
+        (address settleAsset, uint256 settleAmount) = abi.decode(params[1], (address, uint256));
+        (address takeAsset, uint256 takeMinAmount) = abi.decode(params[2], (address, uint256));
+
+        address assetIn = swapParams.zeroForOne ? swapParams.poolKey.currency0 : swapParams.poolKey.currency1;
+        address assetOut = swapParams.zeroForOne ? swapParams.poolKey.currency1 : swapParams.poolKey.currency0;
+        require(assetIn == settleAsset, "mismatched in");
+        require(assetOut == takeAsset, "mismatched out");
+
+        FixtureAsset(assetIn).transferFrom(msg.sender, address(this), settleAmount);
+        uint256 out = settleAmount * rateMultiplier;
+        require(out >= takeMinAmount, "slippage");
+        FixtureAsset(assetOut).mint(msg.sender, out);
+    }
+}
+

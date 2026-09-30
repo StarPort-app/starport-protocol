@@ -3,7 +3,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { posix } from 'node:path';
 const root=new URL('./',import.meta.url),sources={};
-const initial=['src/StarportFeeVault.sol','src/ExactAsset.sol','src/SportDelegationVault.sol','src/FundedMerkleRewards.sol','src/ActionNonces.sol','src/StarportPaymentRouter.sol','src/BoundedTradeRouter.sol','test/Fixtures.sol'];
+const initial=['src/StarportFeeVault.sol','src/ExactAsset.sol','src/SportDelegationVault.sol','src/FundedMerkleRewards.sol','src/ActionNonces.sol','src/StarportPaymentRouter.sol','src/BoundedTradeRouter.sol','src/adapters/PonsV1TradeAdapter.sol','test/Fixtures.sol'];
 async function loadSource(file){
   if(sources[file])return;
   if(file.includes('..')||!file.endsWith('.sol')||!(/^(src|test)\//.test(file)||file.startsWith('@openzeppelin/contracts/')))throw new Error('Unsupported Solidity source path');

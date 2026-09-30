@@ -17,8 +17,8 @@
 | Project ticker | **SPORT**; token contract, decimals, supply, and allocation remain pending deployment/design confirmation. Never select an asset by ticker alone. |
 | Chain target | Robinhood Chain, **4663**. |
 | Treasury recipient supplied by the user | `0xAf3eAA38a445392f1E9d1faE463871998745cb75`. This is not proof of ownership, signer control, historical fee entitlement, or multisig configuration. |
-| Launch quote / creator-fee asset | SPCX, recorded address `0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa`, recorded decimals 18. Reverify mutable integration details before activation. |
-| Creator-fee target | **50 bps (0.50%)**; not an extra SPORT transfer tax, not all trading fees, and not a deployed setting. |
+| Launch quote / creator-fee asset | **Native ETH** (active R6 standard, superseding earlier R4 SPCX quote research). SPCX remains an indexed RWA asset in the catalog. |
+| Creator-fee target | **100 bps (1%)** (active R6 standard selected September 30, 2026, superseding earlier 50 bps research); not an extra SPORT transfer tax, not all trading fees, and not a deployed setting. |
 | Reward funding | Manually approved, actually received, reconciled SPCX; direct distributions require applicable asset and participant eligibility. |
 | Automatic conversion | **Off**. No synthetic USDG rewards or automatic sale of SPCX. |
 | Initial earning epoch | **3 days (72 hours / 259,200 seconds)**; continuous windows from the configured `firstStartTimestamp`, with no weekday alignment. Activation selects and publishes that first start. |

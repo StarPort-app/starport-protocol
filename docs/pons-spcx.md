@@ -44,7 +44,7 @@ At the saved configuration, the ordinary curve base-plus-creator rate would be 1
 ## What was and was not done
 The source rule is confirmed from explorer-verified code and reviewed downstream tax handling. No Starport token has been launched; no wallet, nonce, approval, signature, broadcast or creation simulation was used. An independent local compiler/runtime reproduction was not performed. Other launch dependencies and mutable parameters must still be read immediately before a separately authorized launch.
 
-The user-reported frontend 1% minimum was not independently reproduced. It does not override the verified factory rule. Do not silently raise the target to 100 bps or replace the SPCX quote asset.
+**Current Active Specification (September 30, 2026):** By explicit user directive, the protocol selected **native ETH** as the launch quote and fee collection asset, with a **100 bps (1%)** creator-tax target (see [pons-eth.md](pons-eth.md) and `contracts/deployment.design.json`). The analysis above documents the architectural research proving the PONS contract math operates in basis-point precision without a hardcoded 1% minimum, while the active protocol decision designates 100 bps in native ETH.
 
 References:
 - https://docs.ponsfamily.com/v2

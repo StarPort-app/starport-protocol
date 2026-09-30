@@ -15,3 +15,5 @@ logs/
 *.log
 contracts/out/
 contracts/cache/
+AGENTS.md
+.agent/

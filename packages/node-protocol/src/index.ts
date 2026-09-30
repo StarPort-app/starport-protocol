@@ -25,7 +25,43 @@ export { projectPublicReceipt } from "./redact.js";
 export { evaluateNodeQualification, NODE_REVIEW_VALIDITY_MS } from './qualification.js';
 export type { NodeQualification, NodeQualificationGrant } from './qualification.js';
 export { verifyReceiptSubmission, createReceiptVerifier } from './verify-receipt.js';
-export type { ReceiptVerificationContext, ReceiptVerification } from './verify-receipt.js';
+export type { ReceiptVerificationContext, ReceiptVerification, ReceiptVerifierOptions } from './verify-receipt.js';
+export { MemoryReceiptReplayStore, DurableFileReceiptReplayStore } from './durable-store.js';
+export type { ReceiptReplayStore } from './durable-store.js';
+export {
+  verifyHardwareAttestation,
+  getCanonicalAttestationBytes,
+  parseSgxDcapQuote,
+  parseTpm2Quote,
+  parseSevSnpReport,
+} from './hardware-attestation.js';
+export type {
+  HardwareAttestationReport,
+  HardwareAttestationResult,
+  HardwareVerificationOptions,
+  AttestationEnclaveType,
+  SgxDcapQuote,
+  Tpm2Quote,
+  SevSnpReport,
+} from './hardware-attestation.js';
+export {
+  verifyRfDopplerProof,
+  computeObserverEcef,
+  getCanonicalDopplerBytes,
+  parseTwoLineElement,
+  propagateTleState,
+  verifyMultiStationRfConsensus,
+} from './rf-doppler.js';
+export type {
+  RfDopplerSample,
+  RfDopplerProof,
+  RfDopplerVerificationResult,
+  RfVerificationOptions,
+  ObserverEcef,
+  EphemerisData,
+  TwoLineElement,
+  MultiStationVerificationResult,
+} from './rf-doppler.js';
 export type {
   Capability,
   ChainResult,
