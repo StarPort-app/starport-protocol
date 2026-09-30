@@ -2,14 +2,14 @@
 
 `@starport/read-only-client` is a small, dependency-free ESM workspace package for the **implemented public reads**, not the full application API design. It has no wallet, API-key, cookie, signing, transaction, mutation, arbitrary proxy or webhook interface. Source/package integration does not imply public npm publication.
 
-The current wire version is pinned to `0.5.0-fee-vault`; unexpected versions or private/extra response fields fail closed. Updating that pin requires reviewing the corresponding public projection, not merely accepting a new version string.
+The current wire version is pinned to `0.6.0-native-eth`; unexpected versions or private/extra response fields fail closed. Updating that pin requires reviewing the corresponding public projection, not merely accepting a new version string.
 
 ## Available reads
 
 | SDK method | Fixed endpoint | Interpretation |
 | --- | --- | --- |
 | `getCapabilities()` | `GET /v1/capabilities` | Application capability state; not financial authority |
-| `getLaunchTarget()` | `GET /v1/launch/target` | Planned SPORT/SPCX, 0.5% creator fee; no launch is implied |
+| `getLaunchTarget()` | `GET /v1/launch/target` | Planned SPORT/ETH, 0.5% creator fee; no launch is implied |
 | `getAssets({limit, q, cursor})` | `GET /v1/assets` | Issuer metadata; active is not trading eligibility |
 | `getReferencePrice({address, symbol})` | `GET /v1/market/reference-price` | Underlying-equity USD bid/ask, not multiplier-adjusted and never executable |
 | `getCorporateActions()` | `GET /v1/market/corporate-actions` | Issuer-reported Stock Token actions and process dates; not a payout or trade |

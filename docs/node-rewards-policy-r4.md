@@ -1,3 +1,5 @@
+> **R6 update:** Launch quote and creator revenue are now native ETH. Earlier SPCX launch references below are historical, not the current configuration. SPCX remains a separately funded ERC-20 reward candidate; automatic conversion and rewards stay off. See [native ETH scope](pons-eth.md).
+
 # SPORT Node Participation and Funded Rewards — R4
 
 **R5 boundary:** the final fee recipient is a pending contract vault. Hardware reward buckets in this historical R4 policy remain inactive during the software-first rollout; collection does not create a reward entitlement. See [R5](fee-vault-r5.md).

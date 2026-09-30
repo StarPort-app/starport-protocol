@@ -40,6 +40,16 @@ contract FixtureFactory {
         require(recipients[token] == msg.sender, "not recipient"); recipients[token] = recipient;
     }
 }
+contract FixtureNativeEscrow {
+    mapping(address => uint256) public balanceOf;
+    bool public shortPayment;
+    function credit(address recipient) external payable { balanceOf[recipient] += msg.value; }
+    function setShortPayment(bool value) external { shortPayment = value; }
+    function claim() external returns (uint256 amount) {
+        amount = balanceOf[msg.sender]; require(amount > 0); balanceOf[msg.sender] = 0;
+        (bool ok,) = msg.sender.call{value: shortPayment ? amount - 1 : amount}(""); require(ok);
+    }
+}
 contract FixtureTransferTaxAsset {
     mapping(address => uint256) public balanceOf;
     function mint(address to, uint256 amount) external { balanceOf[to] += amount; }

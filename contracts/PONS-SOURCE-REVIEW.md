@@ -4,6 +4,8 @@ Review date: September 28, 2026. Scope: the source displayed by Robinhood Chain 
 
 ## Escrow
 
+R6 uses the native ledger: the reviewed `balanceOf(recipient)` returns `_balances[recipient]`, and `claim()` calls the debit path for `_balances[msg.sender]`, sends ETH only to `msg.sender`, and returns the claimed amount. The ERC-20 observations below remain accurate but are no longer the Starport fee-vault collection path. Deployed runtime/binding verification remains outstanding.
+
 [PonsV2FeeEscrow](https://robinhoodchain.blockscout.com/address/0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e?tab=contract)
 
 Explorer reports compiler `v0.8.35+commit.47b9dedd`, Cancun, optimizer 200, source path `contracts/src/v2/PonsV2FeeEscrow.sol`, verified August 3, 2026.

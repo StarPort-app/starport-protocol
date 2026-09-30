@@ -1,3 +1,5 @@
+> **R6 update:** Launch quote and creator revenue are now native ETH. Earlier SPCX launch references below are historical, not the current configuration. SPCX remains a separately funded ERC-20 reward candidate; automatic conversion and rewards stay off. See [native ETH scope](pons-eth.md).
+
 # R5 — SPCX fee vault first
 
 This decision supersedes R4 only where it identifies a plain wallet as the final PONS creator-fee recipient or makes a full custom Trade/Pay settlement stack a prerequisite of the initial revenue loop. It does not enable a launch, assign authority, or activate rewards.

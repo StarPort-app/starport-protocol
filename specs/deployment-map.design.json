@@ -1,6 +1,6 @@
 {
   "kind": "starport_deployment_map_design",
-  "revision": "R5-fee-vault-first",
+  "revision": "R6-native-eth",
   "documentStatus": "design_only_not_deployment_configuration",
   "sourceReviewAtUtc": "2026-09-26T04:42:22Z",
   "launchAuthorized": false,
@@ -44,14 +44,16 @@
       "nameAndSupplySource": "Separately approved PONS launch configuration; not fabricated here."
     },
     "launchQuote": {
-      "ticker": "SPCX",
+      "ticker": "ETH",
       "chainId": 4663,
-      "contractAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+      "contractAddress": null,
       "decimals": 18,
-      "evidence": "existing_recorded_official_asset_snapshot",
-      "sourceUrl": "https://api.robinhood.com/rhj/assets",
+      "evidence": "official_native_chain_currency",
+      "sourceUrl": "https://docs.robinhood.com/chain/connecting/",
       "freshAssetObservationPerformed": false,
-      "referenceValuationIsQuantity": false
+      "referenceValuationIsQuantity": false,
+      "kind": "native",
+      "ponsPairToken": "0x0000000000000000000000000000000000000000"
     },
     "paymentCandidate": {
       "ticker": "USDG",
@@ -65,10 +67,20 @@
       "enabled": false
     },
     "initialRewardCandidate": {
-      "assetRef": "launchQuote",
+      "assetRef": "rewardCandidate",
       "eligibilityRequired": true,
       "enabled": false,
       "automaticAlternativeAsset": false
+    },
+    "rewardCandidate": {
+      "ticker": "SPCX",
+      "chainId": 4663,
+      "contractAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+      "decimals": 18,
+      "evidence": "existing_recorded_official_asset_snapshot",
+      "sourceUrl": "https://api.robinhood.com/rhj/assets",
+      "freshAssetObservationPerformed": false,
+      "referenceValuationIsQuantity": false
     }
   },
   "treasury": {
@@ -400,7 +412,7 @@
   "rewardPolicy": {
     "epochSeconds": 259200,
     "epochTimezone": "UTC",
-    "rewardAssetRef": "launchQuote",
+    "rewardAssetRef": "rewardCandidate",
     "grossFeesEqualRewardBudget": false,
     "netFundedBudgetBps": {
       "gatewayWork": 7000,
@@ -583,8 +595,8 @@
   },
   "feeCollection": {
     "vaultAddress": null,
-    "asset": "SPCX",
-    "assetAddress": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+    "asset": "ETH",
+    "assetAddress": "0x0000000000000000000000000000000000000000",
     "escrowReference": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
     "escrowBindingVerified": false,
     "controller": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
@@ -597,6 +609,7 @@
     "minimumRevenueToRunApplication": null,
     "sweepAndClaimAreSeparate": true,
     "deploymentPaused": true,
-    "roleAddressesConfirmedAt": "2026-09-28"
+    "roleAddressesConfirmedAt": "2026-09-28",
+    "assetKind": "native"
   }
 }

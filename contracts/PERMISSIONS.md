@@ -1,6 +1,6 @@
-# Fee vault permissions — R5.1
+# Fee vault permissions — R6 native ETH
 
-Not deployed. This revision adds native ETH reception and controller-only emergency ERC-20/native recovery. The fixed payout address and all management identities remain unchanged. Confirm this revision before signing a deployment.
+Not deployed. The user selected native ETH quote and creator fees for R6; collection uses the native escrow ledger, and ordinary payouts send ETH to the same fixed payout. Donations are not counted as collected fees. The earlier R5.1 revision added native ETH reception and controller-only emergency ERC-20/native recovery. The fixed payout address and all management identities remain unchanged. Confirm this revision before signing a deployment.
 
 ## Roles
 
@@ -11,7 +11,7 @@ Not deployed. This revision adds native ETH reception and controller-only emerge
 ## Accepted assets and accounting
 
 - Native ETH can be received after deployment. Deployment itself is nonpayable: ETH gas stays with the deploying/calling wallet, not a constructor value transfer.
-- ERC-20 tokens on the same chain can be transferred to the vault. Merely receiving an asset does not add it to PONS fee accounting. `totalCollected` remains the cumulative verified receipt of the single configured fee asset.
+- ERC-20 tokens on the same chain can be transferred to the vault. Merely receiving an asset does not add it to PONS fee accounting. `totalCollected` remains the cumulative verified receipt of the native ETH claimed from the fixed PONS escrow.
 - ERC-721/ERC-1155 receiver support is not implemented. Do not send NFTs or assume assets on other chains are recoverable by this contract.
 - Rebasing, blacklisted, frozen or unusual tokens may refuse recovery. For emergency ERC-20 recovery, the event amount is the verified vault debit; a transfer-tax token can credit less to the recipient. No exact recipient credit is promised for generic recovery.
 
@@ -25,7 +25,7 @@ Exiting emergency mode leaves collection paused. The controller must explicitly 
 
 ## Unchanged powers and limits
 
-- Ordinary SPCX spending remains controller-only, to the immutable payout address, without a spending cap or timelock.
+- Ordinary native ETH spending remains controller-only, to the immutable payout address, without a spending cap or timelock.
 - PONS future fee-recipient migration keeps its two-day delay and controller-only execution. It does not move old escrow credits or already received assets.
 - Changing the controller requires acceptance by the proposed controller. The payout address, fee asset, escrow and factory remain immutable.
 - Emergency control uses the same controller; it is not a recovery mechanism for a lost or compromised controller key. A payout wallet that cannot receive an asset can still block that asset's recovery.

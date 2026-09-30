@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Starport API design",
-    "version": "0.5.0-fee-vault",
+    "version": "0.6.0-native-eth",
     "description": "Starport shared API contract. The local read-only application implements configuration projections and issuer-sourced asset metadata; other business operations remain design-only or disabled. Catalog metadata is not a price, executable quote, eligibility decision, chain verification, or Starlink routing evidence. Financial execution remains off."
   },
   "servers": [],
@@ -33,7 +33,7 @@
     },
     {
       "name": "Treasury",
-      "description": "SPCX revenue sweeps, claims, reconciliation, budgeting, and reward funding"
+      "description": "ETH revenue sweeps, claims, reconciliation, budgeting, and reward funding"
     },
     {
       "name": "Signals",
@@ -543,7 +543,7 @@
                               "const": "preview"
                             },
                             "schemaVersion": {
-                              "const": "0.5.0-fee-vault"
+                              "const": "0.6.0-native-eth"
                             },
                             "source": {
                               "const": "issuer_api"
@@ -4752,8 +4752,8 @@
         "tags": [
           "Treasury"
         ],
-        "summary": "Read the SPCX and 50 bps design target; no launch capability",
-        "description": "Read the SPCX and 50 bps design target; no launch capability. Design only; no service implementation is represented.",
+        "summary": "Read the native ETH and 50 bps design target; no launch capability",
+        "description": "Read the native ETH and 50 bps design target; no launch capability. Design only; no service implementation is represented.",
         "security": [],
         "x-design-only": false,
         "responses": {
@@ -11626,7 +11626,7 @@
           "reason"
         ],
         "additionalProperties": false,
-        "description": "Automatic SPCX conversion is disabled. This contract provides no conversion mutation or execution endpoint."
+        "description": "Automatic fee-asset conversion is disabled. This contract provides no conversion mutation or execution endpoint."
       },
       "TreasurySummary": {
         "type": "object",
@@ -11689,30 +11689,36 @@
             "const": 4663
           },
           "quoteAsset": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AssetRef"
+            "type": "object",
+            "properties": {
+              "chainId": {
+                "const": 4663
               },
-              {
-                "properties": {
-                  "chainId": {
-                    "const": 4663
-                  },
-                  "address": {
-                    "const": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa"
-                  },
-                  "symbol": {
-                    "const": "SPCX"
-                  },
-                  "decimals": {
-                    "const": 18
-                  },
-                  "decimalsVerified": {
-                    "const": true
-                  }
-                }
+              "address": {
+                "type": "null"
+              },
+              "kind": {
+                "const": "native"
+              },
+              "symbol": {
+                "const": "ETH"
+              },
+              "decimals": {
+                "const": 18
+              },
+              "decimalsVerified": {
+                "const": true
               }
-            ]
+            },
+            "required": [
+              "chainId",
+              "address",
+              "kind",
+              "symbol",
+              "decimals",
+              "decimalsVerified"
+            ],
+            "additionalProperties": false
           },
           "creatorTaxBps": {
             "type": "integer",
@@ -11731,7 +11737,7 @@
           },
           "evidenceDocument": {
             "type": "string",
-            "const": "docs/pons-spcx.md"
+            "const": "docs/pons-eth.md"
           },
           "launchEnabled": {
             "type": "boolean",
@@ -11762,7 +11768,7 @@
           "creatorRecipientBindingStatus"
         ],
         "additionalProperties": false,
-        "description": "SPORT/SPCX launch design. Creator recipient is a future deployed fee vault, not the previously supplied reference wallet. No launch or financial execution is enabled."
+        "description": "SPORT/native ETH launch design. Creator recipient is a future deployed fee vault, not the previously supplied reference wallet. No launch or financial execution is enabled."
       },
       "Signal": {
         "type": "object",

@@ -1,10 +1,10 @@
 {
-  "revision": "R5.1-emergency-assets",
+  "revision": "R6-native-eth",
   "chainId": 4663,
   "contract": "StarportFeeVault",
   "vaultAddress": null,
   "deployerAddress": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
-  "feeAsset": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+  "feeAsset": "0x0000000000000000000000000000000000000000",
   "feeEscrowReference": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
   "ponsFactoryReference": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
   "deployedStackCompatibilityVerified": false,
@@ -45,5 +45,9 @@
     "keeperWithdrawalRights": false,
     "exitDoesNotResumeCollection": true,
     "enterCancelsPendingControllerAndRecipientChanges": true
-  }
+  },
+  "feeAssetKind": "native",
+  "feeAssetSymbol": "ETH",
+  "feeAssetDecimals": 18,
+  "quoteChangeAuthorizedByUser": true
 }
