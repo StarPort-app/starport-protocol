@@ -1,5 +1,7 @@
 # Starport Protocol
 
+> **Turning low-Earth-orbit satellite kinematics into immutable zero-knowledge consensus — the definitive cryptographic rails for space DePIN and tokenized Wall Street RWAs (SPCX, NVDA.d, TSLA.d, SPY.d) on Robinhood Chain.**
+
 [![Build Status](https://github.com/StarPort-app/starport-protocol/actions/workflows/verify.yml/badge.svg)](https://github.com/StarPort-app/starport-protocol/actions)
 [![Tests](https://img.shields.io/badge/tests-108%2F108%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
 [![ZK-DePIN](https://img.shields.io/badge/ZK--DePIN-Halo2%20%2F%20Groth16%20Ready-9cf.svg)](docs/ZK-DEPIN-CIRCUIT.md)
@@ -20,12 +22,17 @@ Project Token: **SPORT** (Contract implementation complete; on-chain deployment 
 
 ## Executive Summary
 
-Starport is a decentralized physical infrastructure network (DePIN) and financial settlement protocol connecting Starlink-enabled edge nodes, software-defined radio (SDR) observers, and real-world asset (RWA) markets. 
+Starport is the first space-grade DePIN and institutional RWA settlement protocol turning low-Earth-orbit satellite kinematics into immutable on-chain consensus.
 
-The protocol provides:
+Leveraging real-time NORAD Keplerian ephemeris from 10,000+ Starlink satellites, distributed SDR edge receivers, and silicon enclave attestations, Starport establishes Proof-of-Physical-Orbit (PoPO) via relativistic Doppler residuals and zero-knowledge geofence range-proofs (ZK-PoPO).
+
+Settling natively in integer-wei ETH on **Robinhood Chain (Arbitrum Orbit L2, Chain ID 4663)** through bounded Uniswap V4 Universal Router execution, Starport establishes the definitive, non-custodial cryptographic rails for space pioneers (SPCX) as well as tokenized Wall Street equities and index RWAs (NVDA.d, TSLA.d, AAPL.d, SPY.d).
+
+The protocol delivers:
 1. **Verifiable DePIN Telemetry**: Ground station admission via binary hardware enclave attestation (Intel SGX DCAP, TPM 2.0, AMD SEV-SNP) and orbital radio frequency (RF) Doppler verification against NORAD Two-Line Element (TLE) satellite ephemeris.
-2. **Spatial Multi-Station Consensus**: Anti-spoofing Time Difference of Arrival (TDoA) hyperbolic multilateration across distributed terrestrial receivers.
-3. **Non-Custodial Settlement**: Immutable smart contracts for fee collection, epoch-based Merkle rewards with challenge dispute windows, EIP-712 / ERC-1271 invoice settlement, and bounded Uniswap V4 Universal Router trade execution on **Robinhood Chain (Arbitrum Orbit L2, Chain ID 4663)**.
+2. **Spatial Multi-Station Consensus**: Anti-spoofing Time Difference of Arrival (TDoA) hyperbolic multilateration with aerospace Geometric Dilution of Precision (GDOP $\le 5.0$) across distributed terrestrial receivers.
+3. **ZK-PoPO Geofence Privacy**: Arithmetic SNARK circuits (Halo2 / Groth16) protecting edge node GPS locations while mathematically binding relativistic Doppler residuals.
+4. **Non-Custodial Settlement**: Immutable smart contracts for fee collection, epoch-based Merkle rewards with 72h challenge dispute windows, EIP-712 / ERC-1271 invoice settlement, and bounded Uniswap V4 Universal Router trade execution on **Robinhood Chain (Chain ID 4663)**.
 
 ---
 
