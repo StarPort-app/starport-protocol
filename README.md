@@ -1,9 +1,10 @@
 # Starport Protocol
 
 [![Build Status](https://github.com/StarPort-app/starport-protocol/actions/workflows/verify.yml/badge.svg)](https://github.com/StarPort-app/starport-protocol/actions)
-[![Tests](https://img.shields.io/badge/tests-107%2F107%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
+[![Tests](https://img.shields.io/badge/tests-108%2F108%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
 [![ZK-DePIN](https://img.shields.io/badge/ZK--DePIN-Halo2%20%2F%20Groth16%20Ready-9cf.svg)](docs/ZK-DEPIN-CIRCUIT.md)
 [![EVM Fuzzing](https://img.shields.io/badge/fuzzing-1%2C500%20property%20runs%20passing-success.svg)](contracts/test/invariant-fuzz.test.mjs)
+[![Anti-Phishing](https://img.shields.io/badge/anti--phishing-canonical%20registry%20verified-success.svg)](contracts/canonical-manifest.json)
 [![Governance Invariants](https://img.shields.io/badge/governance%20invariants-14%2F14%20verified-success.svg)](contracts/verify-governance.mjs)
 [![Consensus: PoPO](https://img.shields.io/badge/consensus-Proof--of--Physical--Orbit-blueviolet.svg)](docs/PHYSICS-INFORMED-CONSENSUS.md)
 [![Solidity](https://img.shields.io/badge/solidity-0.8.37-363636.svg)](https://docs.soliditylang.org/)
@@ -11,7 +12,7 @@
 [![Network](https://img.shields.io/badge/settlement%20chain-Robinhood%20Chain%20(4663)-6b46c1.svg)](https://starport.nexus)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**Website:** [starport.nexus](https://starport.nexus) · **Consensus Whitepaper:** [Proof-of-Physical-Orbit (PoPO)](docs/PHYSICS-INFORMED-CONSENSUS.md) · **ZK-DePIN Circuit Spec:** [ZK-PoPO Specification](docs/ZK-DEPIN-CIRCUIT.md) · **Security Assessment:** [Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md) · **Status:** [Implementation Map](docs/implementation-status.md) · **API Spec:** [OpenAPI 3.1](specs/openapi.json)
+**Website:** [starport.nexus](https://starport.nexus) · **Consensus Whitepaper:** [Proof-of-Physical-Orbit (PoPO)](docs/PHYSICS-INFORMED-CONSENSUS.md) · **ZK-DePIN Circuit:** [ZK-PoPO Specification](docs/ZK-DEPIN-CIRCUIT.md) · **Anti-Phishing Standard:** [Canonical Verification](docs/ANTI-PHISHING-AND-CANONICAL-REGISTRY.md) · **Economic Security:** [Slashing Model](docs/ECONOMIC-SECURITY-AND-SLASHING.md) · **Status:** [Implementation Map](docs/implementation-status.md) · **API Spec:** [OpenAPI 3.1](specs/openapi.json)
 
 Project Token: **SPORT** (Contract implementation complete; on-chain deployment paused under Phase 2 governance hold).
 
@@ -155,6 +156,44 @@ npm run test:fuzz
 
 ---
 
+## Canonical Provenance & Anti-Phishing Authenticator
+
+To combat counterfeit tokens, fake liquidity pools, and phishing drainers, Starport provides an institutional-grade cryptographic verification suite:
+
+```sh
+# 1. Statically audit 18 canonical registry invariants against compiled bytecode
+npm run verify:canonical
+
+# 2. Authenticate any query address (instantly flags counterfeit tokens & fake pools)
+node contracts/verify-canonical.mjs --check-address 0x...
+
+# 3. Authenticate any web URL (flags phishing & scam drainer links)
+node contracts/verify-canonical.mjs --check-url https://...
+```
+
+### Protocol Reality Check:
+- **SPORT Token Status**: `PRE_GENESIS_GOVERNED_HOLD` (unlaunched; zero circulating supply on mainnet). Any DEX pool trading SPORT is a 100% fraudulent counterfeit scam.
+- **Settlement Chain**: Robinhood Chain Arbitrum Orbit L2 (Chain ID 4663).
+- **Quote Asset**: Native ETH in integer wei (sentinel `0x000...0000`).
+- **PONS Creator Tax**: 100 bps (1.0%).
+
+See [docs/ANTI-PHISHING-AND-CANONICAL-REGISTRY.md](docs/ANTI-PHISHING-AND-CANONICAL-REGISTRY.md) for the complete auditing manual and [contracts/canonical-manifest.json](contracts/canonical-manifest.json) for the machine-readable manifest.
+
+---
+
+## Game-Theoretic Economic Security & Oracle Slashing
+
+Starport couples physics-informed RF consensus with a formal economic slashing game:
+
+1. **Attacker Capital Cost Bound**: Proves that attacking the physical oracle requires compromising $\ge 3$ distinct silicon enclaves ($C_{\text{enclave}} > \$50,000$ each) and forfeiting $\ge 3.0\text{ ETH}$ in bonded stake, strictly exceeding any extractable MEV on Robinhood Chain PONS pools:
+   $$\mathcal{C}_{\text{attack}} \ge 3 \times (1.0\text{ ETH} + \$50,000) \gg M_{\text{extractable}}$$
+2. **72-Hour Bonded Dispute Window**: `FundedMerkleRewards.sol` enforces a mandatory 72-hour delay (`DISPUTE_PERIOD = 259200s`) during which any observer can dispute a fraudulent Merkle root by depositing `challengeBond = 1.0 ETH`.
+3. **Whistleblower Bounty**: 50% of slashed stake is paid directly to the challenger as a bounty, with 50% swept into the immutable cold DAO treasury Safe (`0x3000...0003`).
+
+See [docs/ECONOMIC-SECURITY-AND-SLASHING.md](docs/ECONOMIC-SECURITY-AND-SLASHING.md) for the complete game-theoretic derivation.
+
+---
+
 ## Workspace Packages
 
 The repository is organized as a modular TypeScript monorepo with zero circular dependencies:
@@ -203,9 +242,9 @@ npm run build
 npm run build:contracts
 ```
 
-### 3. Run Full Test Suite (107 / 107 Tests)
+### 3. Run Full Test Suite (108 / 108 Tests)
 ```sh
-# Run TypeScript package test suite (61 unit tests, including ZK-PoPO circuit & intent isolation)
+# Run TypeScript package test suite (62 unit tests, including aerospace GDOP, ZK-PoPO & intent isolation)
 npm test
 
 # Run Solidity smart contract EVM test suite (46 EVM tests, including 1,500 fuzz runs)
@@ -215,18 +254,31 @@ npm run test:contracts
 npm run test:fuzz
 ```
 
-### 4. Verify Governance & Security Invariants
+### 4. Verify Governance & Anti-Phishing Invariants
 ```sh
+# Verify 14 on-chain governance invariants against EVM bytecode
 npm run verify:governance
+
+# Verify 18 canonical registry invariants & anti-phishing parameters
+npm run verify:canonical
 ```
 
-### 5. Run End-to-End Orbital RWA Pipeline Demonstration
+### 5. Run Node Daemon & Trading Bot Simulators
+```sh
+# Run edge ground sensor node daemon (RF Doppler S-curve + ZK-PoPO proof synthesis)
+npm run sim:node
+
+# Run autonomous space-signal to Uniswap V4 (Chain 4663) bounded arbitrage bot
+npm run sim:bot
+```
+
+### 6. Run End-to-End Orbital RWA Pipeline Demonstration
 ```sh
 npm run demo:rwa-pipeline
 ```
-*Simulates NORAD TLE Keplerian state propagation, multi-station TDoA spatial consensus, Intel SGX DCAP quote verification, bounded trade intent for SPCX tokenized stock, and synthesizes Uniswap V4 Universal Router execution payload (`COMMAND_V4_SWAP`).*
+*Simulates NORAD TLE Keplerian state propagation, multi-station TDoA spatial consensus with GDOP geometric validation, Intel SGX DCAP quote verification, bounded trade intent for SPCX tokenized stock, and synthesizes Uniswap V4 Universal Router execution payload (`COMMAND_V4_SWAP`).*
 
-### 6. Run Offline Node Roundtrip Check
+### 7. Run Offline Node Roundtrip Check
 ```sh
 npm run example:offline
 ```
@@ -235,8 +287,10 @@ npm run example:offline
 
 ## Documentation & Auditing References
 
-- **[Proof-of-Physical-Orbit (PoPO) Consensus Whitepaper](docs/PHYSICS-INFORMED-CONSENSUS.md)**: Formal mathematical derivation of orbital kinematics, Doppler frequency residuals, TDoA hyperbolic multilateration, and silicon enclave attestation.
+- **[Proof-of-Physical-Orbit (PoPO) Consensus Whitepaper](docs/PHYSICS-INFORMED-CONSENSUS.md)**: Formal mathematical derivation of orbital kinematics, Doppler frequency residuals, TDoA hyperbolic multilateration, aerospace GDOP, and silicon enclave attestation.
 - **[Zero-Knowledge Proof-of-Physical-Orbit (ZK-PoPO) Circuit Specification](docs/ZK-DEPIN-CIRCUIT.md)**: Formal arithmetic circuit constraints for Halo2 / Groth16, privacy-preserving geofencing, and on-chain verification benchmarks.
+- **[Canonical Registry & Anti-Phishing Standard](docs/ANTI-PHISHING-AND-CANONICAL-REGISTRY.md)**: Cryptographic verification manual for exchanges, auditors, and community members to detect counterfeit tokens and lookalike scams.
+- **[Economic Security & Game-Theoretic Slashing Model](docs/ECONOMIC-SECURITY-AND-SLASHING.md)**: Mathematical proof of physical oracle security, 72h dispute window, and whistleblower bounty mechanics.
 - **[Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md)**: Formal institutional response to external protocol assessments.
 - **[Protocol Overview](docs/overview.md)**: Comprehensive architectural whitepaper.
 - **[Node & Receipt Design](docs/node-and-receipts.md)**: Specification of node qualification, hardware attestation, and receipt signing.

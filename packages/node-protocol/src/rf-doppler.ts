@@ -71,7 +71,25 @@ export interface MultiStationVerificationResult {
   readonly theoreticalTimeDifferenceSec: number;
   readonly tdoaResidualSec: number;
   readonly passConsensusVerified: boolean;
+  readonly gdop?: number;
+  readonly pdop?: number;
+  readonly tdop?: number;
+  readonly geometricQuality?: 'EXCELLENT' | 'GOOD' | 'MODERATE' | 'DEGENERATE';
   readonly reason?: string;
+}
+
+export interface MultiStationVerificationOptions {
+  readonly maxTdoaResidualSec?: number;
+  readonly minStations?: number;
+  readonly satellitePositionEcef?: ObserverEcef;
+  readonly maxGdop?: number;
+}
+
+export interface GdopResult {
+  readonly gdop: number;
+  readonly pdop: number;
+  readonly tdop: number;
+  readonly geometricQuality: 'EXCELLENT' | 'GOOD' | 'MODERATE' | 'DEGENERATE';
 }
 
 export interface RfVerificationOptions {
@@ -485,7 +503,7 @@ export function verifyRfDopplerProof(
  */
 export function verifyMultiStationRfConsensus(
   proofs: readonly RfDopplerProof[],
-  options: { maxTdoaResidualSec?: number; minStations?: number } = {}
+  options: MultiStationVerificationOptions = {}
 ): MultiStationVerificationResult {
   const minStations = options.minStations ?? 2;
   if (!Array.isArray(proofs) || proofs.length < minStations) {
@@ -555,7 +573,32 @@ export function verifyMultiStationRfConsensus(
   const tdoaResidualSec = Math.abs(Math.abs(obsDtSec) - theoreticalDtSec);
   const maxResidual = options.maxTdoaResidualSec ?? 2.5;
 
-  const consensus = tdoaResidualSec <= maxResidual;
+  const tdoaPassed = tdoaResidualSec <= maxResidual;
+
+  // 3. Compute GDOP if satellite position is provided
+  let gdopRes: GdopResult | undefined;
+  if (options.satellitePositionEcef) {
+    const stationEcefs = verifiedResults.map(r => r.observerEcef!);
+    gdopRes = computeGeometricDilutionOfPrecision(stationEcefs, options.satellitePositionEcef);
+    if (options.maxGdop && gdopRes.gdop > options.maxGdop) {
+      return {
+        valid: false,
+        stationCount: proofs.length,
+        baselineDistanceKm: Math.round((baselineDistM / 1000) * 10) / 10,
+        observedTimeDifferenceSec: Math.round(obsDtSec * 100) / 100,
+        theoreticalTimeDifferenceSec: Math.round(theoreticalDtSec * 100) / 100,
+        tdoaResidualSec: Math.round(tdoaResidualSec * 100) / 100,
+        passConsensusVerified: false,
+        gdop: gdopRes.gdop,
+        pdop: gdopRes.pdop,
+        tdop: gdopRes.tdop,
+        geometricQuality: gdopRes.geometricQuality,
+        reason: `GDOP_EXCEEDS_MAXIMUM_THRESHOLD: ${gdopRes.gdop}`,
+      };
+    }
+  }
+
+  const consensus = tdoaPassed;
 
   return {
     valid: consensus,
@@ -565,6 +608,158 @@ export function verifyMultiStationRfConsensus(
     theoreticalTimeDifferenceSec: Math.round(theoreticalDtSec * 100) / 100,
     tdoaResidualSec: Math.round(tdoaResidualSec * 100) / 100,
     passConsensusVerified: consensus,
+    gdop: gdopRes?.gdop,
+    pdop: gdopRes?.pdop,
+    tdop: gdopRes?.tdop,
+    geometricQuality: gdopRes?.geometricQuality,
     reason: consensus ? undefined : 'TDOA_RESIDUAL_EXCEEDS_PHYSICAL_TOLERANCE',
   };
+}
+
+/**
+ * Computes Geometric Dilution of Precision (GDOP), Position Dilution of Precision (PDOP),
+ * and Time Dilution of Precision (TDOP) for ground stations observing a LEO satellite.
+ * Employs GNSS-standard normal covariance inversion Q = (A^T * A)^-1.
+ */
+export function computeGeometricDilutionOfPrecision(
+  stations: readonly ObserverEcef[],
+  satPos: ObserverEcef
+): GdopResult {
+  if (!Array.isArray(stations) || stations.length < 2) {
+    return { gdop: Infinity, pdop: Infinity, tdop: Infinity, geometricQuality: 'DEGENERATE' };
+  }
+
+  if (stations.length >= 4) {
+    // 4D solution: (x, y, z, c*dt)
+    const A: number[][] = [];
+    for (const st of stations) {
+      const dx = satPos.x - st.x;
+      const dy = satPos.y - st.y;
+      const dz = satPos.z - st.z;
+      const rho = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (rho < 1e-3) {
+        return { gdop: Infinity, pdop: Infinity, tdop: Infinity, geometricQuality: 'DEGENERATE' };
+      }
+      A.push([dx / rho, dy / rho, dz / rho, 1.0]);
+    }
+
+    const M: number[][] = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        let sum = 0;
+        for (let i = 0; i < stations.length; i++) {
+          sum += A[i][r] * A[i][c];
+        }
+        M[r][c] = sum;
+      }
+    }
+
+    const inv = invert4x4Matrix(M);
+    if (!inv) {
+      return { gdop: Infinity, pdop: Infinity, tdop: Infinity, geometricQuality: 'DEGENERATE' };
+    }
+
+    const varX = Math.max(0, inv[0][0]);
+    const varY = Math.max(0, inv[1][1]);
+    const varZ = Math.max(0, inv[2][2]);
+    const varT = Math.max(0, inv[3][3]);
+
+    const pdop = Math.sqrt(varX + varY + varZ);
+    const tdop = Math.sqrt(varT);
+    const gdop = Math.sqrt(varX + varY + varZ + varT);
+
+    const roundedGdop = Math.round(gdop * 100) / 100;
+    const roundedPdop = Math.round(pdop * 100) / 100;
+    const roundedTdop = Math.round(tdop * 100) / 100;
+
+    let quality: 'EXCELLENT' | 'GOOD' | 'MODERATE' | 'DEGENERATE' = 'DEGENERATE';
+    if (roundedGdop <= 2.5) quality = 'EXCELLENT';
+    else if (roundedGdop <= 5.0) quality = 'GOOD';
+    else if (roundedGdop <= 10.0) quality = 'MODERATE';
+
+    return { gdop: roundedGdop, pdop: roundedPdop, tdop: roundedTdop, geometricQuality: quality };
+  } else {
+    // 2 or 3 stations: Spatial baseline geometric ratio
+    let totalRho = 0;
+    for (const st of stations) {
+      const dx = satPos.x - st.x;
+      const dy = satPos.y - st.y;
+      const dz = satPos.z - st.z;
+      totalRho += Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+    const meanRho = totalRho / stations.length;
+
+    let maxBaseline = 0;
+    for (let i = 0; i < stations.length; i++) {
+      for (let j = i + 1; j < stations.length; j++) {
+        const dx = stations[i].x - stations[j].x;
+        const dy = stations[i].y - stations[j].y;
+        const dz = stations[i].z - stations[j].z;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist > maxBaseline) maxBaseline = dist;
+      }
+    }
+
+    const baselineRatio = meanRho / Math.max(1_000, maxBaseline);
+    const gdop = Math.max(1.1, Math.min(25.0, Math.round(baselineRatio * 1.8 * 100) / 100));
+    const pdop = Math.round(gdop * 0.85 * 100) / 100;
+    const tdop = Math.round(gdop * 0.52 * 100) / 100;
+
+    let quality: 'EXCELLENT' | 'GOOD' | 'MODERATE' | 'DEGENERATE' = 'DEGENERATE';
+    if (gdop <= 2.5) quality = 'EXCELLENT';
+    else if (gdop <= 5.0) quality = 'GOOD';
+    else if (gdop <= 10.0) quality = 'MODERATE';
+
+    return { gdop, pdop, tdop, geometricQuality: quality };
+  }
+}
+
+function invert4x4Matrix(m: number[][]): number[][] | null {
+  const n = 4;
+  const a: number[][] = [];
+  for (let i = 0; i < n; i++) {
+    a.push([...m[i], 0, 0, 0, 0]);
+    a[i][n + i] = 1.0;
+  }
+
+  for (let i = 0; i < n; i++) {
+    let maxRow = i;
+    let maxVal = Math.abs(a[i][i]);
+    for (let k = i + 1; k < n; k++) {
+      if (Math.abs(a[k][i]) > maxVal) {
+        maxVal = Math.abs(a[k][i]);
+        maxRow = k;
+      }
+    }
+    if (maxVal < 1e-12) return null;
+
+    const temp = a[i];
+    a[i] = a[maxRow];
+    a[maxRow] = temp;
+
+    const pivot = a[i][i];
+    for (let j = 0; j < 2 * n; j++) {
+      a[i][j] /= pivot;
+    }
+
+    for (let k = 0; k < n; k++) {
+      if (k !== i) {
+        const factor = a[k][i];
+        for (let j = 0; j < 2 * n; j++) {
+          a[k][j] -= factor * a[i][j];
+        }
+      }
+    }
+  }
+
+  const inv: number[][] = [];
+  for (let i = 0; i < n; i++) {
+    inv.push(a[i].slice(n, 2 * n));
+  }
+  return inv;
 }

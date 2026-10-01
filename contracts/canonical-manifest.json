@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "protocol": "Starport Protocol",
+  "version": "1.0.0-phase2",
+  "updatedAt": "2026-10-01T02:00:00Z",
+  "settlementNetwork": {
+    "name": "Robinhood Chain",
+    "architecture": "Arbitrum Orbit L2",
+    "chainId": 4663,
+    "nativeQuoteAsset": "ETH",
+    "quoteAssetSentinel": "0x0000000000000000000000000000000000000000",
+    "accountingUnit": "integer wei"
+  },
+  "officialChannels": {
+    "website": "https://starport.nexus",
+    "github": "https://github.com/StarPort-app/starport-protocol",
+    "docs": "https://starport.nexus/docs",
+    "whitepaper": "https://github.com/StarPort-app/starport-protocol/blob/main/docs/PHYSICS-INFORMED-CONSENSUS.md",
+    "zkCircuitSpec": "https://github.com/StarPort-app/starport-protocol/blob/main/docs/ZK-DEPIN-CIRCUIT.md"
+  },
+  "tokenState": {
+    "ticker": "SPORT",
+    "name": "Starport Protocol Token",
+    "status": "PRE_GENESIS_GOVERNED_HOLD",
+    "onChainAddress": null,
+    "automaticBroadcast": false,
+    "deploymentPaused": true,
+    "antiPhishingNotice": "CRITICAL: The SPORT token contract is implemented in source code but is strictly HELD under Phase 2 governance freeze. There is NO official token address, NO liquidity pool, and NO pre-sale. Any token circulating on decentralized or centralized exchanges claiming to be SPORT or Starport is a 100% fraudulent counterfeit / phishing scam."
+  },
+  "feePolicy": {
+    "creatorTaxBps": 100,
+    "creatorTaxPercentage": "1.0%",
+    "supersededTaxBps": [50],
+    "ponsFactoryTarget": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e"
+  },
+  "canonicalRoles": {
+    "deployerAddress": "0x1000000000000000000000000000000000000001",
+    "controllerSafe": "0x2000000000000000000000000000000000000002",
+    "controllerQuorum": "3-of-5 Gnosis Safe",
+    "payoutRecipient": "0x3000000000000000000000000000000000000003",
+    "payoutRecipientDescription": "Immutable Cold DAO Treasury",
+    "keeperAddress": "0x4000000000000000000000000000000000000004",
+    "payoutTimelockSeconds": 172800,
+    "emergencyTimelockSeconds": 86400,
+    "disputePeriodSeconds": 259200,
+    "unbondingPeriodSeconds": 604800
+  },
+  "compiledBytecodeHashes": {
+    "compiler": "solc 0.8.37",
+    "optimizer": "enabled (200 runs)",
+    "evmVersion": "cancun",
+    "contracts": {
+      "StarportFeeVault": "0x364abc8ba4a16b0aafcdb12b0bfbfdc77aa2f168652ba01a0da5d2e104b1879e",
+      "FundedMerkleRewards": "0x02a116642e1c89d566dadd6edc098dfec9eb069db3eb5309aa5eebc7cab2ddc9",
+      "BoundedTradeRouter": "0xb2e2fa5d1d2da9c2a59f54261c3e135bf9f4d086ad973c05f3afe154ae550473",
+      "PonsV1TradeAdapter": "0x2ae9fff9bd84e2fa2a04d498a01bf398955f9cb74b0754cf3f179ca44a513f22",
+      "StarportPaymentRouter": "0x01b89d876b4976f573346173005d650be4ec225b5213fcbf3b75aeb2f2ce8032",
+      "SportDelegationVault": "0x7b00be3ed881a3d91ad9ea0b4529e8e965c90090872537ad1777c5d880865703"
+    }
+  }
+}

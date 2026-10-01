@@ -12,6 +12,8 @@ import {
   parseTwoLineElement,
   propagateTleState,
   verifyMultiStationRfConsensus,
+  computeGeometricDilutionOfPrecision,
+  computeObserverEcef,
   encodeHex,
   signOperatorBytes
 } from '../dist/index.js';
@@ -337,4 +339,47 @@ test('verifyMultiStationRfConsensus proves spatial TDoA baseline consensus acros
   assert.equal(spoofedConsensus.valid, false);
   assert.equal(spoofedConsensus.passConsensusVerified, false);
   assert.equal(spoofedConsensus.reason, 'TDOA_RESIDUAL_EXCEEDS_PHYSICAL_TOLERANCE');
+
+  // Multi-station with favorable geometry and GDOP validation
+  const satPosZenith = computeObserverEcef(50.0, 1.0, 550_000); // Sat over English Channel at 550km
+  const consensusWithGdop = verifyMultiStationRfConsensus([proof1, proof2], {
+    satellitePositionEcef: satPosZenith,
+    maxGdop: 6.0,
+  });
+  assert.equal(consensusWithGdop.valid, true);
+  assert.equal(consensusWithGdop.passConsensusVerified, true);
+  assert.ok(typeof consensusWithGdop.gdop === 'number' && consensusWithGdop.gdop <= 6.0);
+  assert.ok(['EXCELLENT', 'GOOD'].includes(consensusWithGdop.geometricQuality));
+
+  // Degenerate / overly strict GDOP threshold fails consensus
+  const consensusStrict = verifyMultiStationRfConsensus([proof1, proof2], {
+    satellitePositionEcef: satPosZenith,
+    maxGdop: 0.5, // Unachievable threshold
+  });
+  assert.equal(consensusStrict.valid, false);
+  assert.equal(consensusStrict.passConsensusVerified, false);
+  assert.ok(consensusStrict.reason?.includes('GDOP_EXCEEDS_MAXIMUM_THRESHOLD'));
 });
+
+test('computeGeometricDilutionOfPrecision computes accurate GDOP for 4-station GNSS-standard configuration', () => {
+  // 4 distributed stations across Europe forming 3D pyramid with satellite
+  const st1 = computeObserverEcef(51.5074, -0.1278, 50); // London
+  const st2 = computeObserverEcef(48.8566, 2.3522, 50);  // Paris
+  const st3 = computeObserverEcef(52.5200, 13.4050, 50); // Berlin
+  const st4 = computeObserverEcef(41.9028, 12.4964, 50); // Rome
+
+  const satPos = computeObserverEcef(49.0, 6.0, 550_000); // LEO Sat over Luxembourg at 550km
+
+  const res = computeGeometricDilutionOfPrecision([st1, st2, st3, st4], satPos);
+  assert.ok(res.gdop > 0 && res.gdop < 10.0, `GDOP should be reasonable: ${res.gdop}`);
+  assert.ok(res.pdop > 0 && res.pdop <= res.gdop);
+  assert.ok(res.tdop > 0 && res.tdop <= res.gdop);
+  assert.ok(['EXCELLENT', 'GOOD', 'MODERATE'].includes(res.geometricQuality));
+
+  // Degenerate collinear stations (e.g. 4 stations in exact same spot)
+  const degStations = [st1, st1, st1, st1];
+  const degRes = computeGeometricDilutionOfPrecision(degStations, satPos);
+  assert.equal(degRes.gdop, Infinity);
+  assert.equal(degRes.geometricQuality, 'DEGENERATE');
+});
+

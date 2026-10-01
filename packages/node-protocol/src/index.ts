@@ -51,6 +51,7 @@ export {
   parseTwoLineElement,
   propagateTleState,
   verifyMultiStationRfConsensus,
+  computeGeometricDilutionOfPrecision,
 } from './rf-doppler.js';
 export type {
   RfDopplerSample,
@@ -61,6 +62,8 @@ export type {
   EphemerisData,
   TwoLineElement,
   MultiStationVerificationResult,
+  MultiStationVerificationOptions,
+  GdopResult,
 } from './rf-doppler.js';
 export {
   quantizeGeographicCell,

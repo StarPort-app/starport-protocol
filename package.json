@@ -23,7 +23,10 @@
     "prepare:fee-vault": "npm run build:contracts && node contracts/prepare-deployment.mjs",
     "verify:governance": "npm run build:contracts && node contracts/verify-governance.mjs",
     "demo:rwa-pipeline": "npm run build && node examples/orbital-rwa-pipeline.mjs",
-    "test:fuzz": "npm run build:contracts && node --test contracts/test/invariant-fuzz.test.mjs"
+    "test:fuzz": "npm run build:contracts && node --test contracts/test/invariant-fuzz.test.mjs",
+    "verify:canonical": "npm run build:contracts && node contracts/verify-canonical.mjs",
+    "sim:node": "npm run build && node examples/ground-station-node.mjs",
+    "sim:bot": "node examples/rwa-arbitrage-bot.mjs"
   },
   "overrides": {
     "solc": {

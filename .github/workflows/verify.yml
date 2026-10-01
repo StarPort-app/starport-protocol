@@ -23,5 +23,8 @@ jobs:
       - run: npm test
       - run: npm run test:contracts
       - run: npm run verify:governance
+      - run: npm run verify:canonical
       - run: npm run demo:rwa-pipeline
+      - run: npm run sim:node
+      - run: npm run sim:bot
       - run: npm run example:offline
