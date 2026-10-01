@@ -1,14 +1,15 @@
 # Starport Protocol
 
 [![Build Status](https://github.com/StarPort-app/starport-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/StarPort-app/starport-protocol/actions)
-[![Tests](https://img.shields.io/badge/tests-99%2F99%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
+[![Tests](https://img.shields.io/badge/tests-102%2F102%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
 [![Governance Invariants](https://img.shields.io/badge/governance%20invariants-14%2F14%20verified-success.svg)](contracts/verify-governance.mjs)
+[![Consensus: PoPO](https://img.shields.io/badge/consensus-Proof--of--Physical--Orbit-blueviolet.svg)](docs/PHYSICS-INFORMED-CONSENSUS.md)
 [![Solidity](https://img.shields.io/badge/solidity-0.8.37-363636.svg)](https://docs.soliditylang.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.8%2B-blue.svg)](https://www.typescriptlang.org/)
 [![Network](https://img.shields.io/badge/settlement%20chain-Robinhood%20Chain%20(4663)-6b46c1.svg)](https://starport.nexus)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**Website:** [starport.nexus](https://starport.nexus) · **Formal Assessment:** [Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md) · **Status:** [Implementation Map](docs/implementation-status.md) · **API Spec:** [OpenAPI 3.1](specs/openapi.json)
+**Website:** [starport.nexus](https://starport.nexus) · **Consensus Whitepaper:** [Proof-of-Physical-Orbit (PoPO)](docs/PHYSICS-INFORMED-CONSENSUS.md) · **Security Assessment:** [Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md) · **Status:** [Implementation Map](docs/implementation-status.md) · **API Spec:** [OpenAPI 3.1](specs/openapi.json)
 
 Project Token: **SPORT** (Contract implementation complete; on-chain deployment paused under Phase 2 governance hold).
 
@@ -166,9 +167,9 @@ npm run build
 npm run build:contracts
 ```
 
-### 3. Run Full Test Suite (99 / 99 Tests)
+### 3. Run Full Test Suite (102 / 102 Tests)
 ```sh
-# Run TypeScript package test suite (55 unit tests)
+# Run TypeScript package test suite (58 unit tests, including non-custodial intent isolation)
 npm test
 
 # Run Solidity smart contract EVM test suite (44 EVM tests)
@@ -180,7 +181,13 @@ npm run test:contracts
 npm run verify:governance
 ```
 
-### 5. Run Offline Simulation
+### 5. Run End-to-End Orbital RWA Pipeline Demonstration
+```sh
+npm run demo:rwa-pipeline
+```
+*Simulates NORAD TLE Keplerian state propagation, multi-station TDoA spatial consensus, Intel SGX DCAP quote verification, bounded trade intent for SPCX tokenized stock, and synthesizes Uniswap V4 Universal Router execution payload (`COMMAND_V4_SWAP`).*
+
+### 6. Run Offline Node Roundtrip Check
 ```sh
 npm run example:offline
 ```
@@ -189,6 +196,7 @@ npm run example:offline
 
 ## Documentation & Auditing References
 
+- **[Proof-of-Physical-Orbit (PoPO) Consensus Whitepaper](docs/PHYSICS-INFORMED-CONSENSUS.md)**: Formal mathematical derivation of orbital kinematics, Doppler frequency residuals, TDoA hyperbolic multilateration, and silicon enclave attestation.
 - **[Security & Audit Response](docs/SECURITY-AND-AUDIT-RESPONSE.md)**: Formal institutional response to external protocol assessments.
 - **[Protocol Overview](docs/overview.md)**: Comprehensive architectural whitepaper.
 - **[Node & Receipt Design](docs/node-and-receipts.md)**: Specification of node qualification, hardware attestation, and receipt signing.
