@@ -22,7 +22,8 @@
     "test:contracts": "npm run build:contracts && node --test contracts/test/*.test.mjs",
     "prepare:fee-vault": "npm run build:contracts && node contracts/prepare-deployment.mjs",
     "verify:governance": "npm run build:contracts && node contracts/verify-governance.mjs",
-    "demo:rwa-pipeline": "npm run build && node examples/orbital-rwa-pipeline.mjs"
+    "demo:rwa-pipeline": "npm run build && node examples/orbital-rwa-pipeline.mjs",
+    "test:fuzz": "npm run build:contracts && node --test contracts/test/invariant-fuzz.test.mjs"
   },
   "overrides": {
     "solc": {

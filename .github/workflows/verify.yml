@@ -22,4 +22,6 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run test:contracts
+      - run: npm run verify:governance
+      - run: npm run demo:rwa-pipeline
       - run: npm run example:offline

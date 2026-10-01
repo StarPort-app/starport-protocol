@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "ZK-PoPO",
+  "version": "1.0.0",
+  "description": "Zero-Knowledge Proof-of-Physical-Orbit Arithmetic Circuit Specification",
+  "curve": "BN254",
+  "scalarField": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+  "provingSystems": ["Groth16", "Plonk", "Halo2"],
+  "sampleCapacity": 64,
+  "publicInputs": [
+    {
+      "name": "tleHash",
+      "type": "field",
+      "description": "Poseidon commitment to NORAD TLE orbital ephemeris parameters"
+    },
+    {
+      "name": "geographicCellId",
+      "type": "uint64",
+      "description": "Coarse geographic cell ID bounding observer region without revealing exact coordinates"
+    },
+    {
+      "name": "nominalCarrierFrequencyHz",
+      "type": "uint64",
+      "description": "Downlink carrier frequency in Hz (nominally 11,325,000,000 for Ku-band)"
+    },
+    {
+      "name": "maxRmseToleranceHz",
+      "type": "uint32",
+      "description": "Maximum allowable Doppler RMSE deviation (nominally 2500 Hz)"
+    },
+    {
+      "name": "passStartTimeMs",
+      "type": "uint64",
+      "description": "UTC timestamp in milliseconds marking start of satellite pass window"
+    },
+    {
+      "name": "passEndTimeMs",
+      "type": "uint64",
+      "description": "UTC timestamp in milliseconds marking end of satellite pass window"
+    }
+  ],
+  "privateWitness": [
+    {
+      "name": "exactLatitudeDegFixed",
+      "type": "int64",
+      "description": "Exact observer latitude in Q32.32 fixed-point representation"
+    },
+    {
+      "name": "exactLongitudeDegFixed",
+      "type": "int64",
+      "description": "Exact observer longitude in Q32.32 fixed-point representation"
+    },
+    {
+      "name": "exactAltitudeMeters",
+      "type": "uint32",
+      "description": "Exact observer altitude above WGS84 ellipsoid in meters"
+    },
+    {
+      "name": "sampleFrequenciesHz",
+      "type": "uint64[]",
+      "length": 64,
+      "description": "Discrete empirical RF carrier frequency measurements"
+    },
+    {
+      "name": "sampleTimestampsMs",
+      "type": "uint64[]",
+      "length": 64,
+      "description": "UTC sample timestamps corresponding to each frequency measurement"
+    },
+    {
+      "name": "siliconEnclaveSignature",
+      "type": "bytes",
+      "description": "Binary quote signature from Intel SGX DCAP or TPM 2.0 enclave"
+    }
+  ],
+  "constraintFamilies": {
+    "geofenceCellInclusion": {
+      "type": "range_check",
+      "gates": 32,
+      "description": "Constrains exact observer coordinates to fall within geographicCellId bounding box"
+    },
+    "keplerianStateInversion": {
+      "type": "polynomial_orbit_propagator",
+      "gates": 1280,
+      "description": "Computes satellite ECEF position and line-of-sight velocity vector per sample"
+    },
+    "relativisticDopplerResidual": {
+      "type": "quadratic_sum_check",
+      "gates": 512,
+      "description": "Constrains aggregate Doppler frequency RMSE <= maxRmseToleranceHz"
+    },
+    "enclaveTelemetryBinding": {
+      "type": "poseidon_sponge",
+      "gates": 384,
+      "description": "Verifies that sample frequencies match the payload certified by the silicon enclave"
+    }
+  },
+  "totalConstraintsEstimate": 2208
+}

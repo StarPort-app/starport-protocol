@@ -62,6 +62,18 @@ export type {
   TwoLineElement,
   MultiStationVerificationResult,
 } from './rf-doppler.js';
+export {
+  quantizeGeographicCell,
+  computeZkPoPoPublicInputs,
+  digestZkPublicInputs,
+  synthesizeZkPoPoProof,
+  verifyZkPoPoProof,
+} from './zk-popo.js';
+export type {
+  GeographicCell,
+  ZkPoPoPublicInputs,
+  ZkPoPoProof,
+} from './zk-popo.js';
 export type {
   Capability,
   ChainResult,
