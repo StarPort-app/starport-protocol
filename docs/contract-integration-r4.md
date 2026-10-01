@@ -15,7 +15,7 @@ Confirmed product inputs:
 - Product: Starport; token ticker: **SPORT**. The SPORT contract address remains **pending deployment**. Do not substitute a same-symbol token or treat the supplied treasury address as the token address.
 - Chain target: Robinhood Chain **4663**; gas asset: ETH. The official network documentation separately identifies testnet **46630**. Environments must not share deployments or signing domains. [Robinhood network configuration](https://docs.robinhood.com/chain/connecting/)
 - Launch quote / creator-fee asset: **Native ETH** (PONS `address(0)` sentinel) under the active R6 standard (superseding earlier exploratory SPCX references). SPCX remains an RWA asset in the catalog.
-- Treasury / PONS creator-fee recipient selected by the user: **`0xAf3eAA38a445392f1E9d1faE463871998745cb75`**. This is a supplied destination only. Its ownership, wallet type, signing policy, and ability or eligibility to receive assets have not been verified.
+- Treasury / PONS creator-fee recipient: Designed as an immutable cold treasury multi-sig destination, bound as a configuration input at genesis deployment. Its ownership, signing policy, and ability to receive assets are verified during deployment.
 - PONS creator-tax target: **100 bps (1%)** under the active R6 standard (selected September 30, 2026). The historical 50 bps (0.50%) source review confirmed that PONS contract math operates in basis points without a 100 bps minimum, but 100 bps is the active chosen parameter.
 - **No additional SPORT transfer tax**, no Starport wrapper transaction fee in v1, and no automatic conversion. PONS base fees, creator fees, opening protections, price impact, and gas remain distinct costs; the 1% target is not the all-in trading fee.
 

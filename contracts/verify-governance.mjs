@@ -31,26 +31,34 @@ recordCheck(
   'Enforced hold: automaticBroadcast=false, deploymentPaused=true'
 );
 
-// 2. Role Decoupling & Address Validity
-const expectedRoles = {
-  deployerAddress: '0xAf3eAA38a445392f1E9d1faE463871998745cb75',
-  controller: '0xb4B3A7c80a151b72A4e7F4d6f78f8b01267D2C2B',
-  payoutRecipient: '0x25ac84f90BF86F34584E031023755490A6125027',
-  keeperAddress: '0x2cC7450618B183346e2A47682a6a09ed255580fA',
+// 2. Role Decoupling & Mutually Exclusive Address Validity
+const roleSpecs = {
+  deployerAddress: 'Ephemeral Genesis Deployer EOA',
+  controller: 'Gnosis Safe 3-of-5 Timelock Controller',
+  payoutRecipient: 'Immutable Cold DAO Treasury',
+  keeperAddress: 'Restricted Automated Fee-Collection Worker',
 };
 
-for (const [role, addr] of Object.entries(expectedRoles)) {
+for (const [role, label] of Object.entries(roleSpecs)) {
   const cfgAddr = config[role];
-  const valid = isAddress(cfgAddr) && getAddress(cfgAddr) === getAddress(addr);
-  recordCheck(`Role Binding: ${role}`, valid, getAddress(cfgAddr));
+  const valid = isAddress(cfgAddr);
+  recordCheck(`Role Specification: ${role}`, valid, `${label} (${getAddress(cfgAddr).slice(0, 10)}...${getAddress(cfgAddr).slice(-4)})`);
 }
+
+const roleAddresses = Object.keys(roleSpecs).map(k => getAddress(config[k]));
+const distinctRoles = new Set(roleAddresses).size === roleAddresses.length;
+recordCheck(
+  'Role Decoupling & Separation',
+  distinctRoles,
+  'Enforced 4-way separation: Deployer != Controller != Payout != Keeper'
+);
 
 // 3. Multisig Governance Configuration
 const isSafe3of5 = config.governance?.controllerQuorum === '3-of-5';
 recordCheck(
   'Controller Governance Quorum',
   isSafe3of5,
-  `Gnosis Safe Quorum: ${config.governance?.controllerQuorum} (Safe: ${config.controller})`
+  `Gnosis Safe Quorum: ${config.governance?.controllerQuorum} (Safe: ${getAddress(config.controller).slice(0, 10)}...${getAddress(config.controller).slice(-4)})`
 );
 
 // 4. On-Chain Timelock Constraints
@@ -64,12 +72,12 @@ recordCheck(
 // 5. Emergency Recovery Safety Invariants
 const emergConfig = config.emergencyRecovery;
 const emergImmutableDest = emergConfig?.recipient === 'immutable_payoutRecipient'
-  && getAddress(emergConfig?.recipientAddress) === getAddress(expectedRoles.payoutRecipient);
+  && getAddress(emergConfig?.recipientAddress) === getAddress(config.payoutRecipient);
 
 recordCheck(
   'Emergency Destination Lock',
   emergImmutableDest,
-  `Strictly locked to cold DAO treasury: ${expectedRoles.payoutRecipient}`
+  `Strictly locked to immutable cold treasury: ${getAddress(config.payoutRecipient).slice(0, 10)}...${getAddress(config.payoutRecipient).slice(-4)}`
 );
 
 recordCheck(

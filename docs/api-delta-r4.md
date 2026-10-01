@@ -33,7 +33,7 @@ The canonical typed invoice ID is `keccak256(UTF8("StarportInvoice:" + canonical
 ## Confirmed Targets and Three-Day Epochs
 
 - Record ticker **SPORT**, but keep its token address null pending deployment.
-- Record the supplied treasury target **`0xAf3eAA38a445392f1E9d1faE463871998745cb75`** without claiming ownership, wallet type, or an observed PONS beneficiary. Actual launch-recipient binding remains gated on deployed source/ABI verification and must not silently change the initiating account.
+- Record the supplied treasury target as a parameterized configuration input without claiming ownership, wallet type, or an observed PONS beneficiary. Actual launch-recipient binding remains gated on deployed source/ABI verification and must not silently change the initiating account.
 - Under active R6 standard, launch quote is **Native ETH** with **100 bps (1%)** creator-tax target (superseding earlier 50 bps SPCX target). No additional SPORT transfer tax or Starport wrapper fee is introduced.
 - Initial earning epochs are **259,200 seconds (3 days)**, contiguous from an explicitly configured `firstStartTimestamp`. Epoch `n` is `[anchor+n×259200, anchor+(n+1)×259200)`. Unknown anchor/times stay null and unconfigured. There is no weekday/weekly alignment.
 - The proposed per-funded-epoch budget cap is `min(explicit asset raw cap, 25% of actual reconciled spendable surplus)`, subject to separate approval and funding—not APR or a guaranteed payout.

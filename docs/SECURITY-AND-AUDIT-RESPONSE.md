@@ -24,12 +24,12 @@ Starport is an application protocol designed for Robinhood Chain (chainId `4663`
 
 ### Governance Roles & Custody Boundaries
 
-| Role | Address | Custody Mechanism | Permissions & Bounds |
+| Role | Governance Binding | Custody Mechanism | Permissions & Bounds |
 |---|---|---|---|
-| **Deployer** | `0xAf3eAA38a445392f1E9d1faE463871998745cb75` | Ephemeral EOA | Single-use deployment only. Zero administrative, spending, or withdrawal authority post-deployment. |
-| **Controller** | `0xb4B3A7c80a151b72A4e7F4d6f78f8b01267D2C2B` | 3-of-5 Gnosis Safe | Manages operating fund payouts, pauses, 2-step controller handover, and recipient migrations. Payouts require an enforced 48-hour timelock (`queueOperatingFunds` + `executeOperatingFunds`). |
-| **Cold Payout Recipient** | `0x25ac84f90BF86F34584E031023755490A6125027` | Cold DAO Treasury Multi-Sig | **Immutable contract variable.** All operating payouts and emergency recoveries flow exclusively into this address. |
-| **Keeper Worker** | `0x2cC7450618B183346e2A47682a6a09ed255580fA` | Hot Automation Key | Restricted solely to triggering `collectFees()`. Zero withdrawal, approval, or arbitrary-call rights. |
+| **Deployer** | Ephemeral Genesis Account | Ephemeral EOA | Single-use deployment only. Zero administrative, spending, or withdrawal authority post-deployment. |
+| **Controller** | Designated Governance Multi-Sig | 3-of-5 Gnosis Safe | Manages operating fund payouts, pauses, 2-step controller handover, and recipient migrations. Payouts require an enforced 48-hour timelock (`queueOperatingFunds` + `executeOperatingFunds`). |
+| **Cold Payout Recipient** | Dedicated DAO Vault | Cold DAO Treasury Multi-Sig | **Immutable contract variable.** All operating payouts and emergency recoveries flow exclusively into this address. |
+| **Keeper Worker** | Automated Bot Account | Restricted Automation Key | Restricted solely to triggering `collectFees()`. Zero withdrawal, approval, or arbitrary-call rights. |
 
 ### Enforced Timelocks in `StarportFeeVault.sol`
 1. **Operating Payout Timelock (`PAYOUT_TIMELOCK = 48 hours`)**:

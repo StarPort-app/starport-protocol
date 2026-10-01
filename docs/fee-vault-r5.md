@@ -12,9 +12,9 @@ The user requested reception of other assets and emergency handling. The revised
 
 The revised permissions require confirmation before deployment. This emergency mechanism does not recover a lost/compromised controller key, and it does not automate withdrawal of other assets still held in PONS escrow. The controller can recover the entire held balance without a withdrawal timelock, but cannot redirect recovery away from the fixed payout wallet.
 
-### September 28 role confirmation and deployment hold
+### Governance role separation and deployment hold
 
-The user confirmed `0xAf3eAA38a445392f1E9d1faE463871998745cb75` for deployment signing, vault control and the immutable operating payout address, and `0x2cC7450618B183346e2A47682a6a09ed255580fA` as the independent Keeper. These are planned roles, not active on-chain authority. The user explicitly paused vault deployment. `vaultAddress` and SPORT remain unset; signing, broadcasting and rewards remain off. Earlier R5 references to unconfirmed role choices below are historical; fee-recipient status remains pending contract deployment.
+The protocol design decouples authority across distinct roles: an ephemeral deployment account, a 3-of-5 Gnosis Safe timelocked controller, an immutable cold treasury payout recipient, and an independent automated Keeper worker. These are planned governance roles, not active on-chain authority. The user explicitly paused vault deployment. `vaultAddress` and SPORT remain unset; signing, broadcasting and rewards remain off. Fee-recipient status remains pending contract deployment.
 
 The constructor checklist, read-only binding observer and unsigned job-store foundation can be prepared during this hold. No private key is required now. The keeper schema is not applied by web startup and no keeper service or scheduler has been provisioned.
 

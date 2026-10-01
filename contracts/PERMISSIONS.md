@@ -6,19 +6,19 @@ Not deployed. The user selected native ETH quote and creator fees for R6; collec
 
 To prevent key centralization and eliminate single-point-of-failure vulnerabilities, protocol authority is divided across distinct cryptographic entities:
 
-1. **Deployer EOA (`0xAf3eAA38a445392f1E9d1faE463871998745cb75`)**:
+1. **Deployer EOA (Designated Genesis Account)**:
    - Sole role is executing the initial deployment transaction.
    - Holds zero post-deployment administrative, operational, or withdrawal permissions.
-2. **Controller Multi-Sig (`0xb4B3A7c80a151b72A4e7F4d6f78f8b01267D2C2B`)**:
-   - 3-of-5 Gnosis Safe with hardware signer keys.
+2. **Controller Multi-Sig (3-of-5 Gnosis Safe)**:
+   - Multi-sig governance account with quorum threshold.
    - Authorized to manage operating transfers to the payout address, toggle pause states, initiate 2-step controller handover, and propose future PONS recipient updates.
-   - Enforces a 48-hour timelock on non-emergency operations.
-3. **Immutable Cold Payout Recipient (`0x25ac84f90BF86F34584E031023755490A6125027`)**:
+   - Enforces a 48-hour timelock on non-emergency operating disbursements.
+3. **Immutable Cold Payout Recipient (Cold Treasury Multi-Sig / DAO Vault)**:
    - Physically isolated cold treasury multi-sig / DAO vault.
    - Hardcoded in contract immutables at construction.
    - **All disbursements—both normal operating payouts and emergency asset recoveries—can exclusively flow into this specific address.** Neither the Deployer nor the Controller can divert funds to any arbitrary recipient.
-4. **Keeper Worker (`0x2cC7450618B183346e2A47682a6a09ed255580fA`)**:
-   - Hot automation account restricted to invoking `collectFees()`.
+4. **Keeper Worker (Restricted Automation Account)**:
+   - Hot automation account restricted solely to invoking `collectFees()`.
    - Has zero management, withdrawal, transfer, arbitrary-call, or token-approval permissions.
 
 ## Accepted assets and accounting
@@ -31,7 +31,7 @@ To prevent key centralization and eliminate single-point-of-failure vulnerabilit
 ## Emergency handling & fund safety invariants
 
 - **No Arbitrary Drains**: The controller enters emergency mode if an upstream protocol compromise occurs. This immediately pauses fee collection, clears any proposed controller candidate, and voids pending future-recipient migrations.
-- **Strict Destination Invariant**: In emergency mode, `emergencyRecoverToken` and `emergencyRecoverNative` transfer assets **only to the immutable cold payout recipient (`0x25aC84f90Bf86f34584e031023755490a6125027`)**. Even if a controller key were compromised, the attacker cannot siphon funds to an attacker-controlled wallet.
+- **Strict Destination Invariant**: In emergency mode, `emergencyRecoverToken` and `emergencyRecoverNative` transfer assets **only to the immutable cold payout recipient**. Even if a controller key were compromised, the attacker cannot siphon funds to an attacker-controlled wallet.
 - **Fail-Safe Exit**: Exiting emergency mode leaves collection paused. The controller multi-sig must explicitly unpause collection in a separate, timelocked transaction.
 
 ## Upstream PONS authority & migration buffer

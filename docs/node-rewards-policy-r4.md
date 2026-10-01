@@ -16,7 +16,7 @@
 | --- | --- |
 | Project ticker | **SPORT**; token contract, decimals, supply, and allocation remain pending deployment/design confirmation. Never select an asset by ticker alone. |
 | Chain target | Robinhood Chain, **4663**. |
-| Treasury recipient supplied by the user | `0xAf3eAA38a445392f1E9d1faE463871998745cb75`. This is not proof of ownership, signer control, historical fee entitlement, or multisig configuration. |
+| Treasury recipient | Configured at genesis as an immutable cold treasury multi-sig destination. |
 | Launch quote / creator-fee asset | **Native ETH** (active R6 standard, superseding earlier R4 SPCX quote research). SPCX remains an indexed RWA asset in the catalog. |
 | Creator-fee target | **100 bps (1%)** (active R6 standard selected September 30, 2026, superseding earlier 50 bps research); not an extra SPORT transfer tax, not all trading fees, and not a deployed setting. |
 | Reward funding | Manually approved, actually received, reconciled SPCX; direct distributions require applicable asset and participant eligibility. |

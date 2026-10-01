@@ -41,7 +41,7 @@
       "ownershipVerified": false,
       "historicalBeneficiaryVerified": false,
       "multisigAssumed": false,
-      "previousReferenceWallet": "0xAf3eAA38a445392f1E9d1faE463871998745cb75"
+      "previousReferenceWallet": null
     },
     "automaticConversionEnabled": false,
     "rewardAsset": {

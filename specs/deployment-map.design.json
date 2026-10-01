@@ -98,7 +98,7 @@
     "downstreamFunding": "Separate explicitly approved manual wallet action after asset-specific revenue, beneficiary, balance and finality reconciliation.",
     "claimAccount": null,
     "epochFunder": null,
-    "previousReferenceWallet": "0xAf3eAA38a445392f1E9d1faE463871998745cb75"
+    "previousReferenceWallet": null
   },
   "launchTarget": {
     "creatorTaxBps": 100,
@@ -109,7 +109,7 @@
     "additionalTokenTransferTaxBps": 0,
     "launchConfigId": null,
     "expectedEconomics": null,
-    "initiatingAccount": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
+    "initiatingAccount": "0x1000000000000000000000000000000000000001",
     "buybackEnabled": false,
     "buybackChoiceStatus": "Conservative design default; explicit launch review required.",
     "beneficiaryBinding": {
@@ -599,9 +599,9 @@
     "assetAddress": "0x0000000000000000000000000000000000000000",
     "escrowReference": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
     "escrowBindingVerified": false,
-    "controller": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
-    "payoutRecipient": "0xAf3eAA38a445392f1E9d1faE463871998745cb75",
-    "keeperAddress": "0x2cC7450618B183346e2A47682a6a09ed255580fA",
+    "controller": "0x2000000000000000000000000000000000000002",
+    "payoutRecipient": "0x3000000000000000000000000000000000000003",
+    "keeperAddress": "0x4000000000000000000000000000000000000004",
     "keeperGasAsset": "ETH",
     "automaticCollectionDesigned": true,
     "automaticCollectionEnabled": false,

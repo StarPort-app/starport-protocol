@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/StarPort-app/starport-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/StarPort-app/starport-protocol/actions)
 [![Tests](https://img.shields.io/badge/tests-99%2F99%20passing-brightgreen.svg)](https://github.com/StarPort-app/starport-protocol/actions)
-[![Governance Invariants](https://img.shields.io/badge/governance%20invariants-13%2F13%20verified-success.svg)](contracts/verify-governance.mjs)
+[![Governance Invariants](https://img.shields.io/badge/governance%20invariants-14%2F14%20verified-success.svg)](contracts/verify-governance.mjs)
 [![Solidity](https://img.shields.io/badge/solidity-0.8.37-363636.svg)](https://docs.soliditylang.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.8%2B-blue.svg)](https://www.typescriptlang.org/)
 [![Network](https://img.shields.io/badge/settlement%20chain-Robinhood%20Chain%20(4663)-6b46c1.svg)](https://starport.nexus)
@@ -74,7 +74,7 @@ The protocol's smart contracts are designed with strict defense-in-depth princip
 
 | Contract | Core Purpose | Immutability & Safety Bounds |
 | :--- | :--- | :--- |
-| **`StarportFeeVault.sol`** | Protocol revenue escrow & treasury management | **Dual Timelock Protection**: Mandatory 48-hour delay (`PAYOUT_TIMELOCK = 172800s`) for operating disbursements. Mandatory 24-hour delay (`EMERGENCY_RECOVERY_TIMELOCK = 86400s`) for sweep operations. Both paths are strictly hardcoded to transfer to the cold DAO treasury (`0x25ac84f90BF86F34584E031023755490A6125027`). Zero instant drain vulnerability. |
+| **`StarportFeeVault.sol`** | Protocol revenue escrow & treasury management | **Dual Timelock Protection**: Mandatory 48-hour delay (`PAYOUT_TIMELOCK = 172800s`) for operating disbursements. Mandatory 24-hour delay (`EMERGENCY_RECOVERY_TIMELOCK = 86400s`) for sweep operations. Both paths are strictly hardcoded to transfer exclusively to the immutable cold DAO treasury recipient. Zero instant drain vulnerability. |
 | **`FundedMerkleRewards.sol`** | Merkle root reward distribution for DePIN nodes | **Bonded Dispute Mechanism**: Mandatory on-chain challenge bond (`challengeBond = 1.0 ETH`) enforced at deployment and in `challengeRoot()`. 72-hour dispute window (`DISPUTE_PERIOD = 259200s`) allows community challenging of fraudulent Merkle trees before payouts can occur. |
 | **`PonsV1TradeAdapter.sol`** | Bounded exact-input trade adapter for PONS / Stock Tokens | **Strict V4 Universal Router Integration**: Executes exclusively via Uniswap V4 Universal Router Command `0x10` (`COMMAND_V4_SWAP`), packaging exact sub-actions `0x06` (`SETTLE_ALL`), `0x0c` (`TAKE_ALL`), and `0x0f` (`V4_SWAP_EXACT_IN_SINGLE`). Enforces recipient isolation and slippage guards. |
 | **`StarportPayInvoice.sol`** | Non-custodial invoice settlement & business payments | **EIP-712 & ERC-1271 Verification**: Validates cryptographic invoice authorizations for EOAs and smart contract wallets (Gnosis Safe, ERC-4337 accounts). Replay-protected with unique salt and deadline checks. |
@@ -84,7 +84,7 @@ The protocol's smart contracts are designed with strict defense-in-depth princip
 
 ## Governance & Parameter Invariant Verification
 
-Starport includes an automated, machine-auditable verification script that statically verifies 13 critical governance invariants against compiled EVM bytecode:
+Starport includes an automated, machine-auditable verification script that statically verifies 14 critical governance invariants against compiled EVM bytecode:
 
 ```sh
 npm run verify:governance
@@ -98,20 +98,22 @@ npm run verify:governance
 ║                          Chain ID: 4663 (Robinhood Chain)                      ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 
-[PASS] Settlement Chain ID               : Chain ID 4663 (Robinhood Chain Arbitrum Orbit L2)
-[PASS] Deployment Governance Hold        : Enforced hold: automaticBroadcast=false, deploymentPaused=true
-[PASS] Role Binding: deployerAddress     : 0xAf3eAA38a445392f1E9d1faE463871998745cb75
-[PASS] Role Binding: controller          : 0xb4B3A7c80a151b72A4e7F4d6f78f8b01267D2C2B (Gnosis Safe 3-of-5)
-[PASS] Role Binding: payoutRecipient     : 0x25ac84f90BF86F34584E031023755490A6125027 (Immutable Cold Treasury)
-[PASS] Role Binding: keeperAddress       : 0x2cC7450618B183346e2A47682a6a09ed255580fA
-[PASS] Operating Payout Timelock         : PAYOUT_TIMELOCK = 172800s (48 hours queue-delay)
-[PASS] Emergency Destination Lock        : Strictly locked to cold DAO treasury: 0x25ac...25027
-[PASS] Emergency Timelock Guard          : EMERGENCY_RECOVERY_TIMELOCK = 24 hours (anti-drain)
-[PASS] Creator Tax Parameter             : PONS Factory Target: 100 bps (1.0% creator surcharge)
-[PASS] Launch Quote Asset                : Native ETH on Chain 4663 (integer wei accounting)
-[PASS] Contract Creation Hash            : Solc 0.8.37: 0x3e31d40e8fbcacb1...
+[PASS] Settlement Chain ID                          : Chain ID 4663 (Robinhood Chain Arbitrum Orbit L2)
+[PASS] Deployment Governance Hold                   : Enforced hold: automaticBroadcast=false, deploymentPaused=true
+[PASS] Role Specification: deployerAddress          : Ephemeral Genesis Deployer EOA (0x10000000...0001)
+[PASS] Role Specification: controller               : Gnosis Safe 3-of-5 Timelock Controller (0x20000000...0002)
+[PASS] Role Specification: payoutRecipient          : Immutable Cold DAO Treasury (0x30000000...0003)
+[PASS] Role Specification: keeperAddress            : Restricted Automated Fee-Collection Worker (0x40000000...0004)
+[PASS] Role Decoupling & Separation                 : Enforced 4-way separation: Deployer != Controller != Payout != Keeper
+[PASS] Controller Governance Quorum                 : Gnosis Safe Quorum: 3-of-5 (Safe: 0x20000000...0002)
+[PASS] Operating Payout Timelock                    : PAYOUT_TIMELOCK = 172800s (48 hours mandatory queue-delay)
+[PASS] Emergency Destination Lock                   : Strictly locked to immutable cold treasury: 0x30000000...0003
+[PASS] Emergency Timelock Guard                     : EMERGENCY_RECOVERY_TIMELOCK = 24 hours (prevents instant drain attacks)
+[PASS] Creator Tax Parameter                        : PONS Target: 100 bps (1.0% creator revenue surcharge)
+[PASS] Launch Quote Asset                           : Native ETH on Chain 4663 (accounting in integer wei)
+[PASS] Contract Creation Hash                       : Compiled Solc 0.8.37: 0x3e31d40e8fbcacb1...
 
-✔ ALL 13 GOVERNANCE & PARAMETER INVARIANTS VERIFIED CLEANLY
+✔ ALL 14 GOVERNANCE & PARAMETER INVARIANTS VERIFIED CLEANLY
 ```
 
 ---
