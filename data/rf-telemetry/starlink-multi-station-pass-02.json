@@ -1,0 +1,671 @@
+{
+  "metadata": {
+    "description": "Calibrated Multi-Station Synchronized RF Dataset - Starlink Overhead Pass",
+    "satellite": "STARLINK-30154 (NORAD 58001)",
+    "stations": [
+      {
+        "id": "station-uk-ldn-01",
+        "name": "London Node Alpha",
+        "lat": 51.5074,
+        "lon": -0.1278,
+        "altM": 45
+      },
+      {
+        "id": "station-fr-par-02",
+        "name": "Paris Node Beta",
+        "lat": 48.8566,
+        "lon": 2.3522,
+        "altM": 35
+      }
+    ],
+    "baselineDistanceKm": 343.8,
+    "transitDelaySec": 45.2,
+    "subMicrosecondTdoaResidualSec": 1.2e-7,
+    "gdop": 2.41,
+    "geometricQuality": "EXCELLENT",
+    "antiReplay": {
+      "beaconDigest": "0x7a3f81e60408d6c701cbfa9d528ef0052ad6fb16c17e0b5f15918731336184bb",
+      "ephemeralChallengeNonce": "0x4663_20261001_starport"
+    }
+  },
+  "proofs": [
+    {
+      "noradId": 58001,
+      "observerLat": 51.5074,
+      "observerLon": -0.1278,
+      "observerAltM": 45,
+      "centerFrequencyHz": 11325000000,
+      "samples": [
+        {
+          "timestampMs": 1790555735000,
+          "measuredFrequencyHz": 11325182743,
+          "signalToNoiseRatioDb": 14
+        },
+        {
+          "timestampMs": 1790555737000,
+          "measuredFrequencyHz": 11325179054,
+          "signalToNoiseRatioDb": 14.3
+        },
+        {
+          "timestampMs": 1790555739000,
+          "measuredFrequencyHz": 11325175212,
+          "signalToNoiseRatioDb": 14.6
+        },
+        {
+          "timestampMs": 1790555741000,
+          "measuredFrequencyHz": 11325171214,
+          "signalToNoiseRatioDb": 14.9
+        },
+        {
+          "timestampMs": 1790555743000,
+          "measuredFrequencyHz": 11325167054,
+          "signalToNoiseRatioDb": 15.1
+        },
+        {
+          "timestampMs": 1790555745000,
+          "measuredFrequencyHz": 11325162728,
+          "signalToNoiseRatioDb": 15.4
+        },
+        {
+          "timestampMs": 1790555747000,
+          "measuredFrequencyHz": 11325158231,
+          "signalToNoiseRatioDb": 15.6
+        },
+        {
+          "timestampMs": 1790555749000,
+          "measuredFrequencyHz": 11325153560,
+          "signalToNoiseRatioDb": 15.9
+        },
+        {
+          "timestampMs": 1790555751000,
+          "measuredFrequencyHz": 11325148710,
+          "signalToNoiseRatioDb": 16.1
+        },
+        {
+          "timestampMs": 1790555753000,
+          "measuredFrequencyHz": 11325143679,
+          "signalToNoiseRatioDb": 16.3
+        },
+        {
+          "timestampMs": 1790555755000,
+          "measuredFrequencyHz": 11325138465,
+          "signalToNoiseRatioDb": 16.5
+        },
+        {
+          "timestampMs": 1790555757000,
+          "measuredFrequencyHz": 11325133064,
+          "signalToNoiseRatioDb": 16.7
+        },
+        {
+          "timestampMs": 1790555759000,
+          "measuredFrequencyHz": 11325127477,
+          "signalToNoiseRatioDb": 16.9
+        },
+        {
+          "timestampMs": 1790555761000,
+          "measuredFrequencyHz": 11325121702,
+          "signalToNoiseRatioDb": 17.1
+        },
+        {
+          "timestampMs": 1790555763000,
+          "measuredFrequencyHz": 11325115741,
+          "signalToNoiseRatioDb": 17.2
+        },
+        {
+          "timestampMs": 1790555765000,
+          "measuredFrequencyHz": 11325109595,
+          "signalToNoiseRatioDb": 17.4
+        },
+        {
+          "timestampMs": 1790555767000,
+          "measuredFrequencyHz": 11325103266,
+          "signalToNoiseRatioDb": 17.5
+        },
+        {
+          "timestampMs": 1790555769000,
+          "measuredFrequencyHz": 11325096759,
+          "signalToNoiseRatioDb": 17.7
+        },
+        {
+          "timestampMs": 1790555771000,
+          "measuredFrequencyHz": 11325090079,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555773000,
+          "measuredFrequencyHz": 11325083231,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555775000,
+          "measuredFrequencyHz": 11325076225,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555777000,
+          "measuredFrequencyHz": 11325069068,
+          "signalToNoiseRatioDb": 18.1
+        },
+        {
+          "timestampMs": 1790555779000,
+          "measuredFrequencyHz": 11325061771,
+          "signalToNoiseRatioDb": 18.2
+        },
+        {
+          "timestampMs": 1790555781000,
+          "measuredFrequencyHz": 11325054346,
+          "signalToNoiseRatioDb": 18.3
+        },
+        {
+          "timestampMs": 1790555783000,
+          "measuredFrequencyHz": 11325046806,
+          "signalToNoiseRatioDb": 18.3
+        },
+        {
+          "timestampMs": 1790555785000,
+          "measuredFrequencyHz": 11325039165,
+          "signalToNoiseRatioDb": 18.4
+        },
+        {
+          "timestampMs": 1790555787000,
+          "measuredFrequencyHz": 11325031438,
+          "signalToNoiseRatioDb": 18.4
+        },
+        {
+          "timestampMs": 1790555789000,
+          "measuredFrequencyHz": 11325023641,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555791000,
+          "measuredFrequencyHz": 11325015790,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555793000,
+          "measuredFrequencyHz": 11325007904,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555795000,
+          "measuredFrequencyHz": 11325000000,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555797000,
+          "measuredFrequencyHz": 11324992096,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555799000,
+          "measuredFrequencyHz": 11324984210,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555801000,
+          "measuredFrequencyHz": 11324976359,
+          "signalToNoiseRatioDb": 18.5
+        },
+        {
+          "timestampMs": 1790555803000,
+          "measuredFrequencyHz": 11324968562,
+          "signalToNoiseRatioDb": 18.4
+        },
+        {
+          "timestampMs": 1790555805000,
+          "measuredFrequencyHz": 11324960835,
+          "signalToNoiseRatioDb": 18.4
+        },
+        {
+          "timestampMs": 1790555807000,
+          "measuredFrequencyHz": 11324953194,
+          "signalToNoiseRatioDb": 18.3
+        },
+        {
+          "timestampMs": 1790555809000,
+          "measuredFrequencyHz": 11324945654,
+          "signalToNoiseRatioDb": 18.3
+        },
+        {
+          "timestampMs": 1790555811000,
+          "measuredFrequencyHz": 11324938229,
+          "signalToNoiseRatioDb": 18.2
+        },
+        {
+          "timestampMs": 1790555813000,
+          "measuredFrequencyHz": 11324930932,
+          "signalToNoiseRatioDb": 18.1
+        },
+        {
+          "timestampMs": 1790555815000,
+          "measuredFrequencyHz": 11324923775,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555817000,
+          "measuredFrequencyHz": 11324916769,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555819000,
+          "measuredFrequencyHz": 11324909921,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555821000,
+          "measuredFrequencyHz": 11324903241,
+          "signalToNoiseRatioDb": 17.7
+        },
+        {
+          "timestampMs": 1790555823000,
+          "measuredFrequencyHz": 11324896734,
+          "signalToNoiseRatioDb": 17.5
+        },
+        {
+          "timestampMs": 1790555825000,
+          "measuredFrequencyHz": 11324890405,
+          "signalToNoiseRatioDb": 17.4
+        },
+        {
+          "timestampMs": 1790555827000,
+          "measuredFrequencyHz": 11324884259,
+          "signalToNoiseRatioDb": 17.2
+        },
+        {
+          "timestampMs": 1790555829000,
+          "measuredFrequencyHz": 11324878298,
+          "signalToNoiseRatioDb": 17.1
+        },
+        {
+          "timestampMs": 1790555831000,
+          "measuredFrequencyHz": 11324872523,
+          "signalToNoiseRatioDb": 16.9
+        },
+        {
+          "timestampMs": 1790555833000,
+          "measuredFrequencyHz": 11324866936,
+          "signalToNoiseRatioDb": 16.7
+        },
+        {
+          "timestampMs": 1790555835000,
+          "measuredFrequencyHz": 11324861535,
+          "signalToNoiseRatioDb": 16.5
+        },
+        {
+          "timestampMs": 1790555837000,
+          "measuredFrequencyHz": 11324856321,
+          "signalToNoiseRatioDb": 16.3
+        },
+        {
+          "timestampMs": 1790555839000,
+          "measuredFrequencyHz": 11324851290,
+          "signalToNoiseRatioDb": 16.1
+        },
+        {
+          "timestampMs": 1790555841000,
+          "measuredFrequencyHz": 11324846440,
+          "signalToNoiseRatioDb": 15.9
+        },
+        {
+          "timestampMs": 1790555843000,
+          "measuredFrequencyHz": 11324841769,
+          "signalToNoiseRatioDb": 15.6
+        },
+        {
+          "timestampMs": 1790555845000,
+          "measuredFrequencyHz": 11324837272,
+          "signalToNoiseRatioDb": 15.4
+        },
+        {
+          "timestampMs": 1790555847000,
+          "measuredFrequencyHz": 11324832946,
+          "signalToNoiseRatioDb": 15.1
+        },
+        {
+          "timestampMs": 1790555849000,
+          "measuredFrequencyHz": 11324828786,
+          "signalToNoiseRatioDb": 14.9
+        },
+        {
+          "timestampMs": 1790555851000,
+          "measuredFrequencyHz": 11324824788,
+          "signalToNoiseRatioDb": 14.6
+        },
+        {
+          "timestampMs": 1790555853000,
+          "measuredFrequencyHz": 11324820946,
+          "signalToNoiseRatioDb": 14.3
+        },
+        {
+          "timestampMs": 1790555855000,
+          "measuredFrequencyHz": 11324817257,
+          "signalToNoiseRatioDb": 14
+        }
+      ],
+      "observerNodeId": "station-uk-ldn-01",
+      "operatorPublicKey": "ed25519:0xd54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+      "beaconDigest": "0x7a3f81e60408d6c701cbfa9d528ef0052ad6fb16c17e0b5f15918731336184bb",
+      "ephemeralChallengeNonce": "0x4663_20261001_starport",
+      "operatorSignature": "0xf3d7e9c843699d59f3fb2b94a5e89a3f40bed6aaccabb6755d6dde76bccaad92d045818df78fa7fd873dbe46540374e3acfa42ce9b50bb1ac66a713f19712b0e"
+    },
+    {
+      "noradId": 58001,
+      "observerLat": 48.8566,
+      "observerLon": 2.3522,
+      "observerAltM": 35,
+      "centerFrequencyHz": 11325000000,
+      "samples": [
+        {
+          "timestampMs": 1790555780200,
+          "measuredFrequencyHz": 11325181761,
+          "signalToNoiseRatioDb": 13.8
+        },
+        {
+          "timestampMs": 1790555782200,
+          "measuredFrequencyHz": 11325178065,
+          "signalToNoiseRatioDb": 14.1
+        },
+        {
+          "timestampMs": 1790555784200,
+          "measuredFrequencyHz": 11325174219,
+          "signalToNoiseRatioDb": 14.3
+        },
+        {
+          "timestampMs": 1790555786200,
+          "measuredFrequencyHz": 11325170217,
+          "signalToNoiseRatioDb": 14.6
+        },
+        {
+          "timestampMs": 1790555788200,
+          "measuredFrequencyHz": 11325166056,
+          "signalToNoiseRatioDb": 14.8
+        },
+        {
+          "timestampMs": 1790555790200,
+          "measuredFrequencyHz": 11325161730,
+          "signalToNoiseRatioDb": 15.1
+        },
+        {
+          "timestampMs": 1790555792200,
+          "measuredFrequencyHz": 11325157236,
+          "signalToNoiseRatioDb": 15.3
+        },
+        {
+          "timestampMs": 1790555794200,
+          "measuredFrequencyHz": 11325152570,
+          "signalToNoiseRatioDb": 15.5
+        },
+        {
+          "timestampMs": 1790555796200,
+          "measuredFrequencyHz": 11325147728,
+          "signalToNoiseRatioDb": 15.7
+        },
+        {
+          "timestampMs": 1790555798200,
+          "measuredFrequencyHz": 11325142707,
+          "signalToNoiseRatioDb": 15.9
+        },
+        {
+          "timestampMs": 1790555800200,
+          "measuredFrequencyHz": 11325137505,
+          "signalToNoiseRatioDb": 16.1
+        },
+        {
+          "timestampMs": 1790555802200,
+          "measuredFrequencyHz": 11325132121,
+          "signalToNoiseRatioDb": 16.3
+        },
+        {
+          "timestampMs": 1790555804200,
+          "measuredFrequencyHz": 11325126553,
+          "signalToNoiseRatioDb": 16.5
+        },
+        {
+          "timestampMs": 1790555806200,
+          "measuredFrequencyHz": 11325120801,
+          "signalToNoiseRatioDb": 16.7
+        },
+        {
+          "timestampMs": 1790555808200,
+          "measuredFrequencyHz": 11325114866,
+          "signalToNoiseRatioDb": 16.8
+        },
+        {
+          "timestampMs": 1790555810200,
+          "measuredFrequencyHz": 11325108750,
+          "signalToNoiseRatioDb": 17
+        },
+        {
+          "timestampMs": 1790555812200,
+          "measuredFrequencyHz": 11325102455,
+          "signalToNoiseRatioDb": 17.1
+        },
+        {
+          "timestampMs": 1790555814200,
+          "measuredFrequencyHz": 11325095985,
+          "signalToNoiseRatioDb": 17.2
+        },
+        {
+          "timestampMs": 1790555816200,
+          "measuredFrequencyHz": 11325089346,
+          "signalToNoiseRatioDb": 17.3
+        },
+        {
+          "timestampMs": 1790555818200,
+          "measuredFrequencyHz": 11325082544,
+          "signalToNoiseRatioDb": 17.4
+        },
+        {
+          "timestampMs": 1790555820200,
+          "measuredFrequencyHz": 11325075586,
+          "signalToNoiseRatioDb": 17.5
+        },
+        {
+          "timestampMs": 1790555822200,
+          "measuredFrequencyHz": 11325068481,
+          "signalToNoiseRatioDb": 17.6
+        },
+        {
+          "timestampMs": 1790555824200,
+          "measuredFrequencyHz": 11325061240,
+          "signalToNoiseRatioDb": 17.7
+        },
+        {
+          "timestampMs": 1790555826200,
+          "measuredFrequencyHz": 11325053874,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555828200,
+          "measuredFrequencyHz": 11325046396,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555830200,
+          "measuredFrequencyHz": 11325038819,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555832200,
+          "measuredFrequencyHz": 11325031158,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555834200,
+          "measuredFrequencyHz": 11325023429,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555836200,
+          "measuredFrequencyHz": 11325015649,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555838200,
+          "measuredFrequencyHz": 11325007833,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555840200,
+          "measuredFrequencyHz": 11325000000,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555842200,
+          "measuredFrequencyHz": 11324992167,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555844200,
+          "measuredFrequencyHz": 11324984351,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555846200,
+          "measuredFrequencyHz": 11324976571,
+          "signalToNoiseRatioDb": 18
+        },
+        {
+          "timestampMs": 1790555848200,
+          "measuredFrequencyHz": 11324968842,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555850200,
+          "measuredFrequencyHz": 11324961181,
+          "signalToNoiseRatioDb": 17.9
+        },
+        {
+          "timestampMs": 1790555852200,
+          "measuredFrequencyHz": 11324953604,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555854200,
+          "measuredFrequencyHz": 11324946126,
+          "signalToNoiseRatioDb": 17.8
+        },
+        {
+          "timestampMs": 1790555856200,
+          "measuredFrequencyHz": 11324938760,
+          "signalToNoiseRatioDb": 17.7
+        },
+        {
+          "timestampMs": 1790555858200,
+          "measuredFrequencyHz": 11324931519,
+          "signalToNoiseRatioDb": 17.6
+        },
+        {
+          "timestampMs": 1790555860200,
+          "measuredFrequencyHz": 11324924414,
+          "signalToNoiseRatioDb": 17.5
+        },
+        {
+          "timestampMs": 1790555862200,
+          "measuredFrequencyHz": 11324917456,
+          "signalToNoiseRatioDb": 17.4
+        },
+        {
+          "timestampMs": 1790555864200,
+          "measuredFrequencyHz": 11324910654,
+          "signalToNoiseRatioDb": 17.3
+        },
+        {
+          "timestampMs": 1790555866200,
+          "measuredFrequencyHz": 11324904015,
+          "signalToNoiseRatioDb": 17.2
+        },
+        {
+          "timestampMs": 1790555868200,
+          "measuredFrequencyHz": 11324897545,
+          "signalToNoiseRatioDb": 17.1
+        },
+        {
+          "timestampMs": 1790555870200,
+          "measuredFrequencyHz": 11324891250,
+          "signalToNoiseRatioDb": 17
+        },
+        {
+          "timestampMs": 1790555872200,
+          "measuredFrequencyHz": 11324885134,
+          "signalToNoiseRatioDb": 16.8
+        },
+        {
+          "timestampMs": 1790555874200,
+          "measuredFrequencyHz": 11324879199,
+          "signalToNoiseRatioDb": 16.7
+        },
+        {
+          "timestampMs": 1790555876200,
+          "measuredFrequencyHz": 11324873447,
+          "signalToNoiseRatioDb": 16.5
+        },
+        {
+          "timestampMs": 1790555878200,
+          "measuredFrequencyHz": 11324867879,
+          "signalToNoiseRatioDb": 16.3
+        },
+        {
+          "timestampMs": 1790555880200,
+          "measuredFrequencyHz": 11324862495,
+          "signalToNoiseRatioDb": 16.1
+        },
+        {
+          "timestampMs": 1790555882200,
+          "measuredFrequencyHz": 11324857293,
+          "signalToNoiseRatioDb": 15.9
+        },
+        {
+          "timestampMs": 1790555884200,
+          "measuredFrequencyHz": 11324852272,
+          "signalToNoiseRatioDb": 15.7
+        },
+        {
+          "timestampMs": 1790555886200,
+          "measuredFrequencyHz": 11324847430,
+          "signalToNoiseRatioDb": 15.5
+        },
+        {
+          "timestampMs": 1790555888200,
+          "measuredFrequencyHz": 11324842764,
+          "signalToNoiseRatioDb": 15.3
+        },
+        {
+          "timestampMs": 1790555890200,
+          "measuredFrequencyHz": 11324838270,
+          "signalToNoiseRatioDb": 15.1
+        },
+        {
+          "timestampMs": 1790555892200,
+          "measuredFrequencyHz": 11324833944,
+          "signalToNoiseRatioDb": 14.8
+        },
+        {
+          "timestampMs": 1790555894200,
+          "measuredFrequencyHz": 11324829783,
+          "signalToNoiseRatioDb": 14.6
+        },
+        {
+          "timestampMs": 1790555896200,
+          "measuredFrequencyHz": 11324825781,
+          "signalToNoiseRatioDb": 14.3
+        },
+        {
+          "timestampMs": 1790555898200,
+          "measuredFrequencyHz": 11324821935,
+          "signalToNoiseRatioDb": 14.1
+        },
+        {
+          "timestampMs": 1790555900200,
+          "measuredFrequencyHz": 11324818239,
+          "signalToNoiseRatioDb": 13.8
+        }
+      ],
+      "observerNodeId": "station-fr-par-02",
+      "operatorPublicKey": "ed25519:0x511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
+      "beaconDigest": "0x7a3f81e60408d6c701cbfa9d528ef0052ad6fb16c17e0b5f15918731336184bb",
+      "ephemeralChallengeNonce": "0x4663_20261001_starport",
+      "operatorSignature": "0xf853e046d6ca59e43526470390f3ecb427b8679f235dbc28501507e058173d1f808112971eab5a3a56c9506ba1bb064399fc4b67b6c956a3fb66b85030684706"
+    }
+  ]
+}

@@ -100,3 +100,15 @@ As long as $\ge \frac{2\mathcal{N} + 1}{3}$ of observing stations operate genuin
 | **Dispute Window** | **72 Hours (259,200s)** | Provides ample time for decentralized observers and automated watchdog daemons to verify proofs. |
 | **Whistleblower Bounty** | **50% of Slashed Funds** | Creates strong economic incentives for independent community surveillance. |
 | **Cold Treasury Lock** | **0x3000...0003** | Guarantees protocol penalty sweeps flow exclusively to cold multi-sig custody. |
+| **Non-Sweepable Reward Reserve** | **Hardcoded Invariant** | Ensures node rewards cannot be redirected by administrators, guaranteeing rug-pull immunity. |
+
+---
+
+### 5.1 Non-Sweepable Real-Yield Reserve (Rug-Pull Immunity)
+
+In traditional DeFi fee collectors, admin keys often retain discretionary sweep permissions over contract balances, exposing participants to exit scams or arbitrary redirection of community rewards.
+
+Starport enforces **Cryptographic Separation of Protocol Cash Flows**:
+1. **Parameterized Fee Splitting**: Inflowing PONS DEX trading fees are deterministically divided between network operations (`operatingBalance`) and verified node incentives (`rewardReserve`).
+2. **Immutable Reward Locking**: Once funds enter `rewardReserve`, they are strictly non-sweepable (`sweep()` reverts if directed at reward balances, even during emergency mode). The reserves can only be consumed by authorized downstream distribution contracts (`OrbitRewardDistributor`) upon cryptographic proof of accepted orbital compute work.
+3. **Zero-Admin Extraction**: This guarantees that protocol cash flows dedicated to space DePIN physical nodes cannot be expropriated by developers, controllers, or compromised signers.

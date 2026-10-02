@@ -26,7 +26,9 @@
     "test:fuzz": "npm run build:contracts && node --test contracts/test/invariant-fuzz.test.mjs",
     "verify:canonical": "npm run build:contracts && node contracts/verify-canonical.mjs",
     "sim:node": "npm run build && node examples/ground-station-node.mjs",
-    "sim:bot": "node examples/rwa-arbitrage-bot.mjs"
+    "sim:bot": "node examples/rwa-arbitrage-bot.mjs",
+    "sim:dataset": "npm run build && node examples/verify-telemetry-dataset.mjs",
+    "demo:zk": "npm run build && node examples/demo-zk-popo-pipeline.mjs"
   },
   "overrides": {
     "solc": {

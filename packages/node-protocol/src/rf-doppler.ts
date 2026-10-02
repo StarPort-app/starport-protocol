@@ -16,6 +16,8 @@ export interface RfDopplerProof {
   readonly observerNodeId: string;
   readonly operatorPublicKey?: string;
   readonly operatorSignature: string;
+  readonly beaconDigest?: string;
+  readonly ephemeralChallengeNonce?: string;
 }
 
 export interface ObserverEcef {
@@ -60,6 +62,10 @@ export interface RfDopplerVerificationResult {
   readonly maxElevationDeg?: number;
   readonly estimatedSlantRangeM?: number;
   readonly dopplerRmseHz?: number;
+  readonly dynamicToleranceHz?: number;
+  readonly snrDynamicRangeDb?: number;
+  readonly spectralSignatureVerified?: boolean;
+  readonly beaconVerified?: boolean;
   readonly reason?: string;
 }
 
@@ -103,6 +109,12 @@ export interface RfVerificationOptions {
   readonly requireSignature?: boolean;
   readonly ephemeris?: EphemerisData;
   readonly tle?: TwoLineElement;
+  readonly useDynamicTolerance?: boolean;
+  readonly baseToleranceHz?: number;
+  readonly enforceSpectralSignature?: boolean;
+  readonly minSnrDynamicRangeDb?: number;
+  readonly expectedBeaconDigest?: string;
+  readonly expectedChallengeNonce?: string;
 }
 
 const SPEED_OF_LIGHT = 299_792_458; // m/s
@@ -125,7 +137,7 @@ export function computeObserverEcef(latDeg: number, lonDeg: number, altM: number
 }
 
 export function getCanonicalDopplerBytes(p: Partial<RfDopplerProof>): Uint8Array {
-  const payload = {
+  const payload: Record<string, unknown> = {
     centerFrequencyHz: p.centerFrequencyHz,
     noradId: p.noradId,
     observerAltM: p.observerAltM ?? 0,
@@ -138,7 +150,74 @@ export function getCanonicalDopplerBytes(p: Partial<RfDopplerProof>): Uint8Array
       timestampMs: s.timestampMs,
     }))
   };
+  if (p.beaconDigest !== undefined) {
+    payload.beaconDigest = p.beaconDigest;
+  }
+  if (p.ephemeralChallengeNonce !== undefined) {
+    payload.ephemeralChallengeNonce = p.ephemeralChallengeNonce;
+  }
   return new TextEncoder().encode(JSON.stringify(payload));
+}
+
+/**
+ * Computes dynamic Doppler tolerance envelope sigma_f(theta) based on elevation angle.
+ * At zenith (90 deg), tolerance is tightest (baseToleranceHz).
+ * At horizon mask (25 deg), tolerance expands smoothly according to tropospheric & geometric slant range curvature.
+ */
+export function computeDynamicDopplerTolerance(elevationDeg: number, baseToleranceHz = 500): number {
+  const clampedElevation = Math.max(10, Math.min(90, elevationDeg));
+  const elevationRad = (clampedElevation * Math.PI) / 180;
+  // Scaled mapping: at 90 deg -> 1.0 * base, at 25 deg -> ~1.9 * base
+  const expansionFactor = 1.0 + Math.cos(elevationRad);
+  return Math.round(baseToleranceHz * expansionFactor * 10) / 10;
+}
+
+/**
+ * Validates RF spectral signature and SNR bell-curve dynamics.
+ * Genuine orbital passes experience range-dependent Free Space Path Loss (FSPL):
+ * SNR rises as satellite approaches Point of Closest Approach (PCA) and falls as it departs.
+ * Synthetic or static replays exhibit flat SNR or non-physical inverted profiles.
+ */
+export function verifySpectralEnergySignature(
+  samples: readonly RfDopplerSample[],
+  minDynamicRangeDb = 3.0
+): { valid: boolean; snrDynamicRangeDb: number; reason?: string } {
+  if (!Array.isArray(samples) || samples.length < 3) {
+    return { valid: false, snrDynamicRangeDb: 0, reason: 'INSUFFICIENT_SPECTRAL_SAMPLES' };
+  }
+
+  let minSnr = Infinity;
+  let maxSnr = -Infinity;
+  let maxIdx = -1;
+
+  for (let i = 0; i < samples.length; i++) {
+    const snr = samples[i].signalToNoiseRatioDb;
+    if (snr < minSnr) minSnr = snr;
+    if (snr > maxSnr) {
+      maxSnr = snr;
+      maxIdx = i;
+    }
+  }
+
+  const dynamicRange = Math.round((maxSnr - minSnr) * 10) / 10;
+  if (dynamicRange < minDynamicRangeDb) {
+    return {
+      valid: false,
+      snrDynamicRangeDb: dynamicRange,
+      reason: 'FLAT_SPECTRAL_PROFILE_REPLAY_DETECTED'
+    };
+  }
+
+  // In a normal convex pass, peak SNR should not occur exclusively at extreme edge samples
+  if (samples.length >= 5 && (maxIdx === 0 || maxIdx === samples.length - 1)) {
+    return {
+      valid: false,
+      snrDynamicRangeDb: dynamicRange,
+      reason: 'UNPHYSICAL_SPECTRAL_PEAK_ALIGNMENT'
+    };
+  }
+
+  return { valid: true, snrDynamicRangeDb: dynamicRange };
 }
 
 /**
@@ -332,6 +411,18 @@ export function verifyRfDopplerProof(
     }
   }
 
+  // 1b. Cryptographic Beacon Entropy & Ephemeral Nonce Anti-Replay Validation
+  if (options.expectedBeaconDigest !== undefined) {
+    if (!p.beaconDigest || p.beaconDigest !== options.expectedBeaconDigest) {
+      return { valid: false, verifiedRfPass: false, reason: 'BEACON_DIGEST_MISMATCH' };
+    }
+  }
+  if (options.expectedChallengeNonce !== undefined) {
+    if (!p.ephemeralChallengeNonce || p.ephemeralChallengeNonce !== options.expectedChallengeNonce) {
+      return { valid: false, verifiedRfPass: false, reason: 'CHALLENGE_NONCE_MISMATCH' };
+    }
+  }
+
   // 2. Sample sequencing, SNR, and monotonic frequency checks
   const f0 = p.centerFrequencyHz;
   const vOrb = options.tle?.semiMajorAxisM
@@ -450,6 +541,29 @@ export function verifyRfDopplerProof(
     return { valid: false, verifiedRfPass: false, reason: 'INSUFFICIENT_ELEVATION_ANGLE' };
   }
 
+  // 3b. Validate RF Spectral Energy Signature (SNR convex dynamics vs path loss)
+  let spectralSigOk: boolean | undefined;
+  let snrDynRange: number | undefined;
+  if (options.enforceSpectralSignature) {
+    const spectralRes = verifySpectralEnergySignature(p.samples, options.minSnrDynamicRangeDb ?? 3.0);
+    if (!spectralRes.valid) {
+      return {
+        valid: false,
+        verifiedRfPass: false,
+        snrDynamicRangeDb: spectralRes.snrDynamicRangeDb,
+        reason: spectralRes.reason ?? 'SPECTRAL_SIGNATURE_VERIFICATION_FAILED'
+      };
+    }
+    spectralSigOk = true;
+    snrDynRange = spectralRes.snrDynamicRangeDb;
+  }
+
+  // Dynamic Doppler tolerance envelope sigma_f(theta)
+  const dynamicTol = options.useDynamicTolerance
+    ? computeDynamicDopplerTolerance(thetaMaxDeg, options.baseToleranceHz ?? 500)
+    : undefined;
+  const effectiveToleranceHz = dynamicTol ?? maxToleranceHz;
+
   // 4. Theoretical Doppler S-curve matching and residual analysis
   const observerEcef = computeObserverEcef(p.observerLat, p.observerLon, p.observerAltM ?? 0);
   let sumSqResiduals = 0;
@@ -476,7 +590,7 @@ export function verifyRfDopplerProof(
     }
 
     const residual = Math.abs(s.measuredFrequencyHz - theoreticalFreq);
-    if (residual > maxToleranceHz) {
+    if (residual > effectiveToleranceHz) {
       return { valid: false, verifiedRfPass: false, reason: 'DOPPLER_DEVIATION_EXCEEDS_PHYSICAL_TOLERANCE' };
     }
     sumSqResiduals += residual ** 2;
@@ -494,6 +608,10 @@ export function verifyRfDopplerProof(
     maxElevationDeg: Math.round(thetaMaxDeg * 10) / 10,
     estimatedSlantRangeM: Math.round(dMin),
     dopplerRmseHz: Math.round(rmseHz * 10) / 10,
+    dynamicToleranceHz: dynamicTol,
+    snrDynamicRangeDb: snrDynRange,
+    spectralSignatureVerified: spectralSigOk,
+    beaconVerified: options.expectedBeaconDigest !== undefined ? true : undefined,
   };
 }
 
@@ -763,3 +881,6 @@ function invert4x4Matrix(m: number[][]): number[][] | null {
   }
   return inv;
 }
+
+export const verifyDopplerObservation = verifyRfDopplerProof;
+

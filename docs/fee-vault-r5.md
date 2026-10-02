@@ -35,7 +35,7 @@ Already useful orbital, account, asset, treasury-reference and payment-request f
 
 ## Collection versus sweeping
 
-Official PONS documentation exposes `balanceOfToken(recipient, token)` and `claimToken(token)` on the fee escrow. Fees must first be swept from the curve or hook. Sweeps involving conversion or buyback can require PONS's sweep operator. A zero escrow balance therefore does not prove zero accrued fees, and the vault does not pretend to automate restricted upstream swaps. Reference: [PONS v2 claiming fees](https://docs.ponsfamily.com/v2#claiming-fees).
+Official PONS documentation exposes `balanceOf(recipient)` and `claim()` for native ETH on the fee escrow (with `balanceOfToken` / `claimToken` used for ERC-20 pairs). Fees must first be swept from the curve or hook. Sweeps involving conversion or buyback can require PONS's sweep operator. A zero escrow balance therefore does not prove zero accrued fees, and the vault does not pretend to automate restricted upstream swaps. Reference: [PONS v2 claiming fees](https://docs.ponsfamily.com/v2#claiming-fees).
 
 The documented factory/escrow are integration references, not a substitute for resolving and verifying the stack of the actual SPORT launch. The September 28 [verified-source review](../contracts/PONS-SOURCE-REVIEW.md) confirms escrow caller/recipient semantics and factory migration access control. Runtime hashes, current mutable configuration and the eventual SPORT binding remain separate live checks. The older pinned repository snapshot was not a complete verified escrow source bundle.
 
@@ -43,7 +43,7 @@ The documented factory/escrow are integration references, not a substitute for r
 
 `StarportFeeVault` has immutable fee asset, PONS escrow, PONS factory and payout recipient bindings. Anyone may call `collectFees()`, but only the vault receives the fixed asset. There is no caller-selected recipient, arbitrary call, token approval, exchange route or keeper reimbursement. An exact before/after balance check records actual receipts, not donations or forecasts. An empty claim is a no-op.
 
-The controller may pause collection, initiate a two-step controller handover and manually pay SPCX only to the immutable payout recipient. This is spending authority and must not be assigned to the keeper. No automatic reward allocation or spending percentages are implemented in the collection vault. An immutable payout address must be chosen carefully before deployment.
+The controller may pause collection, initiate a two-step controller handover, and queue native ETH operating funds to the immutable payout recipient under a mandatory 48-hour timelock (`PAYOUT_TIMELOCK = 172800s`, executed via `executeOperatingFunds()`). Emergency recovery operates under a 24-hour delay exclusively to the cold treasury. This is spending authority and must not be assigned to the keeper. No automatic reward allocation or spending percentages are implemented in the collection vault. An immutable payout address must be chosen carefully before deployment.
 
 To avoid trapping future PONS beneficiary rights in the contract forever, a controller can propose a future-recipient change for a launched token through the immutable factory. Execution waits two days and remains controller-only. Old escrow credits and already received balances stay with the old vault. This mechanism is not a payout or a keeper power.
 

@@ -46,12 +46,15 @@ export type {
 } from './hardware-attestation.js';
 export {
   verifyRfDopplerProof,
+  verifyDopplerObservation,
   computeObserverEcef,
   getCanonicalDopplerBytes,
   parseTwoLineElement,
   propagateTleState,
   verifyMultiStationRfConsensus,
   computeGeometricDilutionOfPrecision,
+  computeDynamicDopplerTolerance,
+  verifySpectralEnergySignature,
 } from './rf-doppler.js';
 export type {
   RfDopplerSample,
@@ -77,6 +80,46 @@ export type {
   ZkPoPoPublicInputs,
   ZkPoPoProof,
 } from './zk-popo.js';
+export {
+  computeOrbitEarnBudgetSplit,
+  computeTriCapSaturationCeiling,
+  computeTaskCommitment,
+  verifyTaskReveal,
+  evaluateOrbitReviewQuorum,
+} from './orbit-earn.js';
+export type {
+  OrbitEarnServicePool,
+  OrbitEarnBudgetSplit,
+  ReviewSubmission,
+  ReviewQuorumResult,
+} from './orbit-earn.js';
+export {
+  OrbitalDopplerEkfTracker,
+  processDopplerPassWithEkf,
+  EARTH_J2,
+  EARTH_MU,
+  EARTH_RADIUS_EQUATOR_M,
+  CHI_SQUARE_999_1DOF,
+} from './extended-kalman-filter.js';
+export type {
+  EkfStateVector,
+  EkfTrackingSample,
+  EkfStepResult,
+  EkfTrackingReport,
+} from './extended-kalman-filter.js';
+export {
+  computeCompositeHybridDigest,
+  generatePostQuantumEnclaveKeys,
+  signHybridPostQuantumReceipt,
+  verifyHybridPostQuantumReceipt,
+  PQ_HYBRID_DOMAIN_V1,
+  ML_DSA_PRIME_Q,
+} from './post-quantum.js';
+export type {
+  PostQuantumPublicKey,
+  PostQuantumHybridReceipt,
+  HybridVerificationResult,
+} from './post-quantum.js';
 export type {
   Capability,
   ChainResult,
@@ -92,3 +135,4 @@ export type {
   TaskStatus,
   VerifiedAuthContext,
 } from "./wire.js";
+
